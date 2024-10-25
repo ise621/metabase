@@ -27,7 +27,7 @@ public sealed class UserQueries
     }
 
     [UsePaging]
-    /* TODO [UseProjection] // fails without an explicit error message in the logs */
+    /* [UseProjection] // fails without an explicit error message in the logs */
     [UseFiltering]
     [UseSorting]
     public IQueryable<User> GetUsers(
