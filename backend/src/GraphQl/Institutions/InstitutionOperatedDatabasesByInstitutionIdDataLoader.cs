@@ -19,7 +19,7 @@ public sealed class InstitutionOperatedDatabasesByInstitutionIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.Databases.AsQueryable().Where(x =>
+                dbContext.Databases.AsNoTracking().Where(x =>
                     ids.Contains(x.OperatorId)
                 ),
             x => x.OperatorId

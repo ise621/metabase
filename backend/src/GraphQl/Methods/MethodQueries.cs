@@ -1,10 +1,11 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
-using Guid = System.Guid;
 
 namespace Metabase.GraphQl.Methods;
 
@@ -19,7 +20,7 @@ public sealed class MethodQueries
         ApplicationDbContext context
     )
     {
-        return context.Methods;
+        return context.Methods.AsNoTracking();
     }
 
     public Task<Method?> GetMethodAsync(

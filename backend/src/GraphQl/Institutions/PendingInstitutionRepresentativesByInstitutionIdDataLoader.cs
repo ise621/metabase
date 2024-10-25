@@ -19,7 +19,7 @@ public sealed class PendingInstitutionRepresentativesByInstitutionIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.InstitutionRepresentatives.AsQueryable().Where(x =>
+                dbContext.InstitutionRepresentatives.AsNoTracking().Where(x =>
                     x.Pending && ids.Contains(x.InstitutionId)
                 ),
             x => x.InstitutionId

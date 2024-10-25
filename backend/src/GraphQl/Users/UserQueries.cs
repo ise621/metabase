@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
-using Metabase.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Metabase.Data;
 
 namespace Metabase.GraphQl.Users;
 
@@ -31,7 +32,7 @@ public sealed class UserQueries
         ApplicationDbContext context
     )
     {
-        return context.Users;
+        return context.Users.AsNoTracking();
     }
 
     public Task<User?> GetUserAsync(

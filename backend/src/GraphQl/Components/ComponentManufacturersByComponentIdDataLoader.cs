@@ -19,7 +19,7 @@ public sealed class ComponentManufacturersByComponentIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.ComponentManufacturers.AsQueryable().Where(x =>
+                dbContext.ComponentManufacturers.AsNoTracking().Where(x =>
                     !x.Pending && ids.Contains(x.ComponentId)
                 ),
             x => x.ComponentId

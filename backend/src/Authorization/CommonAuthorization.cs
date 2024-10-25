@@ -66,7 +66,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        return await context.Institutions.AsQueryable()
+        return await context.Institutions.AsNoTracking()
             .AnyAsync(x =>
                     x.Id == institutionId &&
                     x.State == InstitutionState.VERIFIED,
@@ -163,7 +163,7 @@ public static class CommonAuthorization
         if (user is null) return null;
 
         var wrappedRole =
-            await context.InstitutionRepresentatives.AsQueryable()
+            await context.InstitutionRepresentatives.AsNoTracking()
                 .Where(x =>
                     x.InstitutionId == institutionId &&
                     x.UserId == user.Id &&
@@ -178,7 +178,7 @@ public static class CommonAuthorization
         if (wrappedRole is not null) return wrappedRole.Role;
 
         var wrappedManagerRole =
-            await context.InstitutionRepresentatives.AsQueryable()
+            await context.InstitutionRepresentatives.AsNoTracking()
                 .Where(x => !x.Pending)
                 .Join(
                     context.Institutions,
@@ -209,7 +209,7 @@ public static class CommonAuthorization
     {
         if (componentIds.Length == 0) return true;
 
-        return await context.ComponentManufacturers.AsQueryable()
+        return await context.ComponentManufacturers.AsNoTracking()
             .AnyAsync(x =>
                     x.InstitutionId == institutionId &&
                     componentIds.Contains(x.ComponentId) &&
@@ -226,7 +226,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        return await context.ComponentManufacturers.AsQueryable()
+        return await context.ComponentManufacturers.AsNoTracking()
             .AnyAsync(x =>
                     x.InstitutionId == institutionId &&
                     x.ComponentId == componentId &&

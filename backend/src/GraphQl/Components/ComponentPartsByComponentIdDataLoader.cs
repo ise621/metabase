@@ -19,7 +19,7 @@ public sealed class ComponentPartsByComponentIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.ComponentAssemblies.AsQueryable().Where(x =>
+                dbContext.ComponentAssemblies.AsNoTracking().Where(x =>
                     ids.Contains(x.AssembledComponentId)
                 ).OrderBy(x => x.Index),
             x => x.AssembledComponentId

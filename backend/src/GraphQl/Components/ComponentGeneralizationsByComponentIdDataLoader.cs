@@ -19,7 +19,7 @@ public sealed class ComponentGeneralizationsByComponentIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.ComponentConcretizationAndGeneralizations.AsQueryable().Where(x =>
+                dbContext.ComponentConcretizationAndGeneralizations.AsNoTracking().Where(x =>
                     ids.Contains(x.ConcreteComponentId)
                 ),
             x => x.ConcreteComponentId

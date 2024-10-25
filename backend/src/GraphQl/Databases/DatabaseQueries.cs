@@ -1,11 +1,12 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.Enumerations;
-using Guid = System.Guid;
 
 namespace Metabase.GraphQl.Databases;
 
@@ -21,7 +22,7 @@ public sealed class DatabaseQueries
     )
     {
         return
-            context.Databases.AsQueryable()
+            context.Databases.AsNoTracking()
                 .Where(d => d.VerificationState == DatabaseVerificationState.VERIFIED);
     }
 
@@ -34,7 +35,7 @@ public sealed class DatabaseQueries
     )
     {
         return
-            context.Databases.AsQueryable()
+            context.Databases.AsNoTracking()
                 .Where(d => d.VerificationState == DatabaseVerificationState.PENDING);
     }
 

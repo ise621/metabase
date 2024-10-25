@@ -20,7 +20,7 @@ public sealed class InstitutionManagedInstitutionsByInstitutionIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.Institutions.AsQueryable().Where(x =>
+                dbContext.Institutions.AsNoTracking().Where(x =>
                     ids.Contains(x.ManagerId ?? Guid.Empty)
                 ),
             x => x.ManagerId ?? Guid.Empty

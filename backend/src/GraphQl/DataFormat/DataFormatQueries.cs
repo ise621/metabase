@@ -1,10 +1,11 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
-using Guid = System.Guid;
 
 namespace Metabase.GraphQl.DataFormats;
 
@@ -19,7 +20,7 @@ public sealed class DataFormatQueries
         ApplicationDbContext context
     )
     {
-        return context.DataFormats;
+        return context.DataFormats.AsNoTracking();
     }
 
     public Task<DataFormat?> GetDataFormatAsync(

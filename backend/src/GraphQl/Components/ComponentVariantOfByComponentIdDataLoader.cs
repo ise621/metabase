@@ -19,7 +19,7 @@ public sealed class ComponentVariantOfByComponentIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.ComponentVariants.AsQueryable().Where(x =>
+                dbContext.ComponentVariants.AsNoTracking().Where(x =>
                     ids.Contains(x.ToComponentId)
                 ),
             x => x.ToComponentId

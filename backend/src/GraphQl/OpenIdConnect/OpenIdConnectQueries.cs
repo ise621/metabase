@@ -6,12 +6,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.Types;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using OpenIddict.Core;
+using OpenIddict.EntityFrameworkCore.Models;
 using Metabase.Authorization;
 using Metabase.Data;
 using Metabase.GraphQl.Users;
-using Microsoft.AspNetCore.Identity;
-using OpenIddict.Core;
-using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Metabase.GraphQl.OpenIdConnect;
 

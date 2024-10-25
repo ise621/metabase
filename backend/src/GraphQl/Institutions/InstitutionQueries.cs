@@ -1,11 +1,12 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.Enumerations;
-using Guid = System.Guid;
 
 namespace Metabase.GraphQl.Institutions;
 
@@ -21,7 +22,7 @@ public sealed class InstitutionQueries
     )
     {
         return
-            context.Institutions.AsQueryable()
+            context.Institutions.AsNoTracking()
                 .Where(d => d.State == InstitutionState.VERIFIED);
     }
 
@@ -34,7 +35,7 @@ public sealed class InstitutionQueries
     )
     {
         return
-            context.Institutions.AsQueryable()
+            context.Institutions.AsNoTracking()
                 .Where(d => d.State == InstitutionState.PENDING);
     }
 

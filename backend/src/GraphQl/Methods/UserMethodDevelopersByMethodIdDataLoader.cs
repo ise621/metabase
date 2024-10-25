@@ -19,7 +19,7 @@ public sealed class UserMethodDevelopersByMethodIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.UserMethodDevelopers.AsQueryable().Where(x =>
+                dbContext.UserMethodDevelopers.AsNoTracking().Where(x =>
                     !x.Pending && ids.Contains(x.MethodId)
                 ),
             x => x.MethodId

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GreenDonut;
-using Metabase.Data;
 using Microsoft.EntityFrameworkCore;
-using Guid = System.Guid;
+using Metabase.Data;
 
 namespace Metabase.GraphQl.Entities;
 
@@ -36,7 +35,7 @@ public abstract class EntityByIdDataLoader<TEntity>
     {
         await using var dbContext =
             _dbContextFactory.CreateDbContext();
-        return await _getQueryable(dbContext).AsQueryable()
+        return await _getQueryable(dbContext).AsNoTrackingWithIdentityResolution()
             .Where(entity => keys.Contains(entity.Id))
             .ToDictionaryAsync(
                 entity => entity.Id,
