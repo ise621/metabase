@@ -203,10 +203,11 @@ public static class GraphQlConfiguration
                 )
             )
             // Paging
+            .AddDbContextCursorPagingProvider()
             .ModifyPagingOptions(options =>
                 {
-                    options.MaxPageSize = int.MaxValue;
-                    options.DefaultPageSize = int.MaxValue;
+                    options.MaxPageSize = int.MaxValue - 1;
+                    options.DefaultPageSize = int.MaxValue - 1;
                     options.IncludeTotalCount = true;
                 }
             )
