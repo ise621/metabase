@@ -28,7 +28,7 @@ public sealed class UserQueries
 
     [UsePaging]
     /* TODO [UseProjection] // fails without an explicit error message in the logs */
-    /* TODO [UseFiltering(typeof(UserFilterType))] // wait for https://github.com/ChilliCream/hotchocolate/issues/2672 and https://github.com/ChilliCream/hotchocolate/issues/2666 */
+    [UseFiltering]
     [UseSorting]
     public IQueryable<User> GetUsers(
         ApplicationDbContext context,
