@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.Methods;
 
@@ -17,9 +19,11 @@ public sealed class MethodQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Method> GetMethods(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<Method>();
         return context.Methods.AsNoTracking();
     }
 

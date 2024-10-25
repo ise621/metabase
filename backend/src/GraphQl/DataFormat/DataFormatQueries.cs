@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.DataFormats;
 
@@ -17,9 +19,11 @@ public sealed class DataFormatQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<DataFormat> GetDataFormats(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<DataFormat>();
         return context.DataFormats.AsNoTracking();
     }
 

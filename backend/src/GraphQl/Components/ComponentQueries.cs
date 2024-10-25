@@ -3,9 +3,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
 using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.Components;
 
@@ -17,9 +19,11 @@ public sealed class ComponentQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Component> GetComponents(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<Component>();
         return context.Components.AsNoTracking();
     }
 

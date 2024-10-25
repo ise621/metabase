@@ -5,10 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.Users;
 
@@ -29,9 +31,11 @@ public sealed class UserQueries
     /* TODO [UseFiltering(typeof(UserFilterType))] // wait for https://github.com/ChilliCream/hotchocolate/issues/2672 and https://github.com/ChilliCream/hotchocolate/issues/2666 */
     [UseSorting]
     public IQueryable<User> GetUsers(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<User>();
         return context.Users.AsNoTracking();
     }
 
