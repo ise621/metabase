@@ -60,7 +60,7 @@ const negateIfNecessary = (
 
 const conjunct = (
     propositions: GeometricDataPropositionInput[]
-): geometricDataPropositionInput => {
+): GeometricDataPropositionInput => {
     if (propositions.length == 0) {
         return {};
     }
