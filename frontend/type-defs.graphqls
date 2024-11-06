@@ -308,8 +308,6 @@ type ComponentVariantOfEdge {
 type ComponentsConnection {
   "A list of edges."
   edges: [ComponentsEdge!]
-  "A flattened list of the nodes."
-  nodes: [Component!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -510,8 +508,6 @@ type DataFormatManagerEdge {
 type DataFormatsConnection {
   "A list of edges."
   edges: [DataFormatsEdge!]
-  "A flattened list of the nodes."
-  nodes: [DataFormat!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -565,8 +561,6 @@ type DatabaseOperatorEdge {
 type DatabasesConnection {
   "A list of edges."
   edges: [DatabasesEdge!]
-  "A flattened list of the nodes."
-  nodes: [Database!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -879,8 +873,6 @@ type InstitutionRepresentativeEdge {
 type InstitutionsConnection {
   "A list of edges."
   edges: [InstitutionsEdge!]
-  "A flattened list of the nodes."
-  nodes: [Institution!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -979,8 +971,6 @@ type MethodManagerEdge {
 type MethodsConnection {
   "A list of edges."
   edges: [MethodsEdge!]
-  "A flattened list of the nodes."
-  nodes: [Method!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -1194,8 +1184,6 @@ type PageInfo {
 type PendingDatabasesConnection {
   "A list of edges."
   edges: [PendingDatabasesEdge!]
-  "A flattened list of the nodes."
-  nodes: [Database!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -1214,8 +1202,6 @@ type PendingDatabasesEdge {
 type PendingInstitutionsConnection {
   "A list of edges."
   edges: [PendingInstitutionsEdge!]
-  "A flattened list of the nodes."
-  nodes: [Institution!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
@@ -1669,8 +1655,6 @@ type UserRepresentedInstitutionEdge {
 type UsersConnection {
   "A list of edges."
   edges: [UsersEdge!]
-  "A flattened list of the nodes."
-  nodes: [User!]
   "Information to aid in pagination."
   pageInfo: PageInfo!
   "Identifies the total count of items in the connection."
