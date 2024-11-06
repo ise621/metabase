@@ -7,8 +7,10 @@ fragment UserPartial on User {
 
 query Users {
   users {
-    nodes {
-      ...UserPartial
+    edges {
+      node {
+        ...UserPartial
+      }
     }
   }
 }

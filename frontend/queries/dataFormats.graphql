@@ -39,8 +39,10 @@ fragment DataFormatPartial on DataFormat {
 
 query DataFormats {
   dataFormats {
-    nodes {
-      ...DataFormatPartial
+    edges {
+      node {
+        ...DataFormatPartial
+      }
     }
   }
 }

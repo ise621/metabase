@@ -16,17 +16,21 @@ fragment DatabasePartial on Database {
 
 query Databases {
   databases {
-    nodes {
-      ...DatabasePartial
+    edges {
+      node {
+        ...DatabasePartial
+      }
     }
   }
 }
 
 query PendingDatabases {
   pendingDatabases {
-    nodes {
-      ...DatabasePartial
-      canCurrentUserVerifyNode
+    edges {
+      node {
+        ...DatabasePartial
+        canCurrentUserVerifyNode
+      }
     }
   }
 }

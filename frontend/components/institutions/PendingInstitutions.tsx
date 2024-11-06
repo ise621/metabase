@@ -67,7 +67,7 @@ export default function PendingInstitutions({}: PendingInstitutionsProps) {
     <List
       size="small"
       loading={loading}
-      dataSource={data?.pendingInstitutions?.nodes || []}
+      dataSource={data?.pendingInstitutions?.edges?.map((e) => e.node) || []}
       renderItem={(item) => (
         <List.Item>
           <Link href={paths.institution(item?.uuid)} legacyBehavior>{item?.name}</Link>

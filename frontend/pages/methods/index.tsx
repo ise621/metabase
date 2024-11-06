@@ -11,7 +11,7 @@ import MethodTable from "../../components/methods/MethodTable";
 
 function Page() {
   const { loading, error, data } = useMethodsQuery();
-  const nodes = data?.methods?.nodes || [];
+  const nodes = data?.methods?.edges?.map((e) => e.node) || [];
 
   useEffect(() => {
     if (error) {

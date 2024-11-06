@@ -22,7 +22,7 @@ import { notEmpty } from "../../lib/array";
 
 function Page() {
   const { loading, error, data } = useInstitutionsQuery();
-  const nodes = data?.institutions?.nodes?.filter(notEmpty) || [];
+  const nodes = data?.institutions?.edges?.map((e) => e.node).filter(notEmpty) || [];
 
   const [filterText, setFilterText] = useState(() => new Map<string, string>());
   const onFilterTextChange = setMapValue(filterText, setFilterText);

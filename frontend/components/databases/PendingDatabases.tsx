@@ -65,7 +65,7 @@ export default function PendingDatabases({}: PendingDatabasesProps) {
     <List
       size="small"
       loading={loading}
-      dataSource={data?.pendingDatabases?.nodes || []}
+      dataSource={data?.pendingDatabases?.edges?.map((e) => e.node) || []}
       renderItem={(item) => (
         <List.Item>
           <Link href={paths.database(item?.uuid)} legacyBehavior>{item?.name}</Link>
