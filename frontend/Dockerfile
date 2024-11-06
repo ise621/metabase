@@ -6,7 +6,7 @@
 # Inspired by https://mherman.org/blog/dockerizing-a-react-app/
 
 # https://hub.docker.com/_/node
-FROM node:20.10-bookworm-slim
+FROM node:22.11-bookworm-slim
 
 ARG GROUP_ID
 ARG USER_ID

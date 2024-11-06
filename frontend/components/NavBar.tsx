@@ -33,13 +33,13 @@ export default function NavBar({ items }: NavBarProps) {
           </Menu.Item>
         ) : (
           // TODO find a better key
-          <Menu.SubMenu title={item.label} key={item.label}>
+          (<Menu.SubMenu title={item.label} key={item.label}>
             {item.subitems.map((subitem) => (
               <Menu.Item key={subitem.path}>
                 <Link href={subitem.path} legacyBehavior>{subitem.label}</Link>
               </Menu.Item>
             ))}
-          </Menu.SubMenu>
+          </Menu.SubMenu>)
         )
       )}
       {/* I would like the following to be on the right but that is not possible at the moment, see issue https://github.com/ant-design/ant-design/issues/10749 */}
