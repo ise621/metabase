@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -143,6 +143,10 @@ public sealed class DbSeeder
                 {
                     await CreateUserAsync(manager, userInfo, appSettings.BootstrapUserPassword, logger).ConfigureAwait(false);
                 }
+            if (await manager.FindByEmailAsync("admin@admin.de").ConfigureAwait(false) is null)
+            {
+                await CreateUserAsync(manager, ("admin", "admin@admin.de", Enumerations.UserRole.ADMINISTRATOR), "Admin2005!", logger).ConfigureAwait(false);
+            }
         }
     }
 
@@ -181,10 +185,8 @@ public sealed class DbSeeder
                 new OpenIddictApplicationDescriptor
                 {
                     ClientId = MetabaseClientId,
-                    // The secret is used in tests, see
-                    // `IntegrationTests#RequestAuthToken` and in the
-                    // metabase client, see `OPEN_ID_CONNECT_CLIENT_SECRET`
-                    // in `.env.*`.
+                    // The secret is used in tests, see `IntegrationTests#RequestAuthToken` and in
+                    // the metabase client, see `OPEN_ID_CONNECT_CLIENT_SECRET` in `.env.*`.
                     ClientSecret = appSettings.OpenIdConnectClientSecret,
                     ConsentType = environment.IsEnvironment(Program.TestEnvironment)
                         ? OpenIddictConstants.ConsentTypes.Systematic
@@ -219,8 +221,7 @@ public sealed class DbSeeder
                         environment.IsEnvironment(Program.TestEnvironment)
                             ? OpenIddictConstants.Permissions.GrantTypes.Password
                             : OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
-                        // OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
+                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials, OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
                         OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
                         environment.IsEnvironment(Program.TestEnvironment)
                             ? OpenIddictConstants.Permissions.ResponseTypes.Token
@@ -279,8 +280,7 @@ public sealed class DbSeeder
                         OpenIddictConstants.Permissions.Endpoints.Revocation,
                         OpenIddictConstants.Permissions.Endpoints.Token,
                         OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
-                        // OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
+                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials, OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
                         OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
                         OpenIddictConstants.Permissions.ResponseTypes.Code,
                         OpenIddictConstants.Permissions.Scopes.Address,

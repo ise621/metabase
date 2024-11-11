@@ -1,20 +1,20 @@
 fragment OpenIdConnectApplicationPartial on OpenIdConnectApplication {
-  applicationType
   clientId
   clientSecret
-  clientType
-  concurrencyToken
-  consentType
   displayName
-  displayNames
   id
-  jsonWebKeySet
   permissions
-  postLogoutRedirectUris
-  properties
-  redirectUris
-  requirements
-  settings
+  # applicationType
+  # clientType
+  # concurrencyToken
+  # consentType
+  # displayNames
+  # jsonWebKeySet
+  # postLogoutRedirectUris
+  # properties
+  # redirectUris
+  # requirements
+  # settings
 }
 
 fragment OpenIdConnectAuthorizationPartial on OpenIdConnectAuthorization {

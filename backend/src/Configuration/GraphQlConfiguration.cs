@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Language;
@@ -22,6 +22,7 @@ using Metabase.GraphQl.Institutions;
 using Metabase.GraphQl.Methods;
 using Metabase.GraphQl.Numerations;
 using Metabase.GraphQl.OpenIdConnect;
+using Metabase.GraphQl.OpenIdConnect.Application;
 using Metabase.GraphQl.Publications;
 using Metabase.GraphQl.References;
 using Metabase.GraphQl.Stakeholders;
@@ -79,17 +80,16 @@ public static class GraphQlConfiguration
                     /* options.UseComplexityMultipliers = ...; */
                 }
             )
-            // Configure `https://github.com/ChilliCream/hotchocolate/blob/main/src/HotChocolate/Core/src/Validation/Options/ValidationOptions.cs`. But how?
-            // Subscriptions
+            // Configure
+            // `https://github.com/ChilliCream/hotchocolate/blob/main/src/HotChocolate/Core/src/Validation/Options/ValidationOptions.cs`.
+            // But how? Subscriptions
             /* .AddInMemorySubscriptions() */
             // Persisted queries
             /* .AddFileSystemQueryStorage("./persisted_queries") */
             /* .UsePersistedQueryPipeline(); */
-            // HotChocolate uses the default authentication scheme,
-            // which we set to `null` in `AuthConfiguration` to force
-            // users to be explicit about what scheme to use when
-            // making it easier to grasp the various authentication
-            // flows.
+            // HotChocolate uses the default authentication scheme, which we set to `null` in
+            // `AuthConfiguration` to force users to be explicit about what scheme to use when
+            // making it easier to grasp the various authentication flows.
             .AddHttpRequestInterceptor(async (httpContext, requestExecutor, requestBuilder, cancellationToken) =>
             {
                 try
@@ -114,8 +114,7 @@ public static class GraphQlConfiguration
             .AddType(new JsonType("Any",
                 BindingBehavior
                     .Implicit)) // https://chillicream.com/blog/2023/02/08/new-in-hot-chocolate-13#json-scalar
-            // .BindRuntimeType<Guid, MyUuidType>()
-            // Query Types
+                                // .BindRuntimeType<Guid, MyUuidType>() Query Types
             .AddQueryType(d => d.Name(nameof(Query)))
             .AddType<ComponentQueries>()
             .AddType<DataFormatQueries>()
@@ -123,6 +122,7 @@ public static class GraphQlConfiguration
             .AddType<InstitutionQueries>()
             .AddType<MethodQueries>()
             .AddType<OpendIdConnectQueries>()
+            .AddType<ApplicationQueries>()
             .AddType<UserQueries>()
             // Mutation Types
             .AddMutationType(d => d.Name(nameof(Mutation)))
@@ -139,6 +139,7 @@ public static class GraphQlConfiguration
             .AddType<MethodMutations>()
             .AddType<UserMethodDeveloperMutations>()
             .AddType<UserMutations>()
+            .AddType<ApplicationMutations>()
             /* .AddSubscriptionType(d => d.Name(nameof(GraphQl.Subscription))) */
             /*     .AddType<ComponentSubscriptions>() */
             // Object Types

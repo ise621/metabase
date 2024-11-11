@@ -1,13 +1,18 @@
 import { messageApolloError } from "../../lib/apollo";
 import Layout from "../../components/Layout";
-import { Table, Typography } from "antd";
+import paths from "../../paths";
+import { Table, Typography, TableProps, Space } from "antd";
 import { useOpenIdConnectQuery } from "../../queries/openIdConnect.graphql";
 import { useEffect } from "react";
+import { OpenIdConnectApplication, UserRole } from "../../__generated__/__types__";
+import { useCurrentUserQuery } from "../../queries/currentUser.graphql";
+import Link from "next/link";
 
 // TODO Load and display scopes.
 
 function Page() {
   const { loading, error, data } = useOpenIdConnectQuery();
+  const currentUser = useCurrentUserQuery()?.data?.currentUser;
 
   useEffect(() => {
     if (error) {
@@ -15,101 +20,41 @@ function Page() {
     }
   }, [error]);
 
+  function isAdmin() {
+    return currentUser?.roles?.includes(UserRole.Administrator)
+  }
+
+  const applicationColumns: TableProps<OpenIdConnectApplication>['columns'] = [
+    {
+      title: "Name",
+      dataIndex: "displayName",
+      key: "displayName",
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, application) => (
+        <Space size="middle">
+          {isAdmin() ? (
+            <>
+              <Link href={paths.openIdApplication(application.id!)}>Edit</Link>
+              <Link href={paths.calorimetricData}>Delete</Link>
+            </>
+          )
+            : <></>}
+
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <Layout>
       <Typography.Title>Applications</Typography.Title>
-      <Table
+      <Table<OpenIdConnectApplication>
         loading={loading}
-        columns={[
-          {
-            title: "applicationType",
-            dataIndex: "applicationType",
-            key: "applicationType",
-          },
-          {
-            title: "clientId",
-            dataIndex: "clientId",
-            key: "clientId",
-          },
-          {
-            title: "clientSecret",
-            dataIndex: "clientSecret",
-            key: "clientSecret",
-          },
-          {
-            title: "clientType",
-            dataIndex: "clientType",
-            key: "clientType",
-          },
-          {
-            title: "concurrencyToken",
-            dataIndex: "concurrencyToken",
-            key: "concurrencyToken",
-          },
-          {
-            title: "consentType",
-            dataIndex: "consentType",
-            key: "consentType",
-          },
-          {
-            title: "displayName",
-            dataIndex: "displayName",
-            key: "displayName",
-          },
-          {
-            title: "displayNames",
-            dataIndex: "displayNames",
-            key: "displayNames",
-          },
-          {
-            title: "id",
-            dataIndex: "id",
-            key: "id",
-          },
-          {
-            title: "jsonWebKeySet",
-            dataIndex: "jsonWebKeySet",
-            key: "jsonWebKeySet",
-          },
-          {
-            title: "permissions",
-            dataIndex: "permissions",
-            key: "permissions",
-          },
-          {
-            title: "postLogoutRedirectUris",
-            dataIndex: "postLogoutRedirectUris",
-            key: "postLogoutRedirectUris",
-          },
-          {
-            title: "properties",
-            dataIndex: "properties",
-            key: "properties",
-          },
-          {
-            title: "redirectUris",
-            dataIndex: "redirectUris",
-            key: "redirectUris",
-          },
-          {
-            title: "requirements",
-            dataIndex: "requirements",
-            key: "requirements",
-          },
-          {
-            title: "settings",
-            dataIndex: "settings",
-            key: "settings",
-          },
-          //   {
-          //     title: "authorizations",
-          //     dataIndex: "authorizations",
-          //     key: "authorizations",
-          //     render: (_value, record, _index) => (
-          //     ),
-          //   },
-        ]}
-        dataSource={data?.openIdConnectApplications || []}
+        columns={applicationColumns}
+        dataSource={data?.openIdConnectApplications as Array<OpenIdConnectApplication> || []}
       />
       <Typography.Title>Authorizations</Typography.Title>
       <Table

@@ -30,7 +30,10 @@ export default {
     },
   },
   personalUserData: "/personal-user-data",
-  openIdConnectClientLogin: "/connect/client/login",
+  openIdApplication(uuid: string) {
+    return `/application/${encodeURIComponent(uuid)}`;
+  },
+  openIdConnectClientLogin: "https://local.buildingenvelopedata.org:4041/connect/client/login",
   openIdConnectClientLogout: "/connect/client/logout",
   userLogin: "/users/login",
   userRegister: "/users/register",

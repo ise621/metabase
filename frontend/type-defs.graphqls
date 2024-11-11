@@ -978,6 +978,7 @@ type Mutation {
   confirmUserEmail(input: ConfirmUserEmailInput!): ConfirmUserEmailPayload!
   confirmUserEmailChange(input: ConfirmUserEmailChangeInput!): ConfirmUserEmailChangePayload!
   confirmUserMethodDeveloper(input: ConfirmUserMethodDeveloperInput!): ConfirmUserMethodDeveloperPayload! @authorize(policy: "Write")
+  createApplication(application: ApplicationDtoInput!): OpenIdConnectApplication! @authorize(policy: "Write")
   createComponent(input: CreateComponentInput!): CreateComponentPayload! @authorize(policy: "Write")
   createDatabase(input: CreateDatabaseInput!): CreateDatabasePayload! @authorize(policy: "Write")
   createDataFormat(input: CreateDataFormatInput!): CreateDataFormatPayload! @authorize(policy: "Write")
@@ -1012,6 +1013,7 @@ type Mutation {
   setUserPassword(input: SetUserPasswordInput!): SetUserPasswordPayload! @authorize(policy: "ManageUser")
   setUserPhoneNumber(input: SetUserPhoneNumberInput!): SetUserPhoneNumberPayload! @authorize(policy: "ManageUser")
   switchInstitutionOperatingState(input: SwitchInstitutionOperatingStateInput!): SwitchInstitutionOperatingStatePayload! @authorize(policy: "Write")
+  updateApplication(applicationDto: ApplicationDtoInput!): OpenIdConnectApplication! @authorize(policy: "Write")
   updateComponent(input: UpdateComponentInput!): UpdateComponentPayload! @authorize(policy: "Write")
   updateComponentAssembly(input: UpdateComponentAssemblyInput!): UpdateComponentAssemblyPayload! @authorize(policy: "Write")
   updateDatabase(input: UpdateDatabaseInput!): UpdateDatabasePayload! @authorize(policy: "Write")
@@ -1258,6 +1260,7 @@ type Query {
   node("ID of the object." id: ID!): Node
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
+  openIdConnectApplication(uuid: Uuid!): OpenIdConnectApplication
   openIdConnectApplications: [OpenIdConnectApplication!]!
   openIdConnectAuthorizations: [OpenIdConnectAuthorization!]!
   openIdConnectScopes: [OpenIdConnectScope!]!
@@ -1715,6 +1718,14 @@ input AddUserMethodDeveloperInput {
 input AddUserRoleInput {
   role: UserRole!
   userId: Uuid!
+}
+
+input ApplicationDtoInput {
+  clientId: String!
+  clientSecret: String!
+  displayName: String!
+  id: String
+  permissions: String!
 }
 
 input BooleanOperationFilterInput {
