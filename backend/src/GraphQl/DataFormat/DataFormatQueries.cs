@@ -1,10 +1,13 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
-using Guid = System.Guid;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.DataFormats;
 
@@ -16,10 +19,12 @@ public sealed class DataFormatQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<DataFormat> GetDataFormats(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
-        return context.DataFormats;
+        sorting.StabilizeOrder<DataFormat>();
+        return context.DataFormats.AsNoTracking();
     }
 
     public Task<DataFormat?> GetDataFormatAsync(

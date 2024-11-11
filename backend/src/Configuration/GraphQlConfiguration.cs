@@ -44,20 +44,21 @@ public static class GraphQlConfiguration
         IWebHostEnvironment environment
     )
     {
+        // Automatic-Persisted-Queries Services
         services
-            .AddMemoryCache() // Needed by the automatic persisted query pipeline
-            .AddSha256DocumentHashProvider(HashFormat
-                .Hex) // Needed by the automatic persisted query pipeline
+            .AddMemoryCache()
+            .AddSha256DocumentHashProvider(HashFormat.Hex);
+        // GraphQL Server
+        services
             .AddGraphQLServer()
             // Services https://chillicream.com/docs/hotchocolate/v13/integrations/entity-framework#registerdbcontext
-            .RegisterDbContext<ApplicationDbContext>(DbContextKind.Pooled)
+            .RegisterDbContextFactory<ApplicationDbContext>()
             .AddMutationConventions(new MutationConventionOptions { ApplyToAllMutations = false })
             // Extensions
             .AddProjections()
             .AddFiltering()
             .AddSorting()
             .AddAuthorization()
-            .AddApolloTracing()
             .AddGlobalObjectIdentification()
             .AddQueryFieldToMutationPayloads()
             .ModifyOptions(options =>
@@ -85,11 +86,13 @@ public static class GraphQlConfiguration
             // But how? Subscriptions
             /* .AddInMemorySubscriptions() */
             // Persisted queries
-            /* .AddFileSystemQueryStorage("./persisted_queries") */
-            /* .UsePersistedQueryPipeline(); */
-            // HotChocolate uses the default authentication scheme, which we set to `null` in
-            // `AuthConfiguration` to force users to be explicit about what scheme to use when
-            // making it easier to grasp the various authentication flows.
+            /* .AddFileSystemOperationDocumentStorage("./persisted_operations") */
+            /* .UsePersistedOperationPipeline(); */
+            // HotChocolate uses the default authentication scheme,
+            // which we set to `null` in `AuthConfiguration` to force
+            // users to be explicit about what scheme to use when
+            // making it easier to grasp the various authentication
+            // flows.
             .AddHttpRequestInterceptor(async (httpContext, requestExecutor, requestBuilder, cancellationToken) =>
             {
                 try
@@ -114,7 +117,8 @@ public static class GraphQlConfiguration
             .AddType(new JsonType("Any",
                 BindingBehavior
                     .Implicit)) // https://chillicream.com/blog/2023/02/08/new-in-hot-chocolate-13#json-scalar
-                                // .BindRuntimeType<Guid, MyUuidType>() Query Types
+                                // .BindRuntimeType<Guid, MyUuidType>()
+                                // Query Types
             .AddQueryType(d => d.Name(nameof(Query)))
             .AddType<ComponentQueries>()
             .AddType<DataFormatQueries>()
@@ -167,6 +171,7 @@ public static class GraphQlConfiguration
             .AddType<StakeholderType>()
             .AddType<StandardType>()
             .AddType<UserType>()
+            .AddType<GeometricData>()
             // Data Loaders
             .AddDataLoader<ComponentByIdDataLoader>()
             .AddDataLoader<DataFormatByIdDataLoader>()
@@ -202,16 +207,17 @@ public static class GraphQlConfiguration
                 )
             )
             // Paging
-            .SetPagingOptions(
-                new PagingOptions
+            .AddDbContextCursorPagingProvider()
+            .ModifyPagingOptions(_ =>
                 {
-                    MaxPageSize = int.MaxValue,
-                    DefaultPageSize = int.MaxValue,
-                    IncludeTotalCount = true
+                    _.MaxPageSize = int.MaxValue - 1;
+                    _.DefaultPageSize = int.MaxValue - 1;
+                    _.IncludeTotalCount = true;
+                    _.IncludeNodesField = false;
                 }
             )
-            .UseAutomaticPersistedQueryPipeline()
-            .AddInMemoryQueryStorage(); // Needed by the automatic persisted query pipeline
+            .UseAutomaticPersistedOperationPipeline()
+            .AddInMemoryOperationDocumentStorage(); // Needed by the automatic persisted operation pipeline
     }
 
     private sealed class MyUuidType : UuidType

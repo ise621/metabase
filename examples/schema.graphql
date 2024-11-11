@@ -671,6 +671,23 @@ type PhotovoltaicDataFromDatabase implements Node {
   timestamp: Timestamp!
 }
 
+type GeometricData implements Node {
+  componentId: NonEmptyUuid!
+  id: NonEmptyUuid!
+  requestTimestamp: Timestamp!
+  timestamp: Timestamp!
+}
+
+type GeometricDataFromDatabase implements Node {
+  component: Component!
+  componentId: NonEmptyUuid!
+  database: Database!
+  databaseId: NonEmptyUuid!
+  id: NonEmptyUuid!
+  requestTimestamp: Timestamp!
+  timestamp: Timestamp!
+}
+
 type Query {
   calorimetricData(
     componentId: NonEmptyUuid!
@@ -743,6 +760,23 @@ type Query {
     timestamp: Timestamp
   ): [Database!]!
   whoHasPhotovoltaicData(
+    componentId: NonEmptyUuid!
+    timestamp: Timestamp
+  ): [Database!]!
+  geometricData(
+    componentId: NonEmptyUuid!
+    timestamp: Timestamp
+  ): [GeometricData!]!
+  geometricDataFromDatabases(
+    componentId: NonEmptyUuid!
+    timestamp: Timestamp
+  ): [GeometricDataFromDatabase!]!
+  hasGeometricData(
+    componentId: NonEmptyUuid!
+    timestamp: Timestamp
+  ): Boolean!
+    users(timestamp: Timestamp): [User!]!
+  whoHasGeometricData(
     componentId: NonEmptyUuid!
     timestamp: Timestamp
   ): [Database!]!

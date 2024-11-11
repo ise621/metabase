@@ -55,6 +55,9 @@ trace : ## Trace the dotnet process `Metabase`
 			--providers Microsoft-Windows-DotNETRuntime
 .PHONY : trace
 
+# If `graphqurl` were installed, the schema could be introspected with
+# `gq http://backend:8080/graphql/ --introspect`
+# See https://github.com/hasura/graphqurl#export-schema
 update-schema : ## Update GraphQl schema
 	wget \
 		--output-document ./test/Integration/GraphQl/__snapshots__/GraphQlSchemaTests.IsUnchanged.snap \
@@ -145,11 +148,6 @@ dedup : ## Dedeuplicate code lines matching the pattern `${PATTERN}`, for exampl
 						{ print } \
 					}"
 .PHONY : dedup
-
-# See https://github.com/hasura/graphqurl#export-schema
-schema : ## Fetch GraphQL schema using `hasura/graphqurl`
-	gq http://backend:8080/graphql/ --introspect > schema.graphql
-.PHONY : schema
 
 add-migration : ## Add migration with name `${NAME}`, for example, `make NAME=InitialCreate add-migration`
 	dotnet ef \

@@ -69,7 +69,7 @@ public sealed class DeletePersonalUserDataTests
             password: password
         ).ConfigureAwait(false);
         // Act
-        var response = await UnsuccessfullyQueryGraphQlContentAsString(
+        var response = await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Users/DeletePersonalUserData.graphql"),
             variables: new Dictionary<string, object?>
             {
@@ -93,7 +93,7 @@ public sealed class DeletePersonalUserDataTests
                 password: password
             ).ConfigureAwait(false);
         // Act
-        await UnsuccessfullyQueryGraphQlContentAsString(
+        await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Users/DeletePersonalUserData.graphql"),
             variables: new Dictionary<string, object?>
             {

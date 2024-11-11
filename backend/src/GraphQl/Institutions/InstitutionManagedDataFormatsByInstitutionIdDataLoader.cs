@@ -19,7 +19,7 @@ public sealed class InstitutionManagedDataFormatsByInstitutionIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.DataFormats.AsQueryable().Where(x =>
+                dbContext.DataFormats.AsNoTracking().Where(x =>
                     ids.Contains(x.ManagerId)
                 ),
             x => x.ManagerId

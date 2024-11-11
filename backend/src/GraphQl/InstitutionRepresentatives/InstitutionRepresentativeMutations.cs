@@ -26,7 +26,7 @@ public sealed class InstitutionRepresentativeMutations
     public async Task<AddInstitutionRepresentativePayload> AddInstitutionRepresentativeAsync(
         AddInstitutionRepresentativeInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -110,7 +110,7 @@ public sealed class InstitutionRepresentativeMutations
     public async Task<RemoveInstitutionRepresentativePayload> RemoveInstitutionRepresentativeAsync(
         RemoveInstitutionRepresentativeInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -203,7 +203,7 @@ public sealed class InstitutionRepresentativeMutations
     public async Task<ChangeInstitutionRepresentativeRolePayload> ChangeInstitutionRepresentativeRoleAsync(
         ChangeInstitutionRepresentativeRoleInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -297,7 +297,7 @@ public sealed class InstitutionRepresentativeMutations
     public async Task<ConfirmInstitutionRepresentativePayload> ConfirmInstitutionRepresentativeAsync(
         ConfirmInstitutionRepresentativeInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

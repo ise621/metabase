@@ -1,11 +1,14 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.Enumerations;
-using Guid = System.Guid;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.Institutions;
 
@@ -17,11 +20,13 @@ public sealed class InstitutionQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Institution> GetInstitutions(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<Institution>();
         return
-            context.Institutions.AsQueryable()
+            context.Institutions.AsNoTracking()
                 .Where(d => d.State == InstitutionState.VERIFIED);
     }
 
@@ -30,11 +35,13 @@ public sealed class InstitutionQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Institution> GetPendingInstitutions(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<Institution>();
         return
-            context.Institutions.AsQueryable()
+            context.Institutions.AsNoTracking()
                 .Where(d => d.State == InstitutionState.PENDING);
     }
 

@@ -17,7 +17,7 @@ public static class CommonComponentAuthorization
     )
     {
         var manufacturerIds =
-            await context.Institutions.AsQueryable()
+            await context.Institutions.AsNoTracking()
                 .Where(i => i.ManufacturedComponents.Any(c => c.Id == componentId))
                 .Select(i => i.Id)
                 .ToListAsync(cancellationToken)

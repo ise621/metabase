@@ -54,9 +54,9 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<ConfirmUserEmailPayload> ConfirmUserEmailAsync(
         ConfirmUserEmailInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -106,10 +106,10 @@ public sealed class UserMutations
     [UseSignInManager]
     public async Task<ConfirmUserEmailChangePayload> ConfirmUserEmailChangeAsync(
         ConfirmUserEmailChangeInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -191,10 +191,10 @@ public sealed class UserMutations
     [UseSignInManager]
     public async Task<LoginUserPayload> LoginUserAsync(
         LoginUserInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -260,9 +260,9 @@ public sealed class UserMutations
     [UseSignInManager]
     public async Task<LoginUserWithTwoFactorCodePayload> LoginUserWithTwoFactorCodeAsync(
         LoginUserWithTwoFactorCodeInput input,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -321,9 +321,9 @@ public sealed class UserMutations
     [UseSignInManager]
     public async Task<LoginUserWithRecoveryCodePayload> LoginUserWithRecoveryCodeAsync(
         LoginUserWithRecoveryCodeInput input,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -378,12 +378,12 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<RegisterUserPayload> RegisterUserAsync(
         RegisterUserInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IEmailSender emailSender,
-        [Service] UrlEncoder urlEncoder,
-        [Service] AppSettings appSettings,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IEmailSender emailSender,
+        UrlEncoder urlEncoder,
+        AppSettings appSettings,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -494,12 +494,12 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<ResendUserEmailConfirmationPayload> ResendUserEmailConfirmationAsync(
         ResendUserEmailConfirmationInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IEmailSender emailSender,
-        [Service] UrlEncoder urlEncoder,
-        [Service] AppSettings appSettings,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IEmailSender emailSender,
+        UrlEncoder urlEncoder,
+        AppSettings appSettings,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -522,12 +522,12 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<RequestUserPasswordResetPayload> RequestUserPasswordResetAsync(
         RequestUserPasswordResetInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IEmailSender emailSender,
-        [Service] UrlEncoder urlEncoder,
-        [Service] AppSettings appSettings,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IEmailSender emailSender,
+        UrlEncoder urlEncoder,
+        AppSettings appSettings,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -555,9 +555,9 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<ResetUserPasswordPayload> ResetUserPasswordAsync(
         ResetUserPasswordInput input,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -645,9 +645,9 @@ public sealed class UserMutations
     public async Task<DeleteUserPayload> DeleteUserAsync(
         DeleteUserInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -710,9 +710,9 @@ public sealed class UserMutations
     [UseUserManager]
     [UseSignInManager]
     public async Task<LogoutUserPayload> LogoutUserAsync(
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -727,10 +727,10 @@ public sealed class UserMutations
     public async Task<ChangeUserPasswordPayload> ChangeUserPasswordAsync(
         ChangeUserPasswordInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -827,10 +827,10 @@ public sealed class UserMutations
     public async Task<DeletePersonalUserDataPayload> DeletePersonalUserDataAsync(
         DeletePersonalUserDataInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -897,9 +897,9 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<DisableUserTwoFactorAuthenticationPayload> DisableUserTwoFactorAuthenticationAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -932,10 +932,10 @@ public sealed class UserMutations
     [UseSignInManager]
     public async Task<ForgetUserTwoFactorAuthenticationClientPayload> ForgetUserTwoFactorAuthenticationClientAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -959,10 +959,10 @@ public sealed class UserMutations
     public async Task<GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriPayload>
         GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriAsync(
             ClaimsPrincipal claimsPrincipal,
-            [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-            [Service] UrlEncoder urlEncoder,
-            [Service] IAntiforgery antiforgeryService,
-            [Service] IHttpContextAccessor httpContextAccessor
+            UserManager<User> userManager,
+            UrlEncoder urlEncoder,
+            IAntiforgery antiforgeryService,
+            IHttpContextAccessor httpContextAccessor
         )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1027,10 +1027,10 @@ public sealed class UserMutations
     public async Task<EnableUserTwoFactorAuthenticatorPayload> EnableUserTwoFactorAuthenticatorAsync(
         EnableUserTwoFactorAuthenticatorInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] UrlEncoder urlEncoder,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        UrlEncoder urlEncoder,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1178,10 +1178,10 @@ public sealed class UserMutations
     [UseSignInManager]
     public async Task<ResetUserTwoFactorAuthenticatorPayload> ResetUserTwoFactorAuthenticatorAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1225,12 +1225,12 @@ public sealed class UserMutations
     public async Task<ChangeUserEmailPayload> ChangeUserEmailAsync(
         ChangeUserEmailInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IEmailSender emailSender,
-        [Service] UrlEncoder urlEncoder,
-        [Service] AppSettings appSettings,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IEmailSender emailSender,
+        UrlEncoder urlEncoder,
+        AppSettings appSettings,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1282,12 +1282,12 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<ResendUserEmailVerificationPayload> ResendUserEmailVerificationAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IEmailSender emailSender,
-        [Service] UrlEncoder urlEncoder,
-        [Service] AppSettings appSettings,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IEmailSender emailSender,
+        UrlEncoder urlEncoder,
+        AppSettings appSettings,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1327,9 +1327,9 @@ public sealed class UserMutations
     [UseUserManager]
     public async Task<GenerateUserTwoFactorRecoveryCodesPayload> GenerateUserTwoFactorRecoveryCodesAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1378,10 +1378,10 @@ public sealed class UserMutations
     public async Task<SetUserPhoneNumberPayload> SetUserPhoneNumberAsync(
         SetUserPhoneNumberInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1438,10 +1438,10 @@ public sealed class UserMutations
     public async Task<SetUserPasswordPayload> SetUserPasswordAsync(
         SetUserPasswordInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service(ServiceKind.Resolver)] SignInManager<User> signInManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor
     )
     {
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
@@ -1535,9 +1535,9 @@ public sealed class UserMutations
     public async Task<AddUserRolePayload> AddUserRoleAsync(
         AddUserRoleInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -1597,9 +1597,9 @@ public sealed class UserMutations
     public async Task<RemoveUserRolePayload> RemoveUserRoleAsync(
         RemoveUserRoleInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-        [Service] IAntiforgery antiforgeryService,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

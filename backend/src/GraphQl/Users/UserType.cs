@@ -264,8 +264,8 @@ public sealed class UserType
         public static async Task<TwoFactorAuthentication?> GetTwoFactorAuthenticationAsync(
             [Parent] User user,
             ClaimsPrincipal claimsPrincipal,
-            [Service(ServiceKind.Resolver)] UserManager<User> userManager,
-            [Service(ServiceKind.Resolver)] SignInManager<User> signInManager
+            UserManager<User> userManager,
+            SignInManager<User> signInManager
         )
         {
             if (!claimsPrincipal.HasScope(AuthConfiguration.ManageUserApiScope)) return null;
@@ -288,7 +288,7 @@ public sealed class UserType
 
         public static Task<bool> GetCanCurrentUserDeleteUserAsync(
             ClaimsPrincipal claimsPrincipal,
-            [Service(ServiceKind.Resolver)] UserManager<User> userManager
+            UserManager<User> userManager
         )
         {
             return UserAuthorization.IsAuthorizedToDeleteUsers(claimsPrincipal, userManager);
@@ -296,7 +296,7 @@ public sealed class UserType
 
         public static async Task<IList<UserRole>> GetRolesCurrentUserCanAddAsync(
             ClaimsPrincipal claimsPrincipal,
-            [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+            UserManager<User> userManager,
             CancellationToken cancellationToken
         )
         {
@@ -307,7 +307,7 @@ public sealed class UserType
 
         public static async Task<IList<UserRole>> GetRolesCurrentUserCanRemoveAsync(
             ClaimsPrincipal claimsPrincipal,
-            [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+            UserManager<User> userManager,
             CancellationToken cancellationToken
         )
         {
@@ -318,7 +318,7 @@ public sealed class UserType
 
         private static async IAsyncEnumerable<UserRole> GetRolesCurrentUserCanAddOrRemoveAsync(
             ClaimsPrincipal claimsPrincipal,
-            [Service(ServiceKind.Resolver)] UserManager<User> userManager
+            UserManager<User> userManager
         )
         {
             foreach (var role in Role.AllEnum)

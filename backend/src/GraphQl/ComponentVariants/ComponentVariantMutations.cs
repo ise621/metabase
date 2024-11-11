@@ -24,7 +24,7 @@ public sealed class ComponentVariantMutations
     public async Task<AddComponentVariantPayload> AddComponentVariantAsync(
         AddComponentVariantInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -112,7 +112,7 @@ public sealed class ComponentVariantMutations
     public async Task<RemoveComponentVariantPayload> RemoveComponentVariantAsync(
         RemoveComponentVariantInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

@@ -25,7 +25,7 @@ public sealed class ComponentMutations
     public async Task<CreateComponentPayload> CreateComponentAsync(
         CreateComponentInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -87,7 +87,7 @@ public sealed class ComponentMutations
     public async Task<UpdateComponentPayload> UpdateComponentAsync(
         UpdateComponentInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

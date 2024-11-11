@@ -84,8 +84,10 @@ fragment MethodPartial on Method {
 
 query Methods {
   methods {
-    nodes {
-      ...MethodPartial
+    edges {
+      node {
+        ...MethodPartial
+      }
     }
   }
 }

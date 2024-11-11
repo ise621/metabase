@@ -73,7 +73,7 @@ public static class DatabaseAuthorization
     )
     {
         var wrappedOperatorId =
-            await context.Databases.AsQueryable()
+            await context.Databases.AsNoTracking()
                 .Where(x => x.Id == databaseId)
                 .Select(x => new { x.OperatorId })
                 .SingleOrDefaultAsync(cancellationToken)

@@ -24,7 +24,7 @@ public sealed class MethodMutations
     public async Task<CreateMethodPayload> CreateMethodAsync(
         CreateMethodInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -183,7 +183,7 @@ public sealed class MethodMutations
     public async Task<UpdateMethodPayload> UpdateMethodAsync(
         UpdateMethodInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

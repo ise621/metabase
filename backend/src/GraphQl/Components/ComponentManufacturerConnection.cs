@@ -29,7 +29,7 @@ public sealed class ComponentManufacturerConnection
     [UseUserManager]
     public Task<bool> CanCurrentUserAddEdgeAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

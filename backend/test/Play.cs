@@ -10,5 +10,6 @@ public sealed class Play
     public async Task Do()
     {
         Console.WriteLine("Do play!");
+        await Task.FromResult(0);
     }
 }

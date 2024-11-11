@@ -19,7 +19,7 @@ public sealed class InstitutionDevelopedMethodsByInstitutionIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.InstitutionMethodDevelopers.AsQueryable().Where(x =>
+                dbContext.InstitutionMethodDevelopers.AsNoTracking().Where(x =>
                     !x.Pending && ids.Contains(x.InstitutionId)
                 ),
             x => x.InstitutionId

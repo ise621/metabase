@@ -26,7 +26,7 @@ function Page() {
       </Typography.Paragraph>
       <DataFormatTable
         loading={loading}
-        dataFormats={data?.dataFormats?.nodes || []}
+        dataFormats={data?.dataFormats?.edges?.map((e) => e.node) || []}
       />
       <Typography.Paragraph style={{ maxWidth: 768 }}>
         The{" "}

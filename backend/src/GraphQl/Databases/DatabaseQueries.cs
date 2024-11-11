@@ -1,11 +1,14 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Types;
+using HotChocolate.Data.Sorting;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.Enumerations;
-using Guid = System.Guid;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.Databases;
 
@@ -17,11 +20,13 @@ public sealed class DatabaseQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Database> GetDatabases(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<Database>();
         return
-            context.Databases.AsQueryable()
+            context.Databases.AsNoTracking()
                 .Where(d => d.VerificationState == DatabaseVerificationState.VERIFIED);
     }
 
@@ -30,11 +35,13 @@ public sealed class DatabaseQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Database> GetPendingDatabases(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
+        sorting.StabilizeOrder<Database>();
         return
-            context.Databases.AsQueryable()
+            context.Databases.AsNoTracking()
                 .Where(d => d.VerificationState == DatabaseVerificationState.PENDING);
     }
 

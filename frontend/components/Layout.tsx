@@ -35,6 +35,10 @@ const navItems = [
         path: paths.photovoltaicData,
         label: "Photovoltaic Data",
       },
+      {
+        path: paths.geometricData,
+        label: "Geometric Data",
+      },
     ],
   },
   {

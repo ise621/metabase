@@ -6,10 +6,10 @@
   "license": "MIT",
   "scripts": {
     "codegen": "graphql-let && graphql-codegen --config codegen.yml",
-    "dev": "yarn codegen && NODE_OPTIONS='--use-openssl-ca' next -p 8080",
+    "dev": "yarn codegen && NODE_OPTIONS='--use-openssl-ca' next dev --port 8080",
     "build": "yarn codegen && NODE_ENV=production next build",
     "test": "yarn codegen && NODE_OPTIONS='--use-openssl-ca' jest",
-    "start": "next start -p 8080"
+    "start": "next start --port 8080"
   },
   "dependencies": {
     "@ant-design/pro-layout": "^7.10.3",
@@ -40,7 +40,7 @@
     "@graphql-tools/load-files": "^6.6.1",
     "@graphql-tools/merge": "^8.3.18",
     "@graphql-tools/schema": "^9.0.16",
-    "@types/node": "^20.14.9",
+    "@types/node": "^22.9.0",
     "@types/qrcode.react": "^1.0",
     "@types/react": "^18.0",
     "@types/react-dom": "^18.0",

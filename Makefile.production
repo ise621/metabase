@@ -3,6 +3,16 @@
 
 include .env
 
+# Use bash with pipefail to have backup and restore fail when whatever comes
+# before the pipe fails. The options given to bash below are described in
+# https://explainshell.com/explain?cmd=set+-eux+-o+pipefail
+# and
+# https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425
+# These settings could just be applied where needed instead of globally as
+# described in
+# https://stackoverflow.com/questions/23079651/equivalent-of-pipefail-in-gnu-make/23080721#23080721
+SHELL=/bin/bash -eux -o pipefail
+
 docker_compose = \
 	docker compose \
 		--file docker-compose.production.yml \
@@ -151,8 +161,11 @@ postgres_passwords : postgres_password ## Generate PostgreSQL passwords file who
 # Backup with `pg_dumpall`: https://www.postgresql.org/docs/13/backup-dump.html#BACKUP-DUMP-ALL
 # Command `pg_dumpall`: https://www.postgresql.org/docs/13/app-pg-dumpall.html
 backup : CONTAINER_NAME = backup_${NAME}_database
-backup : ## Backup database and related data to directory with absolute path `${BACKUP_DIRECTORY}`, for example, `make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/$(date +"%Y-%m-%d_%H_%M_%S") backup`
+backup : ## Backup database and related data to directory with absolute path `${BACKUP_DIRECTORY}` (down-ing and up-ing the database service before and after to prevent race conditions), for example, `make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/$(date +"%Y-%m-%d_%H_%M_%S") backup`
 	mkdir --parents ${BACKUP_DIRECTORY}
+	${docker_compose} down \
+		--remove-orphans \
+		database
 	-docker container stop ${CONTAINER_NAME}
 	-docker container rm --volumes ${CONTAINER_NAME}
 	${docker_compose} run \
@@ -165,10 +178,14 @@ backup : ## Backup database and related data to directory with absolute path `${
 		pg_dumpall \
 			--clean \
 			--username=postgres \
-		| gzip \
-		> ${BACKUP_DIRECTORY}/${dump_archive_name}
+	| gzip \
+	> ${BACKUP_DIRECTORY}/${dump_archive_name}
 	docker container stop ${CONTAINER_NAME}
 	docker container rm --volumes ${CONTAINER_NAME}
+	${docker_compose} up \
+		--remove-orphans \
+		--detach \
+		database
 .PHONY : backup
 
 # Inspired by https://stackoverflow.com/questions/25785/delete-all-but-the-most-recent-x-files-in-bash/34862475#34862475
@@ -188,8 +205,19 @@ prune-backups : ## Keep the most recent 7 backups, delete the rest
 			rm --recursive --dir --
 .PHONY : prune-backups
 
+remove-data : BACKUP_DIRECTORY = $(shell pwd)/backup
+remove-data : backup ## Remove data volumes (after creating a backup in ./backup)
+	docker volume rm \
+		${NAME}_data
+.PHONY : remove-data
+
 restore : CONTAINER_NAME = restore_${NAME}_database
-restore : ## Restore database and related data from directory with absolute path `${BACKUP_DIRECTORY}`, for example, `make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/2021-04-22_15_43_35/ restore`
+restore : ## Restore database and related data from directory with absolute path `${BACKUP_DIRECTORY}` (down-ing and up-ing the database service before and after to prevent race conditions and removing and recreating the data volume before to start cleanly), for example, `make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/2021-04-22_15_43_35/ restore (note that after restoring a database it is usually necessary to restart the backend service for the object-relational mapper Npgsql to work seamlessly, for example, by restarting all services with `make --file=Makefile.production restart`)`
+	${docker_compose} down \
+		--remove-orphans \
+		database
+	docker volume rm \
+		${NAME}_data
 	-docker container stop ${CONTAINER_NAME}
 	-docker container rm --volumes ${CONTAINER_NAME}
 	${docker_compose} run \
@@ -208,6 +236,10 @@ restore : ## Restore database and related data from directory with absolute path
 			--dbname=postgres
 	docker container stop ${CONTAINER_NAME}
 	docker container rm --volumes ${CONTAINER_NAME}
+	${docker_compose} up \
+		--remove-orphans \
+		--detach \
+		database
 .PHONY : restore
 
 begin-maintenance : ## Begin maintenance
@@ -248,7 +280,10 @@ checkout-target : ## Fetch and checkout `${TARGET}`
 migrate : FROM = $(file < ./backend/src/Migrations/previous)
 migrate : TO = $(file < ./backend/src/Migrations/current)
 migrate : CONTAINER_NAME = migrate_${NAME}_database
-migrate : ## Migrate database (note that other PostgreSQL instances using the same data volume must not be used while migrating and need to be restarted afterwards to make migration results visible)
+migrate : ## Migrate database (down-ing and up-ing the database service before and after to prevent race conditions. In general, note that other PostgreSQL instances using the same data volume must not be used while migrating and need to be restarted afterwards to make migration results visible)
+	${docker_compose} down \
+		--remove-orphans \
+		database
 	-docker container stop ${CONTAINER_NAME}
 	-docker container rm --volumes ${CONTAINER_NAME}
 	${docker_compose} run \
@@ -267,6 +302,10 @@ migrate : ## Migrate database (note that other PostgreSQL instances using the sa
 			--dbname=xbase
 	docker container stop ${CONTAINER_NAME}
 	docker container rm --volumes ${CONTAINER_NAME}
+	${docker_compose} up \
+		--remove-orphans \
+		--detach \
+		database
 .PHONY : migrate
 
 # Note that NGINX is because of its dependencies taken down and up last and in

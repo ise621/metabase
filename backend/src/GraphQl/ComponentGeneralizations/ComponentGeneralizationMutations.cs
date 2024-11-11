@@ -24,7 +24,7 @@ public sealed class ComponentGeneralizationMutations
     public async Task<AddComponentGeneralizationPayload> AddComponentGeneralizationAsync(
         AddComponentGeneralizationInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -106,7 +106,7 @@ public sealed class ComponentGeneralizationMutations
     public async Task<RemoveComponentGeneralizationPayload> RemoveComponentGeneralizationAsync(
         RemoveComponentGeneralizationInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

@@ -20,7 +20,7 @@ public sealed class CreateComponentTests
     {
         // Act
         var response =
-            await UnsuccessfullyQueryGraphQlContentAsString(
+            await SuccessfullyQueryGraphQlContentAsString(
                 File.ReadAllText("Integration/GraphQl/Components/CreateComponent.graphql"),
                 variables: MinimalComponentInput
             ).ConfigureAwait(false);
@@ -33,7 +33,7 @@ public sealed class CreateComponentTests
     public async Task AnonymousUser_CannotCreateComponent()
     {
         // Act
-        await UnsuccessfullyQueryGraphQlContentAsString(
+        await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Components/CreateComponent.graphql"),
             variables: MinimalComponentInput
         ).ConfigureAwait(false);

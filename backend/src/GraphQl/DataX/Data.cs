@@ -12,6 +12,11 @@ namespace Metabase.GraphQl.DataX;
 public abstract class Data
     : IData
 {
+    protected const string IgsdbLocale = "en-US";
+    protected const string IgsdbDatabaseId = "48994b60-670d-488d-aaf7-53333a64f1d6";
+    protected const string IgsdbInstitutionId = "c17af5ef-2f1d-4c73-bcc9-fcfb722420f3";
+    protected const string IgsdbMethodId = "35e98d58-9627-4bdf-bf9f-f265471c1f24";
+
     // public IReadOnlyList<DataApproval> Approvals { get; }
     // public ResponseApproval Approval { get; }
 

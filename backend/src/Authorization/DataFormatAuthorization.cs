@@ -55,7 +55,7 @@ public static class DataFormatAuthorization
     )
     {
         var wrappedManagerId =
-            await context.DataFormats.AsQueryable()
+            await context.DataFormats.AsNoTracking()
                 .Where(x => x.Id == dataFormatId)
                 .Select(x => new { x.ManagerId })
                 .SingleOrDefaultAsync(cancellationToken)

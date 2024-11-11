@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GreenDonut;
-using Metabase.Data;
 using Microsoft.EntityFrameworkCore;
-using Guid = System.Guid;
+using Metabase.Data;
 
 namespace Metabase.GraphQl.Entities;
 

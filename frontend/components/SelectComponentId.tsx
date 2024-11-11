@@ -17,7 +17,7 @@ export function SelectComponentId<ValueType extends string>({
   // TODO Only fetch `name` and `uuid` because nothing more is needed.
   // TODO Use search instead of drop-down with all users/components preloaded. Be inspired by https://ant.design/components/select/#components-select-demo-select-users
   const { loading, data, error } = useComponentsQuery();
-  const components = data?.components?.nodes?.filter(notEmpty);
+  const components = data?.components?.edges?.map((e) => e.node).filter(notEmpty);
 
   if (loading) {
     return <Skeleton />;

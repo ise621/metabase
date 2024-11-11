@@ -11,7 +11,7 @@ import { ComponentTable } from "../../components/components/ComponentTable";
 
 function Page() {
   const { loading, error, data } = useComponentsQuery();
-  const nodes = data?.components?.nodes || [];
+  const nodes = data?.components?.edges?.map((e) => e.node) || [];
 
   useEffect(() => {
     if (error) {

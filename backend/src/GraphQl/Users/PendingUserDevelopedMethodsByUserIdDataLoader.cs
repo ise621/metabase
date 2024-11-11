@@ -19,7 +19,7 @@ public sealed class PendingUserDevelopedMethodsByUserIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.UserMethodDevelopers.AsQueryable().Where(x =>
+                dbContext.UserMethodDevelopers.AsNoTracking().Where(x =>
                     x.Pending && ids.Contains(x.UserId)
                 ),
             x => x.UserId

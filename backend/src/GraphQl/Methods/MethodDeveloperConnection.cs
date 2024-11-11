@@ -59,7 +59,7 @@ public sealed class MethodDeveloperConnection
     [UseUserManager]
     public Task<bool> CanCurrentUserAddInstitutionEdgeAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -76,7 +76,7 @@ public sealed class MethodDeveloperConnection
     [UseUserManager]
     public Task<bool> CanCurrentUserAddUserEdgeAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

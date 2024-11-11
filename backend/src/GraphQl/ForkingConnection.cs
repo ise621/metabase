@@ -48,8 +48,7 @@ public abstract class ForkingConnection<TSubject, TAssociation, TSomeAssociation
         where TDataLoader : IDataLoader<Guid, TAssociation[]>
     {
         return (
-                await dataLoader.LoadAsync(Subject.Id, cancellationToken)
-                    .ConfigureAwait(false)
+                await dataLoader.LoadAsync(Subject.Id, cancellationToken).ConfigureAwait(false) ?? []
             )
             .Select(_createEdge);
     }

@@ -55,7 +55,7 @@ public sealed class ChangeUserPasswordTests
         ).ConfigureAwait(false);
         const string newPassword = "new" + password;
         // Act
-        var response = await UnsuccessfullyQueryGraphQlContentAsString(
+        var response = await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Users/ChangeUserPassword.graphql"),
             variables: new Dictionary<string, object?>
             {

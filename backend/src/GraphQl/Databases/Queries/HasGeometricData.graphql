@@ -1,0 +1,7 @@
+query HasGeometricData(
+  $where: GeometricDataPropositionInput
+  $timestamp: DateTime
+  $locale: Locale
+) {
+  hasGeometricData(where: $where, timestamp: $timestamp, locale: $locale)
+}

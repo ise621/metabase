@@ -1,10 +1,13 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
+using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
-using Guid = System.Guid;
+using Metabase.GraphQl.Extensions;
 
 namespace Metabase.GraphQl.Methods;
 
@@ -16,10 +19,12 @@ public sealed class MethodQueries
     [UseFiltering]
     [UseSorting]
     public IQueryable<Method> GetMethods(
-        ApplicationDbContext context
+        ApplicationDbContext context,
+        ISortingContext sorting
     )
     {
-        return context.Methods;
+        sorting.StabilizeOrder<Method>();
+        return context.Methods.AsNoTracking();
     }
 
     public Task<Method?> GetMethodAsync(

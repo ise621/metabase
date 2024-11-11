@@ -193,3 +193,34 @@ query HasPhotovoltaicData($where: PhotovoltaicDataPropositionInput) {
     }
   }
 }
+
+fragment GeometricDataPartial on GeometricData {
+  ...DataPartial
+  thicknesses
+}
+
+query AllGeometricData($where: GeometricDataPropositionInput) {
+  databases {
+    edges {
+      node {
+        allGeometricData(where: $where) {
+          edges {
+            node {
+              ...GeometricDataPartial
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query HasGeometricData($where: GeometricDataPropositionInput) {
+  databases {
+    edges {
+      node {
+        hasGeometricData(where: $where)
+      }
+    }
+  }
+}

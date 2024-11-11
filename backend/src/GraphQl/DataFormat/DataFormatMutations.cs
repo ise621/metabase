@@ -23,7 +23,7 @@ public sealed class DataFormatMutations
     public async Task<CreateDataFormatPayload> CreateDataFormatAsync(
         CreateDataFormatInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -121,7 +121,7 @@ public sealed class DataFormatMutations
     public async Task<UpdateDataFormatPayload> UpdateDataFormatAsync(
         UpdateDataFormatInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

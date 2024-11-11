@@ -1,0 +1,104 @@
+query AllGeometricData(
+  $where: WhereInput!
+  # $timestamp: DateTime
+  # $locale: Locale
+) {
+  allGeometricData(where: $where) { # , timestamp: $timestamp, locale: $locale
+    edges {
+      # cursor
+      node {
+        id
+        uuid
+        timestamp
+        componentId
+        name
+        description
+        # warnings
+        # creatorId
+        # createdAt
+        # appliedMethod {
+        #   methodId
+        #   arguments {
+        #     name
+        #     value
+        #   }
+        #   sources {
+        #     name
+        #     value {
+        #       dataId
+        #       dataTimestamp
+        #       dataKind
+        #       databaseId
+        #     }
+        #   }
+        # }
+        # approvals {
+        #   timestamp
+        #   signature
+        #   keyFingerprint
+        #   query
+        #   response
+        #   approverId
+        # }
+        # resources {
+        #   description
+        #   hashValue
+        #   locator
+        #   dataFormatId
+        #   archivedFilesMetaInformation {
+        #     path
+        #     dataFormatId
+        #   }
+        # }
+        resourceTree {
+          root {
+            # vertexId
+            value {
+              # description
+              # hashValue
+              locator
+              # dataFormatId
+              # archivedFilesMetaInformation {
+              #   path
+              #   dataFormatId
+              # }
+            }
+          }
+          # nonRootVertices {
+          #   vertexId
+          #   parentId
+          #   value {
+          #     description
+          #     hashValue
+          #     locator
+          #     dataFormatId
+          #     archivedFilesMetaInformation {
+          #       path
+          #       dataFormatId
+          #     }
+          #   }
+          #   appliedConversionMethod {
+          #     methodId
+          #     arguments {
+          #       name
+          #       value
+          #     }
+          #     sourceName
+          #   }
+          # }
+        }
+        # approval {
+        #   signature
+        #   keyFingerprint
+        # }
+        # locale
+        thicknesses
+      }
+    }
+    # totalCount
+    # pageInfo {
+    #   ...PageInfoFields
+    # }
+    # timestamp
+  }
+}

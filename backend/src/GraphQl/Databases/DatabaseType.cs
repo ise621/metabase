@@ -105,6 +105,22 @@ public sealed class DatabaseType
             "hasPhotovoltaicData",
             _ => _.GetHasPhotovoltaicDataAsync(default!, default, default, default, default!, default!, default)
         );
+        ConfigureDataField(
+            descriptor,
+            "geometricData",
+            _ => _.GetGeometricDataAsync(default!, default, default, default, default!, default!, default)
+        );
+        ConfigureAllDataField<GeometricDataPropositionInput>(
+            descriptor,
+            "allGeometricData",
+            _ => _.GetAllGeometricDataAsync(default!, default, default, default, default, default, default,
+                default, default!, default!, default)
+        );
+        ConfigureHasDataField<GeometricDataPropositionInput>(
+            descriptor,
+            "hasGeometricData",
+            _ => _.GetHasGeometricDataAsync(default!, default, default, default, default!, default!, default)
+        );
         descriptor
             .Field("canCurrentUserUpdateNode")
             .ResolveWith<DatabaseResolvers>(x =>

@@ -227,9 +227,7 @@ and the pages following it.
    respective inboxes (the variable's value is a comma separated list of email
    addresses). Note that in order for OpenId Connect to work as expected in
    staging, make sure that the redirect URIs use the sub-domain `staging`
-   (instead of `www`) by entering `psql` with `make --file=Makefile.production
-   psql`, expecting the output of the SQL statement `select * from
-   metabase."OpenIddictApplications";`, and if necessary executing SQL
+   (instead of `www`) by entering `psql` with `make --file=Makefile.production psql`, expecting the output of the SQL statement `select * from metabase."OpenIddictApplications";`, and if necessary executing SQL
    statements along the lines
    `update metabase."OpenIddictApplications" set "RedirectUris"='["https://staging.buildingenvelopedata.org/connect/callback/login/metabase"]', "PostLogoutRedirectUris"='["https://staging.buildingenvelopedata.org/connect/callback/logout/metabase"]' where "Id"='2f61279d-25db-4fef-bd19-ba840ba13114';`
    and
@@ -279,8 +277,7 @@ If the database container restarts indefinitely and its logs say
 PANIC:  could not locate a valid checkpoint record
 ```
 
-for example preceded by `LOG:  invalid resource manager ID in primary
-checkpoint record` or `LOG:  invalid primary checkpoint record`, then the
+for example preceded by `LOG: invalid resource manager ID in primary checkpoint record` or `LOG: invalid primary checkpoint record`, then the
 database is corrupt. For example, the write-ahead log (WAL) may be corrupt
 because the database was not shut down cleanly. One solution is to restore the
 database from a backup by running
@@ -309,6 +306,26 @@ gosu postgres pg_resetwal /var/lib/postgresql/data
 ```
 
 Note that both solutions may cause data to be lost.
+
+#### Update a SQL field
+
+If one field in the SQL database needs to be updated and there is no GraphQL mutation available, then the following example illustrates how a SQL field can be updated first in the `staging` environment and later in `production`:
+
+```
+ssh -CvX -A cloud@IpAdressOfCloudServer
+cd staging/
+make --file=Makefile.production
+make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/$(date +"%Y-%m-%d_%H_%M_%S") backup
+make --file=Makefile.production psql
+\dt metabase.*
+select * from metabase.method;
+# Update a single field
+update metabase.method set "Description" ='Harmonized European Standard 410';
+# Create a new method
+insert into metabase.method("Id" ,"Name", "Description", "Categories","ManagerId") values ('f07499ab-f119-471f-8aad-d3c016676bce', 'EN 410','European Standard 410','{calculation}','5320d6fb-b96d-4aeb-a24c-eb7036d3437a');
+# Delete a faulty method
+delete from metabase.method where "Id"='f07499ab-f119-471f-8aad-d3c016676bce';
+```
 
 ## Original Idea
 

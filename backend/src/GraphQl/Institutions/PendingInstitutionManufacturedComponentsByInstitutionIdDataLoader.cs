@@ -19,7 +19,7 @@ public sealed class PendingInstitutionManufacturedComponentsByInstitutionIdDataL
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.ComponentManufacturers.AsQueryable().Where(x =>
+                dbContext.ComponentManufacturers.AsNoTracking().Where(x =>
                     x.Pending && ids.Contains(x.InstitutionId)
                 ),
             x => x.InstitutionId

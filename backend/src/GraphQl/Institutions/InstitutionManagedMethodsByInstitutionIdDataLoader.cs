@@ -19,7 +19,7 @@ public sealed class InstitutionManagedMethodsByInstitutionIdDataLoader
             options,
             dbContextFactory,
             (dbContext, ids) =>
-                dbContext.Methods.AsQueryable().Where(x =>
+                dbContext.Methods.AsNoTracking().Where(x =>
                     ids.Contains(x.ManagerId)
                 ),
             x => x.ManagerId

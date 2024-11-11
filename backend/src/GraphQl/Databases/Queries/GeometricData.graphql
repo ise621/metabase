@@ -1,0 +1,5 @@
+query GeometricData($id: Uuid!, $timestamp: DateTime, $locale: Locale) {
+  geometricData(id: $id, timestamp: $timestamp, locale: $locale) {
+    ...GeometricDataFields
+  }
+}

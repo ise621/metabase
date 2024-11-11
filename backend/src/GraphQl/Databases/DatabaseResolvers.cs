@@ -110,6 +110,13 @@ public sealed class DatabaseResolvers
         "PhotovoltaicData.graphql"
     };
 
+    private static readonly string[] _geometricDataFileNames =
+    {
+        "DataFields.graphql",
+        "GeometricDataFields.graphql",
+        "GeometricData.graphql"
+    };
+
     private static readonly string[] _igsdbAllDataFileNames =
     {
         "AllDataIgsdb.graphql"
@@ -159,6 +166,18 @@ public sealed class DatabaseResolvers
         "AllPhotovoltaicData.graphql"
     };
 
+    private static readonly string[] _igsdbAllGeometricDataFileNames =
+    {
+        "AllGeometricDataIgsdb.graphql"
+    };
+
+    private static readonly string[] _allGeometricDataFileNames =
+    {
+        "DataFields.graphql",
+        "GeometricDataFields.graphql",
+        "AllGeometricData.graphql"
+    };
+
     private static readonly string[] _hasDataFileNames =
     {
         "HasData.graphql"
@@ -184,6 +203,11 @@ public sealed class DatabaseResolvers
         "HasPhotovoltaicData.graphql"
     };
 
+    private static readonly string[] _hasGeometricDataFileNames =
+    {
+        "HasGeometricData.graphql"
+    };
+
     private readonly AppSettings _appSettings;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<DatabaseResolvers> _logger;
@@ -201,14 +225,14 @@ public sealed class DatabaseResolvers
 
     private static bool IsIgsdbDatabase(Database database)
     {
-        return new[] {IgsdbUrl, IgsdbStagingUrl}
+        return new[] { IgsdbUrl, IgsdbStagingUrl }
             .Contains(database.Locator.AbsoluteUri);
     }
 
     public Task<bool> GetCanCurrentUserUpdateNodeAsync(
         [Parent] Database database,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -220,7 +244,7 @@ public sealed class DatabaseResolvers
     public Task<bool> GetCanCurrentUserVerifyNodeAsync(
         [Parent] Database database,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -234,7 +258,7 @@ public sealed class DatabaseResolvers
         Guid id,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -265,7 +289,7 @@ public sealed class DatabaseResolvers
         Guid id,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -296,7 +320,7 @@ public sealed class DatabaseResolvers
         Guid id,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -327,7 +351,7 @@ public sealed class DatabaseResolvers
         Guid id,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -358,7 +382,7 @@ public sealed class DatabaseResolvers
         Guid id,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -384,6 +408,37 @@ public sealed class DatabaseResolvers
             )?.PhotovoltaicData;
     }
 
+    public async Task<GeometricData?> GetGeometricDataAsync(
+        [Parent] Database database,
+        Guid id,
+        DateTime? timestamp,
+        string? locale,
+        [Service] IHttpContextAccessor httpContextAccessor,
+        IResolverContext resolverContext,
+        CancellationToken cancellationToken
+    )
+    {
+        return (await QueryDatabase<GeometricDataData>(
+                    database,
+                    new GraphQLRequest(
+                        await QueryingDatabases.ConstructQuery(
+                            _geometricDataFileNames
+                        ).ConfigureAwait(false),
+                        new
+                        {
+                            id,
+                            timestamp,
+                            locale
+                        },
+                        nameof(GeometricData)
+                    ),
+                    httpContextAccessor,
+                    resolverContext,
+                    cancellationToken
+                ).ConfigureAwait(false)
+            )?.GeometricData;
+    }
+
     public async Task<DataConnection?> GetAllDataAsync(
         [Parent] Database database,
         DataPropositionInput? where,
@@ -393,7 +448,7 @@ public sealed class DatabaseResolvers
         string? after,
         uint? last,
         string? before,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -460,7 +515,7 @@ public sealed class DatabaseResolvers
         string? after,
         uint? last,
         string? before,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -529,7 +584,7 @@ public sealed class DatabaseResolvers
         string? after,
         uint? last,
         string? before,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -568,7 +623,7 @@ public sealed class DatabaseResolvers
         string? after,
         uint? last,
         string? before,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -607,7 +662,7 @@ public sealed class DatabaseResolvers
         string? after,
         uint? last,
         string? before,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -637,12 +692,81 @@ public sealed class DatabaseResolvers
             )?.AllPhotovoltaicData;
     }
 
+    private static GeometricDataPropositionInput? RewriteGeometricDataPropositionInput(
+        GeometricDataPropositionInput? where,
+        Database database
+    )
+    {
+        return IsIgsdbDatabase(database)
+            ? where ?? new GeometricDataPropositionInput(null, null, null, null, null, null)
+            : where;
+    }
+
+    public async Task<GeometricDataConnection?> GetAllGeometricDataAsync(
+        [Parent] Database database,
+        GeometricDataPropositionInput? where,
+        DateTime? timestamp,
+        string? locale,
+        uint? first,
+        string? after,
+        uint? last,
+        string? before,
+        [Service] IHttpContextAccessor httpContextAccessor,
+        IResolverContext resolverContext,
+        CancellationToken cancellationToken
+    )
+    {
+        if (IsIgsdbDatabase(database))
+        {
+            return GeometricDataConnection.From(
+                (await QueryDatabase<AllGeometricDataDataIgsdb>(
+                        database,
+                        new GraphQLRequest(
+                            await QueryingDatabases.ConstructQuery(
+                                _igsdbAllGeometricDataFileNames).ConfigureAwait(false),
+                            new
+                            {
+                                where = RewriteGeometricDataPropositionInput(where, database)
+                            },
+                            "AllGeometricData"
+                        ),
+                        httpContextAccessor,
+                        resolverContext,
+                        cancellationToken
+                    ).ConfigureAwait(false)
+                )?.AllGeometricData
+            );
+        }
+        return (await QueryDatabase<AllGeometricDataData>(
+                    database,
+                    new GraphQLRequest(
+                        await QueryingDatabases.ConstructQuery(
+                            _allGeometricDataFileNames).ConfigureAwait(false),
+                        new
+                        {
+                            where,
+                            timestamp,
+                            locale,
+                            first,
+                            after,
+                            last,
+                            before
+                        },
+                        "AllGeometricData"
+                    ),
+                    httpContextAccessor,
+                    resolverContext,
+                    cancellationToken
+                ).ConfigureAwait(false)
+            )?.AllGeometricData;
+    }
+
     public async Task<bool?> GetHasDataAsync(
         [Parent] Database database,
         DataPropositionInput? where,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -673,7 +797,7 @@ public sealed class DatabaseResolvers
         OpticalDataPropositionInput? where,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -704,7 +828,7 @@ public sealed class DatabaseResolvers
         CalorimetricDataPropositionInput? where,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -735,7 +859,7 @@ public sealed class DatabaseResolvers
         HygrothermalDataPropositionInput? where,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -766,7 +890,7 @@ public sealed class DatabaseResolvers
         PhotovoltaicDataPropositionInput? where,
         DateTime? timestamp,
         string? locale,
-        [Service] IHttpContextAccessor httpContextAccessor,
+        IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
         CancellationToken cancellationToken
     )
@@ -790,6 +914,37 @@ public sealed class DatabaseResolvers
                     cancellationToken
                 ).ConfigureAwait(false)
             )?.HasPhotovoltaicData;
+    }
+
+    public async Task<bool?> GetHasGeometricDataAsync(
+        [Parent] Database database,
+        GeometricDataPropositionInput? where,
+        DateTime? timestamp,
+        string? locale,
+        [Service] IHttpContextAccessor httpContextAccessor,
+        IResolverContext resolverContext,
+        CancellationToken cancellationToken
+    )
+    {
+        return (await QueryDatabase<HasGeometricDataData>(
+                    database,
+                    new GraphQLRequest(
+                        await QueryingDatabases.ConstructQuery(
+                            _hasGeometricDataFileNames
+                        ).ConfigureAwait(false),
+                        new
+                        {
+                            where,
+                            timestamp,
+                            locale
+                        },
+                        "HasGeometricData"
+                    ),
+                    httpContextAccessor,
+                    resolverContext,
+                    cancellationToken
+                ).ConfigureAwait(false)
+            )?.HasGeometricData;
     }
 
     private async
@@ -890,17 +1045,20 @@ public sealed class DatabaseResolvers
     private sealed record HygrothermalDataData(HygrothermalData HygrothermalData);
     private sealed record CalorimetricDataData(CalorimetricData CalorimetricData);
     private sealed record PhotovoltaicDataData(PhotovoltaicData PhotovoltaicData);
+    private sealed record GeometricDataData(GeometricData GeometricData);
     private sealed record AllDataData(DataConnection AllData);
     private sealed record AllDataDataIgsdb(DataConnectionIgsdb AllData);
     private sealed record AllOpticalDataData(OpticalDataConnection AllOpticalData);
     private sealed record AllOpticalDataDataIgsdb(OpticalDataConnectionIgsdb AllOpticalData);
-    private sealed record AllOpticalDataIgsdbData(OpticalDataConnection AllOpticalData);
     private sealed record AllHygrothermalDataData(HygrothermalDataConnection AllHygrothermalData);
     private sealed record AllCalorimetricDataData(CalorimetricDataConnection AllCalorimetricData);
+    private sealed record AllGeometricDataData(GeometricDataConnection AllGeometricData);
+    private sealed record AllGeometricDataDataIgsdb(GeometricDataConnectionIgsdb AllGeometricData);
     private sealed record AllPhotovoltaicDataData(PhotovoltaicDataConnection AllPhotovoltaicData);
     private sealed record HasDataData(bool HasData);
     private sealed record HasOpticalDataData(bool HasOpticalData);
     private sealed record HasCalorimetricDataData(bool HasCalorimetricData);
+    private sealed record HasGeometricDataData(bool HasGeometricData);
     private sealed record HasHygrothermalDataData(bool HasHygrothermalData);
     private sealed record HasPhotovoltaicDataData(bool HasPhotovoltaicData);
 }

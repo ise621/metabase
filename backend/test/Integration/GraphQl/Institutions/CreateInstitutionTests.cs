@@ -19,7 +19,7 @@ public sealed class CreateInstitutionTests
     {
         // Act
         var response =
-            await UnsuccessfullyQueryGraphQlContentAsString(
+            await SuccessfullyQueryGraphQlContentAsString(
                 File.ReadAllText("Integration/GraphQl/Institutions/CreateInstitution.graphql"),
                 variables: PendingInstitutionInput
             ).ConfigureAwait(false);
@@ -32,7 +32,7 @@ public sealed class CreateInstitutionTests
     public async Task AnonymousUser_CannotCreateInstitution()
     {
         // Act
-        await UnsuccessfullyQueryGraphQlContentAsString(
+        await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Institutions/CreateInstitution.graphql"),
             variables: PendingInstitutionInput
         ).ConfigureAwait(false);

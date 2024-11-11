@@ -49,7 +49,7 @@ public sealed class ResendUserEmailVerificationTests
             password: password
         ).ConfigureAwait(false);
         // Act
-        var response = await UnsuccessfullyQueryGraphQlContentAsString(
+        var response = await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Users/ResendUserEmailVerification.graphql")
         ).ConfigureAwait(false);
         // Assert

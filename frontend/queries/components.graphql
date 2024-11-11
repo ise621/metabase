@@ -13,8 +13,10 @@ fragment ComponentPartial on Component {
 
 query Components {
   components {
-    nodes {
-      ...ComponentPartial
+    edges {
+      node {
+        ...ComponentPartial
+      }
     }
   }
 }

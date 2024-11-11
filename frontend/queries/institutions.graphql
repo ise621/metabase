@@ -11,16 +11,20 @@ fragment InstitutionPartial on Institution {
 
 query Institutions {
   institutions {
-    nodes {
-      ...InstitutionPartial
+    edges {
+      node {
+        ...InstitutionPartial
+      }
     }
   }
 }
 
 query PendingInstitutions {
   pendingInstitutions {
-    nodes {
-      ...InstitutionPartial
+    edges {
+      node {
+        ...InstitutionPartial
+      }
     }
   }
 }

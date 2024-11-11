@@ -251,6 +251,7 @@ public sealed class QueryingDatabases
         private const string HYGROTHERMAL_DATA = "HygrothermalData";
         private const string OPTICAL_DATA = "OpticalData";
         private const string PHOTOVOLTAIC_DATA = "PhotovoltaicData";
+        private const string GEOMETRIC_DATA = "GeometricData";
 
         private readonly JsonSerializerOptions _options;
 
@@ -300,6 +301,8 @@ public sealed class QueryingDatabases
                                 throw new JsonException("Could not deserialize optical data."),
                 PHOTOVOLTAIC_DATA => JsonSerializer.Deserialize<PhotovoltaicData>(ref reader, _options) ??
                                      throw new JsonException("Could not deserialize photovoltaic data."),
+                GEOMETRIC_DATA => JsonSerializer.Deserialize<GeometricData>(ref reader, _options) ??
+                                     throw new JsonException("Could not deserialize geometric data."),
                 _ => throw new JsonException($"Type discriminator has unknown value {typeDiscriminator}.")
             };
         }
@@ -328,6 +331,11 @@ public sealed class QueryingDatabases
                 else if (value is PhotovoltaicData photovoltaicData)
                 {
                     writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, PHOTOVOLTAIC_DATA);
+                    throw new JsonException("Unsupported!");
+                }
+                else if (value is GeometricData geometricData)
+                {
+                    writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, GEOMETRIC_DATA);
                     throw new JsonException("Unsupported!");
                 }
 

@@ -54,7 +54,7 @@ public sealed class ChangeUserEmailTests
         ).ConfigureAwait(false);
         const string newEmail = "new." + email;
         // Act
-        var response = await UnsuccessfullyQueryGraphQlContentAsString(
+        var response = await SuccessfullyQueryGraphQlContentAsString(
             File.ReadAllText("Integration/GraphQl/Users/ChangeUserEmail.graphql"),
             variables: new Dictionary<string, object?>
             {

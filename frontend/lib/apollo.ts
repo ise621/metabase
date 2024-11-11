@@ -114,7 +114,7 @@ export function messageApolloError(error: ApolloError) {
     `Name(${error.name}); Message(${
       error.message
     }); GraphQL Errors(${error.graphQLErrors
-      .map((e) => `[Name(${e.name}); Message(${e.message})]`)
+      .map((e) => `[Message(${e.message}); Path(${e.path?.join(".")})]`)
       .join(", ")}); Network Error(Name(${error.networkError?.name}); Message(${
       error.networkError?.message
     }))`

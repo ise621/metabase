@@ -6,11 +6,6 @@ namespace Metabase.GraphQl.DataX;
 public sealed class OpticalData
     : Data
 {
-    private const string IgsdbLocale = "en-US";
-    private const string IgsdbDatabaseId = "48994b60-670d-488d-aaf7-53333a64f1d6";
-    private const string IgsdbInstitutionId = "c17af5ef-2f1d-4c73-bcc9-fcfb722420f3";
-    private const string IgsdbMethodId = "35e98d58-9627-4bdf-bf9f-f265471c1f24";
-
     internal static OpticalData From(OpticalDataIgsdb node)
     {
         return new OpticalData(

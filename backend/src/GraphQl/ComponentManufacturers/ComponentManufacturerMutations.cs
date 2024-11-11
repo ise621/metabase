@@ -25,7 +25,7 @@ public sealed class ComponentManufacturerMutations
     public async Task<AddComponentManufacturerPayload> AddComponentManufacturerAsync(
         AddComponentManufacturerInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -109,7 +109,7 @@ public sealed class ComponentManufacturerMutations
     public async Task<ConfirmComponentManufacturerPayload> ConfirmComponentManufacturerAsync(
         ConfirmComponentManufacturerInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -186,7 +186,7 @@ public sealed class ComponentManufacturerMutations
     public async Task<RemoveComponentManufacturerPayload> RemoveComponentManufacturerAsync(
         RemoveComponentManufacturerInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

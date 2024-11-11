@@ -25,7 +25,7 @@ public sealed class UserMethodDeveloperMutations
     public async Task<AddUserMethodDeveloperPayload> AddUserMethodDeveloperAsync(
         AddUserMethodDeveloperInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -108,7 +108,7 @@ public sealed class UserMethodDeveloperMutations
     public async Task<ConfirmUserMethodDeveloperPayload> ConfirmUserMethodDeveloperAsync(
         ConfirmUserMethodDeveloperInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -183,7 +183,7 @@ public sealed class UserMethodDeveloperMutations
     public async Task<RemoveUserMethodDeveloperPayload> RemoveUserMethodDeveloperAsync(
         RemoveUserMethodDeveloperInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

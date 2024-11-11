@@ -18,11 +18,11 @@ public static partial class Log
     [LoggerMessage(
         EventId = 0,
         Level = LogLevel.Error,
-        Message = "Failed executing the query {Query}.")]
+        Message = "Failed executing the document {Document}.")]
     public static partial void FailedQueryExecution(
         this ILogger logger,
         Exception exception,
-        IQuery? query
+        IOperationDocument? document
     );
 
     [LoggerMessage(
@@ -59,11 +59,11 @@ public static partial class Log
     [LoggerMessage(
         EventId = 4,
         Level = LogLevel.Error,
-        Message = "The query {Query} has the syntax error {Error}.")]
+        Message = "The query {Document} has the syntax error {Error}.")]
     public static partial void FailedSyntax(
         this ILogger logger,
         Exception? exception,
-        IQuery? query,
+        IOperationDocument? document,
         string error
     );
 
@@ -82,11 +82,11 @@ public static partial class Log
     [LoggerMessage(
         EventId = 6,
         Level = LogLevel.Error,
-        Message = "Failed validating the query {Query} with the error {Error}.")]
+        Message = "Failed validating the query {Document} with the error {Error}.")]
     public static partial void FailedValidation(
         this ILogger logger,
         Exception? exception,
-        IQuery? query,
+        IOperationDocument? document,
         string error
     );
 }
@@ -118,7 +118,7 @@ public sealed class LoggingDiagnosticEventListener
         Exception exception
     )
     {
-        _logger.FailedQueryExecution(exception, context.Request.Query);
+        _logger.FailedQueryExecution(exception, context.Request.Document);
     }
 
     public override void ResolverError(
@@ -144,7 +144,7 @@ public sealed class LoggingDiagnosticEventListener
         IError error
     )
     {
-        _logger.FailedSyntax(error.Exception, context.Request.Query, ConvertErrorToString(error));
+        _logger.FailedSyntax(error.Exception, context.Request.Document, ConvertErrorToString(error));
     }
 
     public override void TaskError(
@@ -161,7 +161,7 @@ public sealed class LoggingDiagnosticEventListener
     )
     {
         foreach (var error in errors)
-            _logger.FailedValidation(error.Exception, context.Request.Query, ConvertErrorToString(error));
+            _logger.FailedValidation(error.Exception, context.Request.Document, ConvertErrorToString(error));
     }
 
     private static string ConvertErrorToString(
@@ -202,22 +202,25 @@ public sealed class LoggingDiagnosticEventListener
                     {
                         stringBuilder.AppendFormat(CultureInfo.InvariantCulture,
                             $"Variables {Environment.NewLine}");
-                        foreach (var variableValue in _context.Variables!)
+                        foreach (var variableValueCollection in _context.Variables)
                         {
-                            try
+                            foreach (var variableValue in variableValueCollection)
                             {
-                                stringBuilder.AppendFormat(
-                                    CultureInfo.InvariantCulture,
-                                    $"  {variableValue.Name} : ");
-                                stringBuilder.Append(variableValue.Value.ToString());
-                                stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $" : {variableValue.Type}");
-                                stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $"{Environment.NewLine}");
-                            }
-                            catch (Exception exception)
-                            {
-                                // all input type records will land here.
-                                stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $"  Formatting the variable '{variableValue.Name}' failed with the exception '{exception}'.");
-                                stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $"{Environment.NewLine}");
+                                try
+                                {
+                                    stringBuilder.AppendFormat(
+                                        CultureInfo.InvariantCulture,
+                                        $"  {variableValue.Name} : ");
+                                    stringBuilder.Append(variableValue.Value.ToString());
+                                    stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $" : {variableValue.Type}");
+                                    stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $"{Environment.NewLine}");
+                                }
+                                catch (Exception exception)
+                                {
+                                    // all input type records will land here.
+                                    stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $"  Formatting the variable '{variableValue.Name}' failed with the exception '{exception}'.");
+                                    stringBuilder.AppendFormat(CultureInfo.InvariantCulture, $"{Environment.NewLine}");
+                                }
                             }
                         }
                     }

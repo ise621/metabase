@@ -1,0 +1,27 @@
+query AllGeometricData(
+  $where: GeometricDataPropositionInput
+  $timestamp: DateTime
+  $locale: Locale
+  $first: Int
+  $after: String
+  $last: Int
+  $before: String
+) {
+  allGeometricData(
+    where: $where
+    timestamp: $timestamp
+    locale: $locale
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+  ) {
+    edges {
+      cursor
+      node {
+        ...GeometricDataFields
+      }
+    }
+    totalCount
+  }
+}

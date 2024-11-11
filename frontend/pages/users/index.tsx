@@ -16,7 +16,7 @@ import { messageApolloError } from "../../lib/apollo";
 
 function Page() {
   const { loading, error, data } = useUsersQuery();
-  const nodes = data?.users?.nodes || [];
+  const nodes = data?.users?.edges?.map((e) => e.node) || [];
 
   const [filterText, setFilterText] = useState(() => new Map<string, string>());
   const onFilterTextChange = setMapValue(filterText, setFilterText);

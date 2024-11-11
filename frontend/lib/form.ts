@@ -1,9 +1,9 @@
-import { GraphQLError } from "graphql";
+import { GraphQLFormattedError } from "graphql";
 import { FormInstance } from "antd";
 import { Dispatch, SetStateAction } from "react";
 
 export function handleFormErrors(
-  graphQlErrors: readonly GraphQLError[] | undefined,
+  graphQlErrors: readonly GraphQLFormattedError[] | undefined,
   userErrors: { code: string; message: string; path: string[] }[] | undefined,
   setGlobalErrorMessages: Dispatch<SetStateAction<string[]>>,
   form: FormInstance<any>

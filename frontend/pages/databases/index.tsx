@@ -21,7 +21,7 @@ import { UserRole } from "../../__generated__/__types__";
 
 function Page() {
   const { loading, error, data } = useDatabasesQuery();
-  const nodes = data?.databases?.nodes || [];
+  const nodes = data?.databases?.edges?.map((e) => e.node) || [];
 
   const [filterText, setFilterText] = useState(() => new Map<string, string>());
   const onFilterTextChange = setMapValue(filterText, setFilterText);
@@ -87,7 +87,7 @@ function Page() {
             ),
           },
         ]}
-        dataSource={data?.databases?.nodes || []}
+        dataSource={nodes}
       />
       {currentUser && currentUser?.roles?.includes(UserRole.Administrator) && (
         <>

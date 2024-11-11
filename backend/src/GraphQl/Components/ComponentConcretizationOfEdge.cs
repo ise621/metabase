@@ -25,7 +25,7 @@ public sealed class ComponentConcretizationOfEdge
     [UseUserManager]
     public Task<bool> CanCurrentUserRemoveEdgeAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

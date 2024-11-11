@@ -29,7 +29,7 @@ public sealed class InstitutionDevelopedMethodConnection
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

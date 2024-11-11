@@ -24,7 +24,7 @@ public sealed class ComponentAssemblyMutations
     public async Task<AddComponentAssemblyPayload> AddComponentAssemblyAsync(
         AddComponentAssemblyInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -108,7 +108,7 @@ public sealed class ComponentAssemblyMutations
     public async Task<UpdateComponentAssemblyPayload> UpdateComponentAssemblyAsync(
         UpdateComponentAssemblyInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
@@ -188,7 +188,7 @@ public sealed class ComponentAssemblyMutations
     public async Task<RemoveComponentAssemblyPayload> RemoveComponentAssemblyAsync(
         RemoveComponentAssemblyInput input,
         ClaimsPrincipal claimsPrincipal,
-        [Service(ServiceKind.Resolver)] UserManager<User> userManager,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )

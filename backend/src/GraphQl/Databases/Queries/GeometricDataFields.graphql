@@ -1,0 +1,5 @@
+fragment GeometricDataFields on GeometricData {
+  id
+  ...DataFields
+  thicknesses
+}
