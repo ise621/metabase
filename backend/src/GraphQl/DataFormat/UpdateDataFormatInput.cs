@@ -1,6 +1,5 @@
 using System;
-using Metabase.GraphQl.Publications;
-using Metabase.GraphQl.Standards;
+using Metabase.GraphQl.References;
 
 namespace Metabase.GraphQl.DataFormats;
 
@@ -11,6 +10,5 @@ public sealed record UpdateDataFormatInput(
     string Description,
     string MediaType,
     Uri? SchemaLocator,
-    UpdateStandardInput? Standard,
-    UpdatePublicationInput? Publication
+    ReferenceInput? Reference
 );

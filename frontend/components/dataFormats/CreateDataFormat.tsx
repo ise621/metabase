@@ -5,8 +5,7 @@ import {
   DataFormatsDocument,
 } from "../../queries/dataFormats.graphql";
 import {
-  CreatePublicationInput,
-  CreateStandardInput,
+  ReferenceInput,
   Scalars,
 } from "../../__generated__/__types__";
 import { useState } from "react";
@@ -28,8 +27,7 @@ type FormValues = {
   description: string;
   mediaType: string;
   schemaLocator: Scalars["Url"] | null | undefined;
-  standard: CreateStandardInput | null | undefined;
-  publication: CreatePublicationInput | null | undefined;
+  reference: ReferenceInput | null | undefined;
 };
 
 export type CreateDataFormatProps = {
@@ -64,12 +62,15 @@ export default function CreateDataFormat({ managerId }: CreateDataFormatProps) {
     description,
     mediaType,
     schemaLocator,
-    standard,
-    publication,
+    reference,
   }: FormValues) => {
     const create = async () => {
       try {
         setCreating(true);
+        // TODO Why does `initialValue` not set standardizers to `[]`?
+        if (reference?.standard != null && reference.standard.standardizers == undefined) {
+          reference.standard.standardizers = [];
+        }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await createDataFormatMutation({
           variables: {
@@ -78,8 +79,7 @@ export default function CreateDataFormat({ managerId }: CreateDataFormatProps) {
             description: description,
             mediaType: mediaType,
             schemaLocator: schemaLocator,
-            standard: standard,
-            publication: publication,
+            reference: reference,
             managerId: managerId,
           },
         });

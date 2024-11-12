@@ -11,6 +11,8 @@ using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.Extensions;
 using Metabase.GraphQl.Common;
+using Metabase.GraphQl.Publications;
+using Metabase.GraphQl.Standards;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +44,7 @@ public sealed class ComponentMutations
                 new CreateComponentError(
                     CreateComponentErrorCode.UNAUTHORIZED,
                     "You are not authorized to create components for the institution.",
-                    new[] { nameof(input), nameof(input.ManufacturerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManufacturerId).FirstCharToLower()]
                 )
             );
 
@@ -57,9 +59,21 @@ public sealed class ComponentMutations
                 new CreateComponentError(
                     CreateComponentErrorCode.UNKNOWN_MANUFACTURER,
                     "Unknown manufacturer",
-                    new[] { nameof(input), nameof(input.ManufacturerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManufacturerId).FirstCharToLower()]
                 )
             );
+
+        if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Standard is not null
+            && input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Publication is not null)
+        {
+            return new CreateComponentPayload(
+                new CreateComponentError(
+                    CreateComponentErrorCode.AMBIGUOUS_REFERENCE_IN_DEFINITION_OF_SURFACES_AND_PRIME_DIRECTION,
+                    "Both standard and publication are non-null.",
+                    [nameof(input), nameof(input.DefinitionOfSurfacesAndPrimeDirection).FirstCharToLower(), nameof(input.DefinitionOfSurfacesAndPrimeDirection.Reference).FirstCharToLower()]
+                )
+            );
+        }
 
         var component = new Component(
             input.Name,
@@ -70,13 +84,26 @@ public sealed class ComponentMutations
                 : OpenEndedDateTimeRangeType.FromInput(input.Availability),
             input.Categories
         );
+        // Note that above we make sure that standard and publication are *not* both non-null.
+        Reference? reference = null;
+        if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Standard is not null)
+            reference = new Reference(StandardType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Standard));
+        else if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Publication is not null)
+            reference = new Reference(PublicationType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Publication));
+        if (reference is null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
+            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(input.DefinitionOfSurfacesAndPrimeDirection.Description);
+        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is null)
+            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference);
+        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
+            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference, input.DefinitionOfSurfacesAndPrimeDirection.Description);
+
         component.ManufacturerEdges.Add(
-            new ComponentManufacturer
-            {
-                InstitutionId = input.ManufacturerId,
-                Pending = false
-            }
-        );
+                        new ComponentManufacturer
+                        {
+                            InstitutionId = input.ManufacturerId,
+                            Pending = false
+                        }
+                    );
         context.Components.Add(component);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new CreateComponentPayload(component);
@@ -104,7 +131,7 @@ public sealed class ComponentMutations
                 new UpdateComponentError(
                     UpdateComponentErrorCode.UNAUTHORIZED,
                     "You are not authorized to update the component.",
-                    Array.Empty<string>()
+                    []
                 )
             );
 
@@ -118,7 +145,7 @@ public sealed class ComponentMutations
                 new UpdateComponentError(
                     UpdateComponentErrorCode.UNKNOWN_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.ComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ComponentId).FirstCharToLower()]
                 )
             );
 
@@ -131,6 +158,18 @@ public sealed class ComponentMutations
                 : OpenEndedDateTimeRangeType.FromInput(input.Availability),
             input.Categories
         );
+        // Note that above we make sure that standard and publication are *not* both non-null.
+        Reference? reference = null;
+        if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Standard is not null)
+            reference = new Reference(StandardType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Standard));
+        else if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Publication is not null)
+            reference = new Reference(PublicationType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Publication));
+        if (reference is null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
+            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(input.DefinitionOfSurfacesAndPrimeDirection.Description);
+        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is null)
+            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference);
+        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
+            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference, input.DefinitionOfSurfacesAndPrimeDirection.Description);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new UpdateComponentPayload(component);
     }

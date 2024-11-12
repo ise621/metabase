@@ -19,6 +19,7 @@ public abstract class ComponentIntegrationTests
         "Best component ever!",
         null,
         Array.Empty<ComponentCategory>(),
+        null,
         Guid.Empty
     );
 
@@ -35,6 +36,7 @@ public abstract class ComponentIntegrationTests
             ComponentCategory.MATERIAL,
             ComponentCategory.UNIT
         },
+        null,
         Guid.Empty
     );
 
@@ -50,6 +52,7 @@ public abstract class ComponentIntegrationTests
         {
             ComponentCategory.UNIT
         },
+        null,
         Guid.Empty
     );
 
@@ -67,6 +70,7 @@ public abstract class ComponentIntegrationTests
             ComponentCategory.MATERIAL,
             ComponentCategory.UNIT
         },
+        null,
         Guid.Empty
     );
 

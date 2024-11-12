@@ -1,16 +1,20 @@
 import {
   ComponentsDocument,
+  ComponentDocument,
   useUpdateComponentMutation,
 } from "../../queries/components.graphql";
 import dayjs from "dayjs";
-import { Alert, Form, Input, Button, Modal, DatePicker, Select } from "antd";
+import { Alert, Form, Input, Button, Modal, DatePicker, Select, Divider } from "antd";
 import { useState } from "react";
 import { handleFormErrors } from "../../lib/form";
 import {
   ComponentCategory,
+  DefinitionOfSurfacesAndPrimeDirection,
+  DefinitionOfSurfacesAndPrimeDirectionInput,
   OpenEndedDateTimeRange,
   Scalars,
 } from "../../__generated__/__types__";
+import { ReferenceForm } from "../ReferenceForm";
 
 const layout = {
   labelCol: { span: 8 },
@@ -29,6 +33,7 @@ type FormValues = {
     | null
     | undefined;
   newCategories: ComponentCategory[] | null | undefined;
+  newDefinitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput | null | undefined;
 };
 
 export type UpdateComponentProps = {
@@ -38,6 +43,7 @@ export type UpdateComponentProps = {
   description: string;
   availability: OpenEndedDateTimeRange | null | undefined;
   categories: ComponentCategory[] | null | undefined;
+  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirection | null | undefined;
 };
 
 export default function UpdateComponent({
@@ -47,6 +53,7 @@ export default function UpdateComponent({
   description,
   availability,
   categories,
+  definitionOfSurfacesAndPrimeDirection,
 }: UpdateComponentProps) {
   const [open, setOpen] = useState(false);
   const [updateComponentMutation] = useUpdateComponentMutation({
@@ -55,6 +62,12 @@ export default function UpdateComponent({
     refetchQueries: [
       {
         query: ComponentsDocument,
+      },
+      {
+        query: ComponentDocument,
+        variables: {
+          uuid: componentId,
+        },
       },
     ],
   });
@@ -70,10 +83,15 @@ export default function UpdateComponent({
     newDescription,
     newAvailability,
     newCategories,
+    newDefinitionOfSurfacesAndPrimeDirection,
   }: FormValues) => {
     const update = async () => {
       try {
         setUpdating(true);
+        // TODO Why does `initialValue` not set standardizers to `[]`?
+        if (newDefinitionOfSurfacesAndPrimeDirection?.reference?.standard != null && newDefinitionOfSurfacesAndPrimeDirection.reference.standard.standardizers == undefined) {
+          newDefinitionOfSurfacesAndPrimeDirection.reference.standard.standardizers = [];
+        }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await updateComponentMutation({
           variables: {
@@ -86,6 +104,7 @@ export default function UpdateComponent({
               to: newAvailability?.[1],
             },
             categories: newCategories || [],
+            definitionOfSurfacesAndPrimeDirection: newDefinitionOfSurfacesAndPrimeDirection,
           },
         });
         handleFormErrors(
@@ -196,6 +215,17 @@ export default function UpdateComponent({
                 })
               )}
             />
+          </Form.Item>
+          <Divider />
+          <Form.Item label="Definition of Surfaces and Prime Direction" name="newDefinitionOfSurfacesAndPrimeDirection">
+            <Form.Item
+              label="Description"
+              name={["newDefinitionOfSurfacesAndPrimeDirection", "description"]}
+              initialValue={definitionOfSurfacesAndPrimeDirection?.description}
+            >
+              <Input />
+            </Form.Item>
+            <ReferenceForm form={form} namespace={["newDefinitionOfSurfacesAndPrimeDirection"]} initialValue={definitionOfSurfacesAndPrimeDirection?.reference} />
           </Form.Item>
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit" loading={updating}>

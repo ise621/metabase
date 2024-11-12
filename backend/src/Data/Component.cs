@@ -34,11 +34,11 @@ public sealed class Component
     // Data Annotations https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations
     // Built-In Validation Attributes https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation#built-in-attributes
 
-    [Required] [MinLength(1)] public string Name { get; private set; }
+    [Required][MinLength(1)] public string Name { get; private set; }
 
     [MinLength(1)] public string? Abbreviation { get; private set; }
 
-    [Required] [MinLength(1)] public string Description { get; private set; }
+    [Required][MinLength(1)] public string Description { get; private set; }
 
     public NpgsqlRange<DateTime>?
         Availability
@@ -49,6 +49,8 @@ public sealed class Component
 
     // https://www.npgsql.org/efcore/mapping/array.html
     [Required] public ComponentCategory[] Categories { get; private set; }
+
+    public DefinitionOfSurfacesAndPrimeDirection? DefinitionOfSurfacesAndPrimeDirection { get; set; }
 
     public ICollection<ComponentAssembly> PartOfEdges { get; } = new List<ComponentAssembly>();
     public ICollection<Component> PartOf { get; } = new List<Component>();

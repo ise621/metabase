@@ -5,10 +5,9 @@ import {
   MethodsDocument,
 } from "../../queries/methods.graphql";
 import {
-  CreatePublicationInput,
-  CreateStandardInput,
   MethodCategory,
   Scalars,
+  ReferenceInput,
 } from "../../__generated__/__types__";
 import { useState } from "react";
 import { handleFormErrors } from "../../lib/form";
@@ -37,8 +36,7 @@ type FormValues = {
     | [dayjs.Dayjs | null | undefined, dayjs.Dayjs | null | undefined]
     | null
     | undefined;
-  standard: CreateStandardInput | null | undefined;
-  publication: CreatePublicationInput | null | undefined;
+  reference: ReferenceInput | null | undefined;
   calculationLocator: Scalars["Url"] | null | undefined;
   categories: MethodCategory[] | null | undefined;
   institutionDeveloperIds: Scalars["Uuid"][] | null | undefined;
@@ -76,8 +74,7 @@ export default function CreateMethod({ managerId }: CreateMethodProps) {
     description,
     validity,
     availability,
-    standard,
-    publication,
+    reference,
     calculationLocator,
     categories,
     institutionDeveloperIds,
@@ -87,8 +84,8 @@ export default function CreateMethod({ managerId }: CreateMethodProps) {
       try {
         setCreating(true);
         // TODO Why does `initialValue` not set standardizers to `[]`?
-        if (standard != null && standard.standardizers == undefined) {
-          standard.standardizers = [];
+        if (reference?.standard != null && reference.standard.standardizers == undefined) {
+          reference.standard.standardizers = [];
         }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await createMethodMutation({
@@ -97,8 +94,7 @@ export default function CreateMethod({ managerId }: CreateMethodProps) {
             description: description,
             validity: { from: validity?.[0], to: validity?.[1] },
             availability: { from: availability?.[0], to: availability?.[1] },
-            standard: standard,
-            publication: publication,
+            reference: reference,
             calculationLocator: calculationLocator,
             categories: categories || [],
             managerId: managerId,

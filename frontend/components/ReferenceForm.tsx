@@ -43,18 +43,22 @@ function referenceToKind(
 export type ReferenceFormProps<Values> = {
   form: FormInstance<Values>;
   initialValue?: Standard | Publication | null;
+  namespace?: string[];
 };
 
 // TODO Why does the following not work? export function ReferenceForm<Values extends HasStandardAndPublication>({form}: ReferenceFormProps<Values>) {
-export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
+export function ReferenceForm({ form, initialValue, namespace = [] }: ReferenceFormProps<any>) {
   const initialKind = referenceToKind(initialValue);
   const [selectedReferenceOption, setSelectedReferenceOption] =
     useState(initialKind);
-  if (initialValue?.__typename == "Publication") {
-    form.setFieldsValue({ publication: initialValue });
-  }
-  if (initialValue?.__typename == "Standard") {
-    form.setFieldsValue({ standard: initialValue });
+  if (initialValue != null) {
+    const { __typename, ...initialReference } = initialValue
+    if (__typename == "Publication") {
+      form.setFieldValue(namespace.concat("reference", "publication"), initialReference);
+    }
+    if (__typename == "Standard") {
+      form.setFieldValue(namespace.concat("reference", "standard"), initialReference);
+    }
   }
 
   const onReferenceChange = (value: ReferenceKind) => {
@@ -65,14 +69,20 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
         break;
       case ReferenceKind.Publication:
         form.setFieldsValue({ standard: null });
-        if (initialValue?.__typename == "Publication") {
-          form.setFieldsValue({ publication: initialValue });
+        if (initialValue != null) {
+          const { __typename, ...initialReference } = initialValue
+          if (__typename == "Publication") {
+            form.setFieldValue(namespace.concat("reference", "publication"), initialReference);
+          }
         }
         break;
       case ReferenceKind.Standard:
         form.setFieldsValue({ publication: null });
-        if (initialValue?.__typename == "Standard") {
-          form.setFieldsValue({ standard: initialValue });
+        if (initialValue != null) {
+          const { __typename, ...initialReference } = initialValue
+          if (__typename == "Standard") {
+            form.setFieldValue(namespace.concat("reference", "standard"), initialReference);
+          }
         }
         break;
       default:
@@ -83,7 +93,7 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
 
   return (
     <>
-      <Form.Item label="Reference" name="reference" initialValue={initialKind}>
+      <Form.Item label="Reference" name="unmappedReferenceKind" initialValue={initialKind}>
         <Select
           options={[
             { label: "None", value: ReferenceKind.None },
@@ -95,27 +105,27 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
       </Form.Item>
       {selectedReferenceOption === ReferenceKind.Publication && (
         <>
-          <Form.Item label="Title" name={["publication", "title"]}>
+          <Form.Item label="Title" name={namespace.concat("reference", "publication", "title")}>
             <Input />
           </Form.Item>
-          <Form.Item label="Abstract" name={["publication", "abstract"]}>
+          <Form.Item label="Abstract" name={namespace.concat("reference", "publication", "abstract")}>
             <Input />
           </Form.Item>
-          <Form.Item label="Section" name={["publication", "section"]}>
+          <Form.Item label="Section" name={namespace.concat("reference", "publication", "section")}>
             <Input />
           </Form.Item>
-          <Form.Item label="arXiv" name={["publication", "arXiv"]}>
+          <Form.Item label="arXiv" name={namespace.concat("reference", "publication", "arXiv")}>
             <Input />
           </Form.Item>
-          <Form.Item label="DOI" name={["publication", "doi"]}>
+          <Form.Item label="DOI" name={namespace.concat("reference", "publication", "doi")}>
             <Input />
           </Form.Item>
-          <Form.Item label="URN" name={["publication", "urn"]}>
+          <Form.Item label="URN" name={namespace.concat("reference", "publication", "urn")}>
             <Input />
           </Form.Item>
           <Form.Item
             label="WebAddress"
-            name={["publication", "webAddress"]}
+            name={namespace.concat("reference", "publication", "webAddress")}
             rules={[
               {
                 type: "url",
@@ -124,7 +134,7 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
           >
             <Input />
           </Form.Item>
-          <Form.List name={["publication", "authors"]}>
+          <Form.List name={namespace.concat("reference", "publication", "authors")}>
             {(fields, { add, remove }, { errors }) => (
               <>
                 {fields.map((field, index) => (
@@ -161,20 +171,20 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
       )}
       {selectedReferenceOption === ReferenceKind.Standard && (
         <>
-          <Form.Item label="Title" name={["standard", "title"]}>
+          <Form.Item label="Title" name={namespace.concat("reference", "standard", "title")}>
             <Input />
           </Form.Item>
-          <Form.Item label="Abstract" name={["standard", "abstract"]}>
+          <Form.Item label="Abstract" name={namespace.concat("reference", "standard", "abstract")}>
             <Input />
           </Form.Item>
-          <Form.Item label="Section" name={["standard", "section"]}>
+          <Form.Item label="Section" name={namespace.concat("reference", "standard", "section")}>
             <Input />
           </Form.Item>
           <Form.Item label="Numeration">
             <Input.Group>
               <Form.Item
                 noStyle
-                name={["standard", "numeration", "mainNumber"]}
+                name={namespace.concat("reference", "standard", "numeration", "mainNumber")}
                 rules={[
                   {
                     required: true,
@@ -183,20 +193,20 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
               >
                 <Input placeholder="Main Number" />
               </Form.Item>
-              <Form.Item noStyle name={["standard", "numeration", "prefix"]}>
+              <Form.Item noStyle name={namespace.concat("reference", "standard", "numeration", "prefix")}>
                 <Input placeholder="Prefix" />
               </Form.Item>
-              <Form.Item noStyle name={["standard", "numeration", "suffix"]}>
+              <Form.Item noStyle name={namespace.concat("reference", "standard", "numeration", "suffix")}>
                 <Input placeholder="Suffix" />
               </Form.Item>
             </Input.Group>
           </Form.Item>
-          <Form.Item label="Year" name={["standard", "year"]}>
+          <Form.Item label="Year" name={namespace.concat("reference", "standard", "year")}>
             <InputNumber />
           </Form.Item>
           <Form.Item
             label="Locator"
-            name={["standard", "locator"]}
+            name={namespace.concat("reference", "standard", "locator")}
             rules={[
               {
                 type: "url",
@@ -205,7 +215,7 @@ export function ReferenceForm({ form, initialValue }: ReferenceFormProps<any>) {
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Standardizers" name={["standard", "standardizers"]}>
+          <Form.Item label="Standardizers" name={namespace.concat("reference", "standard", "standardizers")}>
             <Select
               mode="multiple"
               placeholder="Please select"

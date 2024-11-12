@@ -16,6 +16,7 @@ using Metabase.GraphQl.ComponentVariants;
 using Metabase.GraphQl.Databases;
 using Metabase.GraphQl.DataFormats;
 using Metabase.GraphQl.DataX;
+using Metabase.GraphQl.DefinitionOfSurfacesAndPrimeDirections;
 using Metabase.GraphQl.InstitutionMethodDevelopers;
 using Metabase.GraphQl.InstitutionRepresentatives;
 using Metabase.GraphQl.Institutions;
@@ -146,6 +147,7 @@ public static class GraphQlConfiguration
             .AddType<OpenEndedDateTimeRangeType>()
             .AddType<ComponentType>()
             .AddType<DataFormatType>()
+            .AddType<DefinitionOfSurfacesAndPrimeDirectionType>()
             .AddType<CalorimetricData>()
             .AddType<DataApproval>()
             .AddType<GetHttpsResourceTreeNonRootVertex>()

@@ -227,6 +227,7 @@ type Component implements Node {
   canCurrentUserUpdateNode: Boolean! @cost(weight: "10")
   categories: [ComponentCategory!]!
   concretizationOf: ComponentConcretizationOfConnection! @cost(weight: "10")
+  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirection
   description: String!
   generalizationOf: ComponentGeneralizationOfConnection! @cost(weight: "10")
   id: ID!
@@ -573,6 +574,11 @@ type DatabasesEdge {
   cursor: String!
   "The item at the end of the edge."
   node: Database!
+}
+
+type DefinitionOfSurfacesAndPrimeDirection {
+  description: String
+  reference: Reference @cost(weight: "10")
 }
 
 type DeleteInstitutionError {
@@ -1847,6 +1853,7 @@ input ComponentSortInput {
   abbreviation: SortEnumType @cost(weight: "10")
   description: SortEnumType @cost(weight: "10")
   availability: SortEnumType @cost(weight: "10")
+  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionSortInput @cost(weight: "10")
   id: SortEnumType @cost(weight: "10")
   version: SortEnumType @cost(weight: "10")
 }
@@ -1886,6 +1893,7 @@ input CreateComponentInput {
   abbreviation: String
   availability: OpenEndedDateTimeRangeInput
   categories: [ComponentCategory!]!
+  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
   description: String!
   manufacturerId: Uuid!
   name: String!
@@ -1897,9 +1905,8 @@ input CreateDataFormatInput {
   managerId: Uuid!
   mediaType: String!
   name: String!
-  publication: CreatePublicationInput
+  reference: ReferenceInput
   schemaLocator: Url
-  standard: CreateStandardInput
 }
 
 input CreateDatabaseInput {
@@ -1927,8 +1934,7 @@ input CreateMethodInput {
   institutionDeveloperIds: [Uuid!]!
   managerId: Uuid!
   name: String!
-  publication: CreatePublicationInput
-  standard: CreateStandardInput
+  reference: ReferenceInput
   userDeveloperIds: [Uuid!]!
   validity: OpenEndedDateTimeRangeInput
 }
@@ -1937,27 +1943,6 @@ input CreateNumerationInput {
   mainNumber: String!
   prefix: String
   suffix: String
-}
-
-input CreatePublicationInput {
-  abstract: String
-  arXiv: String
-  authors: [String!]
-  doi: String
-  section: String
-  title: String
-  urn: String
-  webAddress: Url
-}
-
-input CreateStandardInput {
-  abstract: String
-  locator: Url
-  numeration: CreateNumerationInput!
-  section: String
-  standardizers: [Standardizer!]!
-  title: String
-  year: Int
 }
 
 input DataFormatFilterInput {
@@ -2026,6 +2011,17 @@ input DatabaseSortInput {
   operator: InstitutionSortInput @cost(weight: "10")
   id: SortEnumType @cost(weight: "10")
   version: SortEnumType @cost(weight: "10")
+}
+
+input DefinitionOfSurfacesAndPrimeDirectionInput {
+  description: String
+  reference: ReferenceInput
+}
+
+input DefinitionOfSurfacesAndPrimeDirectionSortInput {
+  reference: ReferenceSortInput @cost(weight: "10")
+  description: SortEnumType @cost(weight: "10")
+  exists: SortEnumType @cost(weight: "10")
 }
 
 input DeleteInstitutionInput {
@@ -2408,6 +2404,17 @@ input PublicationFilterInput {
   section: StringOperationFilterInput
 }
 
+input PublicationInput {
+  abstract: String
+  arXiv: String
+  authors: [String!]
+  doi: String
+  section: String
+  title: String
+  urn: String
+  webAddress: Url
+}
+
 input PublicationSortInput {
   "The Digital Object Identifier (DOI) is a very important persistent identifier for publications. It MUST be defined here if it is available for a publication."
   doi: SortEnumType @cost(weight: "10")
@@ -2421,6 +2428,18 @@ input PublicationSortInput {
   abstract: SortEnumType @cost(weight: "10")
   "Referenced section"
   section: SortEnumType @cost(weight: "10")
+}
+
+input ReferenceInput {
+  publication: PublicationInput
+  standard: StandardInput
+}
+
+input ReferenceSortInput {
+  standard: StandardSortInput @cost(weight: "10")
+  publication: PublicationSortInput @cost(weight: "10")
+  theReference: IReferenceSortInput @cost(weight: "10")
+  exists: SortEnumType @cost(weight: "10")
 }
 
 input RegisterUserInput {
@@ -2511,6 +2530,16 @@ input StandardFilterInput {
   section: StringOperationFilterInput
 }
 
+input StandardInput {
+  abstract: String
+  locator: Url
+  numeration: CreateNumerationInput!
+  section: String
+  standardizers: [Standardizer!]!
+  title: String
+  year: Int
+}
+
 "`ISO 52022` is an example of the abbreviation of a standardizer and the main number of the identifier."
 input StandardSortInput {
   "It is important to define the year in which the standard was issued because there can be relevant updates of one standard."
@@ -2561,6 +2590,7 @@ input UpdateComponentInput {
   availability: OpenEndedDateTimeRangeInput
   categories: [ComponentCategory!]!
   componentId: Uuid!
+  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
   description: String!
   name: String!
 }
@@ -2571,9 +2601,8 @@ input UpdateDataFormatInput {
   extension: String
   mediaType: String!
   name: String!
-  publication: UpdatePublicationInput
+  reference: ReferenceInput
   schemaLocator: Url
-  standard: UpdateStandardInput
 }
 
 input UpdateDatabaseInput {
@@ -2599,36 +2628,8 @@ input UpdateMethodInput {
   description: String!
   methodId: Uuid!
   name: String!
-  publication: UpdatePublicationInput
-  standard: UpdateStandardInput
+  reference: ReferenceInput
   validity: OpenEndedDateTimeRangeInput
-}
-
-input UpdateNumerationInput {
-  mainNumber: String!
-  prefix: String
-  suffix: String
-}
-
-input UpdatePublicationInput {
-  abstract: String
-  arXiv: String
-  authors: [String!]
-  doi: String
-  section: String
-  title: String
-  urn: String
-  webAddress: Url
-}
-
-input UpdateStandardInput {
-  abstract: String
-  locator: Url
-  numeration: UpdateNumerationInput!
-  section: String
-  standardizers: [Standardizer!]!
-  title: String
-  year: Int
 }
 
 input UriSortInput {
@@ -2893,6 +2894,7 @@ enum CreateComponentErrorCode {
   UNKNOWN
   UNKNOWN_MANUFACTURER
   UNAUTHORIZED
+  AMBIGUOUS_REFERENCE_IN_DEFINITION_OF_SURFACES_AND_PRIME_DIRECTION
 }
 
 enum CreateDataFormatErrorCode {

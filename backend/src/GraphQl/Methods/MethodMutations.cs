@@ -2,7 +2,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
@@ -10,6 +9,8 @@ using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.Extensions;
 using Metabase.GraphQl.Common;
+using Metabase.GraphQl.Publications;
+using Metabase.GraphQl.Standards;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -94,14 +95,14 @@ public sealed class MethodMutations
                 )
             );
 
-        if (input.Standard is not null &&
-            input.Publication is not null
+        if (input.Reference?.Standard is not null &&
+            input.Reference?.Publication is not null
            )
             return new CreateMethodPayload(
                 new CreateMethodError(
                     CreateMethodErrorCode.TWO_REFERENCES,
                     "Specify either a standard or a publication as reference.",
-                    new[] { nameof(input), nameof(input.Publication).FirstCharToLower() }
+                    new[] { nameof(input), nameof(input.Reference).FirstCharToLower() }
                 )
             );
 
@@ -118,39 +119,15 @@ public sealed class MethodMutations
             input.Categories
         )
         {
-            // TODO The below is also used in `DataFormatMutations`. Put into helper!
             ManagerId = input.ManagerId,
             Standard =
-                input.Standard is null
+                input.Reference?.Standard is null
                     ? null
-                    : new Standard(
-                        input.Standard.Title,
-                        input.Standard.Abstract,
-                        input.Standard.Section,
-                        input.Standard.Year,
-                        input.Standard.Standardizers,
-                        input.Standard.Locator
-                    )
-                    {
-                        Numeration = new Numeration(
-                            input.Standard.Numeration.Prefix,
-                            input.Standard.Numeration.MainNumber,
-                            input.Standard.Numeration.Suffix
-                        )
-                    },
+                    : StandardType.FromInput(input.Reference.Standard),
             Publication =
-                input.Publication is null
+                input.Reference?.Publication is null
                     ? null
-                    : new Publication(
-                        input.Publication.Title,
-                        input.Publication.Abstract,
-                        input.Publication.Section,
-                        input.Publication.Authors,
-                        input.Publication.Doi,
-                        input.Publication.ArXiv,
-                        input.Publication.Urn,
-                        input.Publication.WebAddress
-                    )
+                    : PublicationType.FromInput(input.Reference.Publication),
         };
         foreach (var institutionDeveloperId in input.InstitutionDeveloperIds.Distinct())
             method.InstitutionDeveloperEdges.Add(
@@ -204,14 +181,14 @@ public sealed class MethodMutations
                 )
             );
 
-        if (input.Standard is not null &&
-            input.Publication is not null
+        if (input.Reference?.Standard is not null &&
+            input.Reference?.Publication is not null
            )
             return new UpdateMethodPayload(
                 new UpdateMethodError(
                     UpdateMethodErrorCode.TWO_REFERENCES,
                     "Specify either a standard or a publication as reference.",
-                    new[] { nameof(input), nameof(input.Publication).FirstCharToLower() }
+                    new[] { nameof(input), nameof(input.Reference).FirstCharToLower() }
                 )
             );
 
@@ -242,36 +219,13 @@ public sealed class MethodMutations
             input.Categories
         );
         method.Standard =
-            input.Standard is null
+            input.Reference?.Standard is null
                 ? null
-                : new Standard(
-                    input.Standard.Title,
-                    input.Standard.Abstract,
-                    input.Standard.Section,
-                    input.Standard.Year,
-                    input.Standard.Standardizers,
-                    input.Standard.Locator
-                )
-                {
-                    Numeration = new Numeration(
-                        input.Standard.Numeration.Prefix,
-                        input.Standard.Numeration.MainNumber,
-                        input.Standard.Numeration.Suffix
-                    )
-                };
+                : StandardType.FromInput(input.Reference.Standard);
         method.Publication =
-            input.Publication is null
+            input.Reference?.Publication is null
                 ? null
-                : new Publication(
-                    input.Publication.Title,
-                    input.Publication.Abstract,
-                    input.Publication.Section,
-                    input.Publication.Authors,
-                    input.Publication.Doi,
-                    input.Publication.ArXiv,
-                    input.Publication.Urn,
-                    input.Publication.WebAddress
-                );
+                : PublicationType.FromInput(input.Reference.Publication);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new UpdateMethodPayload(method);
     }

@@ -1,14 +1,15 @@
 import * as React from "react";
-import { DatePicker, Alert, Select, Form, Input, Button } from "antd";
+import { DatePicker, Alert, Select, Form, Input, Button, Divider } from "antd";
 import {
   useCreateComponentMutation,
   ComponentsDocument,
 } from "../../queries/components.graphql";
-import { ComponentCategory, Scalars } from "../../__generated__/__types__";
+import { ComponentCategory, DefinitionOfSurfacesAndPrimeDirectionInput, Scalars } from "../../__generated__/__types__";
 import { useState } from "react";
 import { handleFormErrors } from "../../lib/form";
 import dayjs from "dayjs";
 import { InstitutionDocument } from "../../queries/institutions.graphql";
+import { ReferenceForm } from "../ReferenceForm";
 
 const layout = {
   labelCol: { span: 8 },
@@ -27,6 +28,7 @@ type FormValues = {
     | null
     | undefined;
   categories: ComponentCategory[] | null | undefined;
+  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput | null | undefined;
 };
 
 export type CreateComponentProps = {
@@ -63,10 +65,15 @@ export default function CreateComponent({
     description,
     availability,
     categories,
+    definitionOfSurfacesAndPrimeDirection
   }: FormValues) => {
     const create = async () => {
       try {
         setCreating(true);
+        // TODO Why does `initialValue` not set standardizers to `[]`?
+        if (definitionOfSurfacesAndPrimeDirection?.reference?.standard != null && definitionOfSurfacesAndPrimeDirection.reference.standard.standardizers == undefined) {
+          definitionOfSurfacesAndPrimeDirection.reference.standard.standardizers = [];
+        }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await createComponentMutation({
           variables: {
@@ -75,6 +82,7 @@ export default function CreateComponent({
             description: description,
             availability: { from: availability?.[0], to: availability?.[1] },
             categories: categories || [],
+            definitionOfSurfacesAndPrimeDirection: definitionOfSurfacesAndPrimeDirection,
             manufacturerId: manufacturerId,
           },
         });
@@ -154,6 +162,16 @@ export default function CreateComponent({
               value: value,
             }))}
           />
+        </Form.Item>
+        <Divider />
+        <Form.Item label="Definition of Surfaces and Prime Direction" name="definitionOfSurfacesAndPrimeDirection">
+          <Form.Item
+            label="Description"
+            name={["definitionOfSurfacesAndPrimeDirection", "description"]}
+          >
+            <Input />
+          </Form.Item>
+          <ReferenceForm form={form} namespace={["definitionOfSurfacesAndPrimeDirection"]} />
         </Form.Item>
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit" loading={creating}>

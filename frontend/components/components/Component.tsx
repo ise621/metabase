@@ -287,6 +287,7 @@ export default function Component({ componentId }: ComponentProps) {
                 description={component.description}
                 availability={component.availability}
                 categories={component.categories}
+                definitionOfSurfacesAndPrimeDirection={component.definitionOfSurfacesAndPrimeDirection}
               />,
             ]
           : []
@@ -297,6 +298,12 @@ export default function Component({ componentId }: ComponentProps) {
         <Descriptions.Item label="UUID">{component.uuid}</Descriptions.Item>
         <Descriptions.Item label="Available">
           <OpenEndedDateTimeRangeX range={component.availability} />
+        </Descriptions.Item>
+        <Descriptions.Item label="Definition of Surfaces and Prime Direction">
+          {component.definitionOfSurfacesAndPrimeDirection?.description}{" "}
+          {component.definitionOfSurfacesAndPrimeDirection?.reference?.title}{" "}
+          {component.definitionOfSurfacesAndPrimeDirection?.reference?.abstract}{" "}
+          {component.definitionOfSurfacesAndPrimeDirection?.reference?.section}{" "}
         </Descriptions.Item>
       </Descriptions>
     </PageHeader>

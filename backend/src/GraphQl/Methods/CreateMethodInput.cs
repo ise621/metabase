@@ -1,8 +1,7 @@
 using System;
 using Metabase.Enumerations;
 using Metabase.GraphQl.Common;
-using Metabase.GraphQl.Publications;
-using Metabase.GraphQl.Standards;
+using Metabase.GraphQl.References;
 
 namespace Metabase.GraphQl.Methods;
 
@@ -11,8 +10,7 @@ public sealed record CreateMethodInput(
     string Description,
     OpenEndedDateTimeRangeInput? Validity,
     OpenEndedDateTimeRangeInput? Availability,
-    CreateStandardInput? Standard,
-    CreatePublicationInput? Publication,
+    ReferenceInput? Reference,
     Uri? CalculationLocator,
     MethodCategory[] Categories,
     Guid ManagerId,

@@ -33,6 +33,31 @@ query Component($uuid: Uuid!) {
       from
       to
     }
+    definitionOfSurfacesAndPrimeDirection {
+      description
+      reference {
+        abstract
+        section
+        title
+        ... on Standard {
+          locator
+          numeration {
+            mainNumber
+            prefix
+            suffix
+          }
+          standardizers
+          year
+        }
+        ... on Publication {
+          arXiv
+          authors
+          doi
+          urn
+          webAddress
+        }
+      }
+    }
     manufacturers(pending: false) {
       edges {
         node {
@@ -131,6 +156,7 @@ mutation CreateComponent(
   $description: String!
   $categories: [ComponentCategory!]!
   $availability: OpenEndedDateTimeRangeInput
+  $definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
   $manufacturerId: Uuid!
 ) {
   createComponent(
@@ -140,6 +166,7 @@ mutation CreateComponent(
       description: $description
       categories: $categories
       availability: $availability
+      definitionOfSurfacesAndPrimeDirection: $definitionOfSurfacesAndPrimeDirection
       manufacturerId: $manufacturerId
     }
   ) {
@@ -161,6 +188,7 @@ mutation UpdateComponent(
   $description: String!
   $categories: [ComponentCategory!]!
   $availability: OpenEndedDateTimeRangeInput
+  $definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
 ) {
   updateComponent(
     input: {
@@ -170,6 +198,7 @@ mutation UpdateComponent(
       description: $description
       categories: $categories
       availability: $availability
+      definitionOfSurfacesAndPrimeDirection: $definitionOfSurfacesAndPrimeDirection
     }
   ) {
     component {
