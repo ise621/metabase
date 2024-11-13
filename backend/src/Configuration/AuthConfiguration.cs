@@ -34,8 +34,8 @@ public abstract class AuthConfiguration
     public const string ManageUserApiScope = ScopePrefixApi + ":user:manage";
 
     // Keep in sync with the scopes set in `OpenIddictClientRegistration`.
-    private static readonly HashSet<string> _clientScopes = new()
-    {
+    private static readonly HashSet<string> _clientScopes =
+    [
         OpenIddictConstants.Scopes.Address,
         OpenIddictConstants.Scopes.Email,
         OpenIddictConstants.Scopes.Phone,
@@ -44,7 +44,7 @@ public abstract class AuthConfiguration
         ReadApiScope,
         WriteApiScope,
         ManageUserApiScope
-    };
+    ];
 
     public static void ConfigureServices(
         IServiceCollection services,
