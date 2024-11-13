@@ -3,7 +3,7 @@ using GreenDonut;
 using HotChocolate.Types;
 using Metabase.Data;
 
-namespace Metabase.GraphQl;
+namespace Metabase.GraphQl.Entities;
 
 public abstract class EntityType<TEntity, TEntityByIdDataLoader>
     : ObjectType<TEntity>

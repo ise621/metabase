@@ -11,6 +11,7 @@ using Metabase.Authorization;
 using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.Extensions;
+using Metabase.GraphQl.Entities;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
