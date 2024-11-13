@@ -37,6 +37,37 @@ public sealed class AuthorizationController(
     private readonly IOpenIddictScopeManager _scopeManager = scopeManager;
     private readonly SignInManager<User> _signInManager = signInManager;
     private readonly UserManager<User> _userManager = userManager;
+    // private bool _disposed;
+
+    // protected virtual void Dispose(bool disposing)
+    // {
+    //     if (!_disposed)
+    //     {
+    //         // Dispose of resources held by this instance.
+    //         _userManager.Dispose();
+    //         _disposed = true;
+    //         // Suppress finalization of this disposed instance.
+    //         if (disposing)
+    //         {
+    //             GC.SuppressFinalize(this);
+    //         }
+    //     }
+    // }
+
+    // public void Dispose()
+    // {
+    //     if (!_disposed)
+    //     {
+    //         // Dispose of resources held by this instance.
+    //         Dispose(true);
+    //     }
+    // }
+
+    // // Disposable types implement a finalizer.
+    // ~AuthorizationController()
+    // {
+    //     Dispose(false);
+    // }
 
     private async Task<AuthenticateResult> AuthenticateAsync(
         string scheme
