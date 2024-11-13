@@ -218,12 +218,7 @@ public sealed class QueryingDatabases
                 graphQlResponseStream,
                 SerializerOptions,
                 cancellationToken
-            ).ConfigureAwait(false);
-        if (deserializedGraphQlResponse is null)
-        {
-            throw new JsonException("Failed to deserialize the GraphQL response.");
-        }
-
+            ).ConfigureAwait(false) ?? throw new JsonException("Failed to deserialize the GraphQL response.");
         return deserializedGraphQlResponse;
     }
 
