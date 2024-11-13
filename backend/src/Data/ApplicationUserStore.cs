@@ -7,10 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.Data;
 
-public sealed class ApplicationUserStore : UserStore<User, Role, ApplicationDbContext, Guid, UserClaim, UserRole, UserLogin, UserToken, RoleClaim> {
-    public ApplicationUserStore(ApplicationDbContext context, IdentityErrorDescriber? describer = null)
-        : base(context, describer) {
-    }
+public sealed class ApplicationUserStore(ApplicationDbContext context, IdentityErrorDescriber? describer = null) : UserStore<User, Role, ApplicationDbContext, Guid, UserClaim, UserRole, UserLogin, UserToken, RoleClaim>(context, describer)
+{
 
     // Inspired by https://github.com/dotnet/aspnetcore/blob/ef09c065b96af01afa38b82e5b8a35a718685a48/src/Identity/EntityFrameworkCore/src/UserStore.cs#L167C5-L185C6
     // and

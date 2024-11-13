@@ -168,7 +168,10 @@ public abstract partial class IntegrationTests
                     }
                 )
                 .ConfigureAwait(false);
-        if (response.IsError) throw new HttpRequestException($"Error {response.Error} of type {response.ErrorType} with description {response.ErrorDescription}");
+        if (response.IsError)
+        {
+            throw new HttpRequestException($"Error {response.Error} of type {response.ErrorType} with description {response.ErrorDescription}");
+        }
 
         return response;
     }
@@ -439,12 +442,14 @@ public abstract partial class IntegrationTests
             variables
         ).ConfigureAwait(false);
         if (httpResponseMessage.StatusCode != HttpStatusCode.OK)
+        {
             // We wrap this check in an if-condition such that the message
             // content is only read when the status code is not 200.
             httpResponseMessage.StatusCode.Should().Be(
                 HttpStatusCode.OK,
                 await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false)
             );
+        }
 
         return httpResponseMessage.Content;
     }
@@ -477,12 +482,14 @@ public abstract partial class IntegrationTests
             variables
         ).ConfigureAwait(false);
         if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
+        {
             // We wrap this check in an if-condition such that the message
             // content is only read when the status code is not 200.
             httpResponseMessage.StatusCode.Should().NotBe(
                 HttpStatusCode.OK,
                 await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false)
             );
+        }
 
         return httpResponseMessage.Content;
     }
@@ -670,21 +677,14 @@ public abstract partial class IntegrationTests
         return new SnapshotFullName(testName, testDirectory);
     }
 
-    private sealed class GraphQlRequest
-    {
-        public GraphQlRequest(
-            string query,
-            string? operationName,
-            object? variables
+    private sealed class GraphQlRequest(
+        string query,
+        string? operationName,
+        object? variables
         )
-        {
-            Query = query;
-            OperationName = operationName;
-            Variables = variables;
-        }
-
-        public string Query { get; }
-        public string? OperationName { get; }
-        public object? Variables { get; }
+    {
+        public string Query { get; } = query;
+        public string? OperationName { get; } = operationName;
+        public object? Variables { get; } = variables;
     }
 }

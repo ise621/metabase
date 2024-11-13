@@ -4,12 +4,21 @@ using System.Linq;
 
 namespace Metabase.GraphQl.DataX;
 
-public sealed class DataConnection
-    : DataConnectionBase<DataEdge>
+public sealed class DataConnection(
+    IReadOnlyList<DataEdge> edges,
+    uint totalCount,
+    DateTime timestamp
+    )
+        : DataConnectionBase<DataEdge>(
+        edges,
+        totalCount,
+        timestamp
+        )
 {
     internal static DataConnection? From(DataConnectionIgsdb? connection)
     {
-        if (connection is null) {
+        if (connection is null)
+        {
             return null;
         }
         return new DataConnection(
@@ -17,18 +26,5 @@ public sealed class DataConnection
             connection.TotalCount,
             connection.Timestamp
         );
-    }
-
-    public DataConnection(
-        IReadOnlyList<DataEdge> edges,
-        uint totalCount,
-        DateTime timestamp
-    )
-        : base(
-            edges,
-            totalCount,
-            timestamp
-        )
-    {
     }
 }

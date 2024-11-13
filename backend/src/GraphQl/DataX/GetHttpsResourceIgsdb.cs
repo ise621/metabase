@@ -2,14 +2,9 @@ using System;
 
 namespace Metabase.GraphQl.DataX;
 
-public sealed class GetHttpsResourceIgsdb
-{
-    public GetHttpsResourceIgsdb(
-        Uri locator
+public sealed class GetHttpsResourceIgsdb(
+    Uri locator
     )
-    {
-        Locator = locator;
-    }
-
-    public Uri Locator { get; }
+{
+    public Uri Locator { get; } = locator;
 }

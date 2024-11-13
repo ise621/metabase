@@ -112,6 +112,7 @@ public sealed class DbSeeder
     {
         var manager = services.GetRequiredService<RoleManager<Role>>();
         foreach (var role in Role.AllEnum)
+        {
             if (await manager.FindByNameAsync(Role.EnumToName(role)).ConfigureAwait(false) is null)
             {
                 logger.CreatingRole(role);
@@ -119,6 +120,7 @@ public sealed class DbSeeder
                     new Role(role)
                 ).ConfigureAwait(false);
             }
+        }
     }
 
     private static async Task CreateUsersAsync(
@@ -139,10 +141,12 @@ public sealed class DbSeeder
         else
         {
             foreach (var userInfo in Users)
+            {
                 if (await manager.FindByEmailAsync(userInfo.EmailAddress).ConfigureAwait(false) is null)
                 {
                     await CreateUserAsync(manager, userInfo, appSettings.BootstrapUserPassword, logger).ConfigureAwait(false);
                 }
+            }
         }
     }
 

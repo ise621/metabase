@@ -5,15 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 // Inspired by https://github.com/npgsql/efcore.pg/blob/main/src/EFCore.PG/Infrastructure/Internal/NpgsqlOptionsExtension.cs
 namespace Metabase.Data.Extensions;
 
-public sealed class SchemaNameOptionsExtension
-    : IDbContextOptionsExtension
+public sealed class SchemaNameOptionsExtension(string schemaName)
+        : IDbContextOptionsExtension
 {
-    public SchemaNameOptionsExtension(string schemaName)
-    {
-        SchemaName = schemaName;
-    }
-
-    public string SchemaName { get; }
+    public string SchemaName { get; } = schemaName;
 
     public DbContextOptionsExtensionInfo Info
         => new SchemaNameExtensionInfo(this);
@@ -26,14 +21,9 @@ public sealed class SchemaNameOptionsExtension
     {
     }
 
-    public sealed class SchemaNameExtensionInfo
-        : DbContextOptionsExtensionInfo
+    public sealed class SchemaNameExtensionInfo(SchemaNameOptionsExtension extension)
+                : DbContextOptionsExtensionInfo(extension)
     {
-        public SchemaNameExtensionInfo(SchemaNameOptionsExtension extension)
-            : base(extension)
-        {
-        }
-
         public override bool IsDatabaseProvider
             => false;
 

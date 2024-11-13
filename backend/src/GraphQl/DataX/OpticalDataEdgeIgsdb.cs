@@ -1,13 +1,8 @@
 namespace Metabase.GraphQl.DataX;
 
-public sealed class OpticalDataEdgeIgsdb
-{
-    public OpticalDataIgsdb Node { get; }
-
-    public OpticalDataEdgeIgsdb(
-        OpticalDataIgsdb node
+public sealed class OpticalDataEdgeIgsdb(
+    OpticalDataIgsdb node
     )
-    {
-        Node = node;
-    }
+{
+    public OpticalDataIgsdb Node { get; } = node;
 }

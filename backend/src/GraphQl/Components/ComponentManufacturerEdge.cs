@@ -10,18 +10,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentManufacturerEdge
-    : Edge<Institution, InstitutionByIdDataLoader>
-{
-    private readonly ComponentManufacturer _association;
-
-    public ComponentManufacturerEdge(
-        ComponentManufacturer association
+public sealed class ComponentManufacturerEdge(
+    ComponentManufacturer association
     )
-        : base(association.InstitutionId)
-    {
-        _association = association;
-    }
+        : Edge<Institution, InstitutionByIdDataLoader>(association.InstitutionId)
+{
+    private readonly ComponentManufacturer _association = association;
 
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(

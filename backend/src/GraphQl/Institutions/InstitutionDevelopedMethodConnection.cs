@@ -9,23 +9,18 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionDevelopedMethodConnection
-    : ForkingConnection<Institution, InstitutionMethodDeveloper,
-        PendingInstitutionDevelopedMethodsByInstitutionIdDataLoader,
-        InstitutionDevelopedMethodsByInstitutionIdDataLoader, InstitutionDevelopedMethodEdge>
-{
-    public InstitutionDevelopedMethodConnection(
-        Institution institution,
-        bool pending
+public sealed class InstitutionDevelopedMethodConnection(
+    Institution institution,
+    bool pending
     )
-        : base(
-            institution,
-            pending,
-            x => new InstitutionDevelopedMethodEdge(x)
+        : ForkingConnection<Institution, InstitutionMethodDeveloper,
+        PendingInstitutionDevelopedMethodsByInstitutionIdDataLoader,
+        InstitutionDevelopedMethodsByInstitutionIdDataLoader, InstitutionDevelopedMethodEdge>(
+        institution,
+        pending,
+        x => new InstitutionDevelopedMethodEdge(x)
         )
-    {
-    }
-
+{
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(
         ClaimsPrincipal claimsPrincipal,

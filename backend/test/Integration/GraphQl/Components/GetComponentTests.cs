@@ -72,6 +72,7 @@ public sealed class GetComponentTests
         ).ConfigureAwait(false);
         var componentIdsAndUuids = new List<(string, string)>();
         foreach (var input in ComponentInputs)
+        {
             componentIdsAndUuids.Add(
                 await CreateComponentReturningIdAndUuid(
                     input with
@@ -80,6 +81,7 @@ public sealed class GetComponentTests
                     }
                 ).ConfigureAwait(false)
             );
+        }
 
         await LogoutUser().ConfigureAwait(false);
         // Act

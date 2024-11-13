@@ -6,24 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentVariantOfByComponentIdDataLoader
-    : AssociationsByAssociateIdDataLoader<ComponentVariant>
-{
-    public ComponentVariantOfByComponentIdDataLoader(
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions options,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory
+public sealed class ComponentVariantOfByComponentIdDataLoader(
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options,
+    IDbContextFactory<ApplicationDbContext> dbContextFactory
     )
-        : base(
-            batchScheduler,
-            options,
-            dbContextFactory,
-            (dbContext, ids) =>
+        : AssociationsByAssociateIdDataLoader<ComponentVariant>(
+        batchScheduler,
+        options,
+        dbContextFactory,
+        (dbContext, ids) =>
                 dbContext.ComponentVariants.AsNoTracking().Where(x =>
                     ids.Contains(x.ToComponentId)
                 ),
-            x => x.ToComponentId
+        x => x.ToComponentId
         )
-    {
-    }
+{
 }

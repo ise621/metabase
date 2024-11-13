@@ -9,18 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentConcretizationOfEdge
-    : Edge<Component, ComponentByIdDataLoader>
-{
-    private readonly ComponentConcretizationAndGeneralization _association;
-
-    public ComponentConcretizationOfEdge(
-        ComponentConcretizationAndGeneralization association
+public sealed class ComponentConcretizationOfEdge(
+    ComponentConcretizationAndGeneralization association
     )
-        : base(association.GeneralComponentId)
-    {
-        _association = association;
-    }
+        : Edge<Component, ComponentByIdDataLoader>(association.GeneralComponentId)
+{
+    private readonly ComponentConcretizationAndGeneralization _association = association;
 
     [UseUserManager]
     public Task<bool> CanCurrentUserRemoveEdgeAsync(

@@ -3,22 +3,15 @@ using Enum = System.Enum;
 
 namespace Metabase.GraphQl;
 
-public abstract class UserErrorBase<TUserErrorCode>
+public abstract class UserErrorBase<TUserErrorCode>(
+    TUserErrorCode code,
+    string message,
+    IReadOnlyList<string> path
+    )
     : IUserError
     where TUserErrorCode : struct, Enum
 {
-    protected UserErrorBase(
-        TUserErrorCode code,
-        string message,
-        IReadOnlyList<string> path
-    )
-    {
-        Code = code;
-        Message = message;
-        Path = path;
-    }
-
-    public TUserErrorCode Code { get; }
-    public string Message { get; }
-    public IReadOnlyList<string> Path { get; }
+    public TUserErrorCode Code { get; } = code;
+    public string Message { get; } = message;
+    public IReadOnlyList<string> Path { get; } = path;
 }

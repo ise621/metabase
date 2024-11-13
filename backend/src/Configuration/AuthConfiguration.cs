@@ -67,8 +67,13 @@ public abstract class AuthConfiguration
         string password
     )
     {
-        if (string.IsNullOrEmpty(password)) throw new ArgumentException($"Empty password for certificate {fileName}.");
-        var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Metabase.{fileName}")
+        if (string.IsNullOrEmpty(password))
+        {
+            throw new ArgumentException($"Empty password for certificate {fileName}.");
+        }
+
+        var stream =
+            Assembly.GetExecutingAssembly().GetManifestResourceStream($"Metabase.{fileName}")
             ?? throw new ArgumentException($"Missing certificate {fileName}.");
         using var buffer = new MemoryStream();
         stream.CopyTo(buffer);
@@ -179,12 +184,13 @@ public abstract class AuthConfiguration
                              (ManageUserPolicy, ManageUserApiScope)
                          }
                         )
+                {
                     options.AddPolicy(policyName, policy =>
                         {
-                            policy.AuthenticationSchemes = new[]
-                            {
+                            policy.AuthenticationSchemes =
+                            [
                                 OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
-                            };
+                            ];
                             policy.RequireAuthenticatedUser();
                             policy.RequireAssertion(context =>
                                 {
@@ -208,6 +214,7 @@ public abstract class AuthConfiguration
                             );
                         }
                     );
+                }
             }
         );
     }
@@ -230,8 +237,10 @@ public abstract class AuthConfiguration
                 _.MaxConcurrency = 10
             );
             if (environment.IsEnvironment(Program.TestEnvironment))
+            {
                 // See https://gitter.im/MassTransit/MassTransit?at=5db2d058f6db7f4f856fb404
                 options.SchedulerName = Guid.NewGuid().ToString();
+            }
         });
         // Register the Quartz.NET service and configure it to block shutdown until jobs are complete.
         services.AddQuartzHostedService(_ =>

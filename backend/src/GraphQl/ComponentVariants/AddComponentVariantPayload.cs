@@ -25,7 +25,7 @@ public sealed class AddComponentVariantPayload
     public AddComponentVariantPayload(
         AddComponentVariantError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

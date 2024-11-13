@@ -7,22 +7,17 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Users;
 
-public sealed class UserDevelopedMethodConnection
-    : ForkingConnection<User, UserMethodDeveloper, PendingUserDevelopedMethodsByUserIdDataLoader,
-        UserDevelopedMethodsByUserIdDataLoader, UserDevelopedMethodEdge>
-{
-    public UserDevelopedMethodConnection(
-        User subject,
-        bool pending
+public sealed class UserDevelopedMethodConnection(
+    User subject,
+    bool pending
     )
-        : base(
-            subject,
-            pending,
-            x => new UserDevelopedMethodEdge(x)
+        : ForkingConnection<User, UserMethodDeveloper, PendingUserDevelopedMethodsByUserIdDataLoader,
+        UserDevelopedMethodsByUserIdDataLoader, UserDevelopedMethodEdge>(
+        subject,
+        pending,
+        x => new UserDevelopedMethodEdge(x)
         )
-    {
-    }
-
+{
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(
         ClaimsPrincipal claimsPrincipal,

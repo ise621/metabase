@@ -2,14 +2,9 @@ using Metabase.Data;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionManagedInstitutionEdge
-{
-    public InstitutionManagedInstitutionEdge(
-        Institution node
+public sealed class InstitutionManagedInstitutionEdge(
+    Institution node
     )
-    {
-        Node = node;
-    }
-
-    public Institution Node { get; }
+{
+    public Institution Node { get; } = node;
 }

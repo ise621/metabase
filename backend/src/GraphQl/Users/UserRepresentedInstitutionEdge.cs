@@ -4,16 +4,10 @@ using Metabase.GraphQl.Institutions;
 
 namespace Metabase.GraphQl.Users;
 
-public sealed class UserRepresentedInstitutionEdge
-    : Edge<Institution, InstitutionByIdDataLoader>
-{
-    public UserRepresentedInstitutionEdge(
-        InstitutionRepresentative association
+public sealed class UserRepresentedInstitutionEdge(
+    InstitutionRepresentative association
     )
-        : base(association.InstitutionId)
-    {
-        Role = association.Role;
-    }
-
-    public InstitutionRepresentativeRole Role { get; }
+        : Edge<Institution, InstitutionByIdDataLoader>(association.InstitutionId)
+{
+    public InstitutionRepresentativeRole Role { get; } = association.Role;
 }

@@ -9,24 +9,17 @@ using Metabase.Data;
 
 namespace Metabase.GraphQl.Entities;
 
-public abstract class EntityByIdDataLoader<TEntity>
-    : BatchDataLoader<Guid, TEntity?>
+public abstract class EntityByIdDataLoader<TEntity>(
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options,
+    IDbContextFactory<ApplicationDbContext> dbContextFactory,
+    Func<ApplicationDbContext, DbSet<TEntity>> getQueryable
+    )
+    : BatchDataLoader<Guid, TEntity?>(batchScheduler, options)
     where TEntity : class, IEntity
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-    private readonly Func<ApplicationDbContext, DbSet<TEntity>> _getQueryable;
-
-    protected EntityByIdDataLoader(
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions options,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory,
-        Func<ApplicationDbContext, DbSet<TEntity>> getQueryable
-    )
-        : base(batchScheduler, options)
-    {
-        _dbContextFactory = dbContextFactory;
-        _getQueryable = getQueryable;
-    }
+    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory = dbContextFactory;
+    private readonly Func<ApplicationDbContext, DbSet<TEntity>> _getQueryable = getQueryable;
 
     protected override async Task<IReadOnlyDictionary<Guid, TEntity?>> LoadBatchAsync(
         IReadOnlyList<Guid> keys,

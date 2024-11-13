@@ -93,18 +93,13 @@ public static partial class Log
 
 // Inspired by https://chillicream.com/blog/2019/03/19/logging-with-hotchocolate
 // and https://chillicream.com/blog/2021/01/10/hot-chocolate-logging
-public sealed class LoggingDiagnosticEventListener
-    : ExecutionDiagnosticEventListener
+public sealed class LoggingDiagnosticEventListener(
+    ILogger<LoggingDiagnosticEventListener> logger
+    )
+        : ExecutionDiagnosticEventListener
 {
     private static Stopwatch s_queryTimer = null!;
-    private readonly ILogger<LoggingDiagnosticEventListener> _logger;
-
-    public LoggingDiagnosticEventListener(
-        ILogger<LoggingDiagnosticEventListener> logger
-    )
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<LoggingDiagnosticEventListener> _logger = logger;
 
     // this diagnostic event is raised when a request is executed ...
     public override IDisposable ExecuteRequest(IRequestContext context)
@@ -161,7 +156,9 @@ public sealed class LoggingDiagnosticEventListener
     )
     {
         foreach (var error in errors)
+        {
             _logger.FailedValidation(error.Exception, context.Request.Document, ConvertErrorToString(error));
+        }
     }
 
     private static string ConvertErrorToString(

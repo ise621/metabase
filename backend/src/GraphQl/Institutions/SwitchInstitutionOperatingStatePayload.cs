@@ -22,7 +22,7 @@ public sealed class SwitchInstitutionOperatingStatePayload
     public SwitchInstitutionOperatingStatePayload(
         SwitchInstitutionOperatingStateError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

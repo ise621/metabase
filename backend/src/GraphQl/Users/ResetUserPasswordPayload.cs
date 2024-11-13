@@ -18,7 +18,7 @@ public sealed class ResetUserPasswordPayload
     public ResetUserPasswordPayload(
         ResetUserPasswordError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

@@ -117,7 +117,7 @@ To debug the
 [ASP.NET Core web application](https://learn.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core),
 attach Visual Studio Code to the `metabase-backend-*` container,
 [press `Ctrl+Shift+P`, select "Debug: Attach to a .NET 5+ or .NET Core process"](https://code.visualstudio.com/docs/csharp/debugging#_attaching-to-a-process),
-and choose the process `/app/src/bin/Debug/net8.0/Metabase run` titled
+and choose the process `/app/src/bin/Debug/net9.0/Metabase run` titled
 `Metabase` or alternatively navigate to the "Run and Debug" pane
 (`Ctrl+Shift+D`), select the launch profile ".NET Core Attach", press the
 "Start Debugging" icon (`F5`), and select the same process as above. Then, for
@@ -141,7 +141,7 @@ and
 that attempt to solve that. Those extensions don't work in our case though, as
 they try to restart `dotnet watch` themselves, instead of waiting for the
 polling file watcher of `dotnet watch` to restart
-`/app/src/bin/Debug/net8.0/Metabase run` and attach to that process.
+`/app/src/bin/Debug/net9.0/Metabase run` and attach to that process.
 
 ## Deployment
 

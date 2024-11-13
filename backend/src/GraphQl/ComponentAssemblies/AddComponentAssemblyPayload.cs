@@ -24,7 +24,7 @@ public sealed class AddComponentAssemblyPayload
     public AddComponentAssemblyPayload(
         AddComponentAssemblyError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

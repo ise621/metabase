@@ -5,20 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentByIdDataLoader
-    : EntityByIdDataLoader<Component>
-{
-    public ComponentByIdDataLoader(
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions options,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory
+public sealed class ComponentByIdDataLoader(
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options,
+    IDbContextFactory<ApplicationDbContext> dbContextFactory
     )
-        : base(
-            batchScheduler,
-            options,
-            dbContextFactory,
-            dbContext => dbContext.Components
+        : EntityByIdDataLoader<Component>(
+        batchScheduler,
+        options,
+        dbContextFactory,
+        dbContext => dbContext.Components
         )
-    {
-    }
+{
 }

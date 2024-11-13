@@ -23,6 +23,7 @@ public static class CommonComponentAuthorization
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
         foreach (var manufacturerId in manufacturerIds)
+        {
             if (await CommonAuthorization.IsAtLeastAssistantOfVerifiedInstitution(
                     user,
                     manufacturerId,
@@ -37,7 +38,10 @@ public static class CommonComponentAuthorization
                     cancellationToken
                 ).ConfigureAwait(false)
                )
+            {
                 return true;
+            }
+        }
 
         return false;
     }

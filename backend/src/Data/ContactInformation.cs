@@ -6,26 +6,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Metabase.Data;
 
 [Owned]
-public sealed class ContactInformation
-{
-    public ContactInformation(
-        string? phoneNumber,
-        string? postalAddress,
-        string? emailAddress,
-        Uri? websiteLocator
+public sealed class ContactInformation(
+    string? phoneNumber,
+    string? postalAddress,
+    string? emailAddress,
+    Uri? websiteLocator
     )
-    {
-        PhoneNumber = phoneNumber;
-        PostalAddress = postalAddress;
-        EmailAddress = emailAddress;
-        WebsiteLocator = websiteLocator;
-    }
+{
+    [Phone] public string? PhoneNumber { get; private set; } = phoneNumber;
 
-    [Phone] public string? PhoneNumber { get; private set; }
+    [MinLength(1)] public string? PostalAddress { get; private set; } = postalAddress;
 
-    [MinLength(1)] public string? PostalAddress { get; private set; }
+    [EmailAddress] public string? EmailAddress { get; private set; } = emailAddress;
 
-    [EmailAddress] public string? EmailAddress { get; private set; }
-
-    [Url] public Uri? WebsiteLocator { get; private set; }
+    [Url] public Uri? WebsiteLocator { get; private set; } = websiteLocator;
 }

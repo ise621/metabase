@@ -25,7 +25,7 @@ public sealed class AddUserMethodDeveloperPayload
     public AddUserMethodDeveloperPayload(
         AddUserMethodDeveloperError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

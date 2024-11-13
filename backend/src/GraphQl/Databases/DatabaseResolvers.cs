@@ -71,157 +71,150 @@ public static partial class Log
     );
 }
 
-public sealed class DatabaseResolvers
+public sealed class DatabaseResolvers(
+    AppSettings appSettings,
+    IHttpClientFactory httpClientFactory,
+    ILogger<DatabaseResolvers> logger
+    )
 {
     private const string IgsdbUrl = "https://igsdb-v2.herokuapp.com/graphql/";
     private const string IgsdbStagingUrl = "https://igsdb-v2-staging.herokuapp.com/graphql/";
 
     private static readonly string[] _dataFileNames =
-    {
+    [
         "DataFields.graphql",
         "Data.graphql"
-    };
+    ];
 
     private static readonly string[] _opticalDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "OpticalDataFields.graphql",
         "OpticalData.graphql"
-    };
+    ];
 
     private static readonly string[] _hygrothermalDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "HygrothermalDataFields.graphql",
         "HygrothermalData.graphql"
-    };
+    ];
 
     private static readonly string[] _calorimetricDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "CalorimetricDataFields.graphql",
         "CalorimetricData.graphql"
-    };
+    ];
 
     private static readonly string[] _photovoltaicDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "PhotovoltaicDataFields.graphql",
         "PhotovoltaicData.graphql"
-    };
+    ];
 
     private static readonly string[] _geometricDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "GeometricDataFields.graphql",
         "GeometricData.graphql"
-    };
+    ];
 
     private static readonly string[] _igsdbAllDataFileNames =
-    {
+    [
         "AllDataIgsdb.graphql"
-    };
+    ];
 
     private static readonly string[] _allDataFileNames =
-    {
+    [
         "DataFields.graphql",
         // "PageInfoFields.graphql",
         "AllData.graphql"
-    };
+    ];
 
     private static readonly string[] _igsdbAllOpticalDataFileNames =
-    {
+    [
         "AllOpticalDataIgsdb.graphql"
-    };
+    ];
 
     private static readonly string[] _allOpticalDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "OpticalDataFields.graphql",
         // "PageInfoFields.graphql",
         "AllOpticalData.graphql"
-    };
+    ];
 
     private static readonly string[] _allHygrothermalDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "HygrothermalDataFields.graphql",
         // "PageInfoFields.graphql",
         "AllHygrothermalData.graphql"
-    };
+    ];
 
     private static readonly string[] _allCalorimetricDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "CalorimetricDataFields.graphql",
         // "PageInfoFields.graphql",
         "AllCalorimetricData.graphql"
-    };
+    ];
 
     private static readonly string[] _allPhotovoltaicDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "PhotovoltaicDataFields.graphql",
         // "PageInfoFields.graphql",
         "AllPhotovoltaicData.graphql"
-    };
+    ];
 
     private static readonly string[] _igsdbAllGeometricDataFileNames =
-    {
+    [
         "AllGeometricDataIgsdb.graphql"
-    };
+    ];
 
     private static readonly string[] _allGeometricDataFileNames =
-    {
+    [
         "DataFields.graphql",
         "GeometricDataFields.graphql",
         "AllGeometricData.graphql"
-    };
+    ];
 
     private static readonly string[] _hasDataFileNames =
-    {
+    [
         "HasData.graphql"
-    };
+    ];
 
     private static readonly string[] _hasOpticalDataFileNames =
-    {
+    [
         "HasOpticalData.graphql"
-    };
+    ];
 
     private static readonly string[] _hasCalorimetricDataFileNames =
-    {
+    [
         "HasCalorimetricData.graphql"
-    };
+    ];
 
     private static readonly string[] _hasHygrothermalDataFileNames =
-    {
+    [
         "HasHygrothermalData.graphql"
-    };
+    ];
 
     private static readonly string[] _hasPhotovoltaicDataFileNames =
-    {
+    [
         "HasPhotovoltaicData.graphql"
-    };
+    ];
 
     private static readonly string[] _hasGeometricDataFileNames =
-    {
+    [
         "HasGeometricData.graphql"
-    };
+    ];
 
-    private readonly AppSettings _appSettings;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILogger<DatabaseResolvers> _logger;
-
-    public DatabaseResolvers(
-        AppSettings appSettings,
-        IHttpClientFactory httpClientFactory,
-        ILogger<DatabaseResolvers> logger
-    )
-    {
-        _appSettings = appSettings;
-        _httpClientFactory = httpClientFactory;
-        _logger = logger;
-    }
+    private readonly AppSettings _appSettings = appSettings;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+    private readonly ILogger<DatabaseResolvers> _logger = logger;
 
     private static bool IsIgsdbDatabase(Database database)
     {
@@ -981,8 +974,12 @@ public sealed class DatabaseResolvers
                             $"The GraphQL response received from the database {database.Locator} for the request {JsonSerializer.Serialize(request, QueryingDatabases.SerializerOptions)} reported the error {error.Message}.")
                         .SetPath(error.Path);
                     if (error.Extensions is not null)
+                    {
                         foreach (var (key, value) in error.Extensions)
+                        {
                             errorBuilder.SetExtension(key, value);
+                        }
+                    }
 
                     // TODO Add `error.Locations` to `errorBuilder`.
                     resolverContext.ReportError(errorBuilder.Build());

@@ -9,26 +9,19 @@ using Metabase.Data;
 namespace Metabase.GraphQl;
 
 public abstract class ForkingConnection<TSubject, TAssociation, TSomeAssociationsByAssociateIdDataLoader,
-    TOtherAssociationsByAssociateIdDataLoader, TEdge>
+    TOtherAssociationsByAssociateIdDataLoader, TEdge>(
+    TSubject subject,
+    bool useFirstDataLoader,
+    Func<TAssociation, TEdge> createEdge
+    )
     where TSubject : IEntity
     where TSomeAssociationsByAssociateIdDataLoader : IDataLoader<Guid, TAssociation[]>
     where TOtherAssociationsByAssociateIdDataLoader : IDataLoader<Guid, TAssociation[]>
 {
-    private readonly Func<TAssociation, TEdge> _createEdge;
-    private readonly bool _useFirstDataLoader;
+    private readonly Func<TAssociation, TEdge> _createEdge = createEdge;
+    private readonly bool _useFirstDataLoader = useFirstDataLoader;
 
-    protected ForkingConnection(
-        TSubject subject,
-        bool useFirstDataLoader,
-        Func<TAssociation, TEdge> createEdge
-    )
-    {
-        Subject = subject;
-        _useFirstDataLoader = useFirstDataLoader;
-        _createEdge = createEdge;
-    }
-
-    protected TSubject Subject { get; }
+    protected TSubject Subject { get; } = subject;
 
     public Task<IEnumerable<TEdge>> GetEdgesAsync(
         TSomeAssociationsByAssociateIdDataLoader someDataLoader,

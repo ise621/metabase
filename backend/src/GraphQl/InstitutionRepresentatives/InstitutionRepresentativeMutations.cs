@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
@@ -39,6 +38,7 @@ public sealed class InstitutionRepresentativeMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new AddInstitutionRepresentativePayload(
                 new AddInstitutionRepresentativeError(
                     AddInstitutionRepresentativeErrorCode.UNAUTHORIZED,
@@ -46,6 +46,7 @@ public sealed class InstitutionRepresentativeMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<AddInstitutionRepresentativeError>();
         if (!await context.Institutions.AsQueryable()
@@ -53,28 +54,35 @@ public sealed class InstitutionRepresentativeMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddInstitutionRepresentativeError(
                     AddInstitutionRepresentativeErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(u => u.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddInstitutionRepresentativeError(
                     AddInstitutionRepresentativeErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new AddInstitutionRepresentativePayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new AddInstitutionRepresentativePayload(errors.AsReadOnly());
+        }
 
         if (await context.InstitutionRepresentatives.AsQueryable()
                 .Where(r =>
@@ -84,13 +92,15 @@ public sealed class InstitutionRepresentativeMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             return new AddInstitutionRepresentativePayload(
                 new AddInstitutionRepresentativeError(
                     AddInstitutionRepresentativeErrorCode.DUPLICATE,
                     "Institution representative already exists.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var institutionRepresentative = new InstitutionRepresentative
         {
@@ -123,6 +133,7 @@ public sealed class InstitutionRepresentativeMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveInstitutionRepresentativePayload(
                 new RemoveInstitutionRepresentativeError(
                     RemoveInstitutionRepresentativeErrorCode.UNAUTHORIZED,
@@ -130,6 +141,7 @@ public sealed class InstitutionRepresentativeMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<RemoveInstitutionRepresentativeError>();
         if (!await context.Institutions.AsQueryable()
@@ -137,28 +149,35 @@ public sealed class InstitutionRepresentativeMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveInstitutionRepresentativeError(
                     RemoveInstitutionRepresentativeErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(u => u.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveInstitutionRepresentativeError(
                     RemoveInstitutionRepresentativeErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new RemoveInstitutionRepresentativePayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new RemoveInstitutionRepresentativePayload(errors.AsReadOnly());
+        }
 
         var institutionRepresentative =
             await context.InstitutionRepresentatives.AsQueryable()
@@ -169,13 +188,15 @@ public sealed class InstitutionRepresentativeMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institutionRepresentative is null)
+        {
             return new RemoveInstitutionRepresentativePayload(
                 new RemoveInstitutionRepresentativeError(
                     RemoveInstitutionRepresentativeErrorCode.UNKNOWN_REPRESENTATIVE,
                     "Unknown representative.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (institutionRepresentative.Role == InstitutionRepresentativeRole.OWNER
             && !await ExistsOtherInstitutionOwner(
@@ -185,13 +206,15 @@ public sealed class InstitutionRepresentativeMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveInstitutionRepresentativePayload(
                 new RemoveInstitutionRepresentativeError(
                     RemoveInstitutionRepresentativeErrorCode.LAST_OWNER,
                     "Cannot remove last owner.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         context.InstitutionRepresentatives.Remove(institutionRepresentative);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -216,6 +239,7 @@ public sealed class InstitutionRepresentativeMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new ChangeInstitutionRepresentativeRolePayload(
                 new ChangeInstitutionRepresentativeRoleError(
                     ChangeInstitutionRepresentativeRoleErrorCode.UNAUTHORIZED,
@@ -223,6 +247,7 @@ public sealed class InstitutionRepresentativeMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<ChangeInstitutionRepresentativeRoleError>();
         if (!await context.Institutions.AsQueryable()
@@ -230,28 +255,35 @@ public sealed class InstitutionRepresentativeMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ChangeInstitutionRepresentativeRoleError(
                     ChangeInstitutionRepresentativeRoleErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(u => u.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ChangeInstitutionRepresentativeRoleError(
                     ChangeInstitutionRepresentativeRoleErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new ChangeInstitutionRepresentativeRolePayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new ChangeInstitutionRepresentativeRolePayload(errors.AsReadOnly());
+        }
 
         var institutionRepresentative =
             await context.InstitutionRepresentatives.AsQueryable()
@@ -262,13 +294,15 @@ public sealed class InstitutionRepresentativeMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institutionRepresentative is null)
+        {
             return new ChangeInstitutionRepresentativeRolePayload(
                 new ChangeInstitutionRepresentativeRoleError(
                     ChangeInstitutionRepresentativeRoleErrorCode.UNKNOWN_REPRESENTATIVE,
                     "Unknown representative.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (input.Role != InstitutionRepresentativeRole.OWNER
             && institutionRepresentative.Role == InstitutionRepresentativeRole.OWNER
@@ -279,13 +313,15 @@ public sealed class InstitutionRepresentativeMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new ChangeInstitutionRepresentativeRolePayload(
                 new ChangeInstitutionRepresentativeRoleError(
                     ChangeInstitutionRepresentativeRoleErrorCode.LAST_OWNER,
                     "Cannot downgrade last owner.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         institutionRepresentative.Role = input.Role;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -308,13 +344,15 @@ public sealed class InstitutionRepresentativeMutations
                 userManager
             ).ConfigureAwait(false)
            )
+        {
             return new ConfirmInstitutionRepresentativePayload(
                 new ConfirmInstitutionRepresentativeError(
                     ConfirmInstitutionRepresentativeErrorCode.UNAUTHORIZED,
                     $"You are not authorized to confirm representative relation for user ${input.UserId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
+        }
 
         var errors = new List<ConfirmInstitutionRepresentativeError>();
         if (!await context.Institutions.AsQueryable()
@@ -322,28 +360,35 @@ public sealed class InstitutionRepresentativeMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmInstitutionRepresentativeError(
                     ConfirmInstitutionRepresentativeErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(u => u.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmInstitutionRepresentativeError(
                     ConfirmInstitutionRepresentativeErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new ConfirmInstitutionRepresentativePayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new ConfirmInstitutionRepresentativePayload(errors.AsReadOnly());
+        }
 
         var institutionRepresentative =
             await context.InstitutionRepresentatives.AsQueryable()
@@ -354,13 +399,15 @@ public sealed class InstitutionRepresentativeMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institutionRepresentative is null)
+        {
             return new ConfirmInstitutionRepresentativePayload(
                 new ConfirmInstitutionRepresentativeError(
                     ConfirmInstitutionRepresentativeErrorCode.UNKNOWN_REPRESENTATIVE,
                     "Unknown representative.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         institutionRepresentative.Pending = false;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

@@ -25,34 +25,28 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Metabase.Controllers;
 
-public sealed class AuthorizationController : Controller
+public sealed class AuthorizationController(
+    IOpenIddictApplicationManager applicationManager,
+    IOpenIddictAuthorizationManager authorizationManager,
+    IOpenIddictScopeManager scopeManager,
+    SignInManager<User> signInManager,
+    UserManager<User> userManager) : Controller
 {
-    private readonly IOpenIddictApplicationManager _applicationManager;
-    private readonly IOpenIddictAuthorizationManager _authorizationManager;
-    private readonly IOpenIddictScopeManager _scopeManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
-
-    public AuthorizationController(
-        IOpenIddictApplicationManager applicationManager,
-        IOpenIddictAuthorizationManager authorizationManager,
-        IOpenIddictScopeManager scopeManager,
-        SignInManager<User> signInManager,
-        UserManager<User> userManager)
-    {
-        _applicationManager = applicationManager;
-        _authorizationManager = authorizationManager;
-        _scopeManager = scopeManager;
-        _signInManager = signInManager;
-        _userManager = userManager;
-    }
+    private readonly IOpenIddictApplicationManager _applicationManager = applicationManager;
+    private readonly IOpenIddictAuthorizationManager _authorizationManager = authorizationManager;
+    private readonly IOpenIddictScopeManager _scopeManager = scopeManager;
+    private readonly SignInManager<User> _signInManager = signInManager;
+    private readonly UserManager<User> _userManager = userManager;
 
     private async Task<AuthenticateResult> AuthenticateAsync(
         string scheme
     )
     {
         var result = await HttpContext.AuthenticateAsync(scheme).ConfigureAwait(false);
-        if (result.Principal is not null) HttpContext.User = result.Principal;
+        if (result.Principal is not null)
+        {
+            HttpContext.User = result.Principal;
+        }
 
         return result;
     }
@@ -79,15 +73,20 @@ public sealed class AuthorizationController : Controller
                 .ToListAsync()
                 .ConfigureAwait(false)
         );
-        if (extend is not null) await extend(principal).ConfigureAwait(false);
+        if (extend is not null)
+        {
+            await extend(principal).ConfigureAwait(false);
+        }
 
         // Set claim destinations when the respective scopes are granted.
         // For details see
         // https://documentation.openiddict.com/configuration/claim-destinations.html
         foreach (var claim in principal.Claims)
+        {
             claim.SetDestinations(
                 GetDestinations(claim, principal)
             );
+        }
 
         return principal;
     }
@@ -130,6 +129,7 @@ public sealed class AuthorizationController : Controller
                 ? null
                 : await _userManager.FindByNameAsync(request.Username).ConfigureAwait(false);
             if (user is null)
+            {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -138,6 +138,7 @@ public sealed class AuthorizationController : Controller
                             "The username/password couple is invalid."
                     }),
                     OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            }
 
             // Validate the username/password parameters and ensure the account is not locked out.
             var result = request.Password is null
@@ -145,6 +146,7 @@ public sealed class AuthorizationController : Controller
                 : await _signInManager.CheckPasswordSignInAsync(user, request.Password, true)
                     .ConfigureAwait(false);
             if (result is null || !result.Succeeded)
+            {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -153,6 +155,7 @@ public sealed class AuthorizationController : Controller
                             "The username/password couple is invalid."
                     }),
                     OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            }
 
             // Note: in this sample, the granted scopes match the requested scope
             // but you may want to allow the user to uncheck specific scopes.
@@ -173,6 +176,7 @@ public sealed class AuthorizationController : Controller
             var principal = (await AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)
                 .ConfigureAwait(false)).Principal;
             if (principal is null)
+            {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -181,6 +185,7 @@ public sealed class AuthorizationController : Controller
                             "The token is no longer valid."
                     }),
                     OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            }
 
             // Retrieve the user profile corresponding to the authorization code/refresh token.
             // Note: if you want to automatically invalidate the authorization code/refresh token
@@ -188,6 +193,7 @@ public sealed class AuthorizationController : Controller
             // var user = _signInManager.ValidateSecurityStampAsync(info.Principal);
             var user = await _userManager.GetUserAsync(principal).ConfigureAwait(false);
             if (user is null)
+            {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -196,9 +202,11 @@ public sealed class AuthorizationController : Controller
                             "The token is no longer valid."
                     }),
                     OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            }
 
             // Ensure the user is still allowed to sign in.
             if (!await _signInManager.CanSignInAsync(user).ConfigureAwait(false))
+            {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -207,8 +215,12 @@ public sealed class AuthorizationController : Controller
                             "The user is no longer allowed to sign in."
                     }),
                     OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+            }
 
-            foreach (var claim in principal.Claims) claim.SetDestinations(GetDestinations(claim, principal));
+            foreach (var claim in principal.Claims)
+            {
+                claim.SetDestinations(GetDestinations(claim, principal));
+            }
 
             // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
             return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -233,7 +245,9 @@ public sealed class AuthorizationController : Controller
                 yield return Destinations.AccessToken;
 
                 if (principal.HasScope(Scopes.Profile))
+                {
                     yield return Destinations.IdentityToken;
+                }
 
                 yield break;
 
@@ -241,7 +255,9 @@ public sealed class AuthorizationController : Controller
                 yield return Destinations.AccessToken;
 
                 if (principal.HasScope(Scopes.Email))
+                {
                     yield return Destinations.IdentityToken;
+                }
 
                 yield break;
 
@@ -249,7 +265,9 @@ public sealed class AuthorizationController : Controller
                 yield return Destinations.AccessToken;
 
                 if (principal.HasScope(Scopes.Roles))
+                {
                     yield return Destinations.IdentityToken;
+                }
 
                 yield break;
 
@@ -297,6 +315,7 @@ public sealed class AuthorizationController : Controller
             // If the client application requested promptless authentication,
             // return an error indicating that the user is not logged in.
             if (request.HasPrompt(Prompts.None))
+            {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {
@@ -306,6 +325,7 @@ public sealed class AuthorizationController : Controller
                     }),
                     OpenIddictServerAspNetCoreDefaults.AuthenticationScheme
                 );
+            }
 
             return Challenge(
                 new AuthenticationProperties
@@ -478,6 +498,7 @@ public sealed class AuthorizationController : Controller
         // force it to return a valid response without the external authorization.
         if (authorizations.Count == 0 && await _applicationManager
                 .HasConsentTypeAsync(application, ConsentTypes.External).ConfigureAwait(false))
+        {
             return Forbid(
                 new AuthenticationProperties(new Dictionary<string, string?>
                 {
@@ -486,6 +507,7 @@ public sealed class AuthorizationController : Controller
                         "The logged in user is not allowed to access this client application."
                 }),
                 OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+        }
 
         // Note: in this sample, the granted scopes match the requested scope
         // but you may want to allow the user to uncheck specific scopes.
@@ -533,7 +555,10 @@ public sealed class AuthorizationController : Controller
 
         // If the user code was not specified in the query string (e.g as part of the verification_uri_complete),
         // render a form to ask the user to enter the user code manually (non-digit chars are automatically ignored).
-        if (string.IsNullOrEmpty(request.UserCode)) return View(new VerifyViewModel());
+        if (string.IsNullOrEmpty(request.UserCode))
+        {
+            return View(new VerifyViewModel());
+        }
 
         // Retrieve the claims principal associated with the user code.
         var result = await AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)
@@ -675,21 +700,19 @@ public static class AsyncEnumerableExtensions
         {
             var list = new List<T>();
 
-            await foreach (var element in source) list.Add(element);
+            await foreach (var element in source)
+            {
+                list.Add(element);
+            }
 
             return list;
         }
     }
 }
 
-public sealed class FormValueRequiredAttribute : ActionMethodSelectorAttribute
+public sealed class FormValueRequiredAttribute(string name) : ActionMethodSelectorAttribute
 {
-    private readonly string _name;
-
-    public FormValueRequiredAttribute(string name)
-    {
-        _name = name;
-    }
+    private readonly string _name = name;
 
     public override bool IsValidForRequest(RouteContext routeContext, ActionDescriptor action)
     {
@@ -697,13 +720,20 @@ public sealed class FormValueRequiredAttribute : ActionMethodSelectorAttribute
             string.Equals(routeContext.HttpContext.Request.Method, "HEAD", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(routeContext.HttpContext.Request.Method, "DELETE", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(routeContext.HttpContext.Request.Method, "TRACE", StringComparison.OrdinalIgnoreCase))
+        {
             return false;
+        }
 
-        if (string.IsNullOrEmpty(routeContext.HttpContext.Request.ContentType)) return false;
+        if (string.IsNullOrEmpty(routeContext.HttpContext.Request.ContentType))
+        {
+            return false;
+        }
 
         if (!routeContext.HttpContext.Request.ContentType.StartsWith("application/x-www-form-urlencoded",
                 StringComparison.OrdinalIgnoreCase))
+        {
             return false;
+        }
 
         return !string.IsNullOrEmpty(routeContext.HttpContext.Request.Form[_name]);
     }

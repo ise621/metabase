@@ -25,7 +25,7 @@ public sealed class ConfirmInstitutionRepresentativePayload
     public ConfirmInstitutionRepresentativePayload(
         ConfirmInstitutionRepresentativeError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

@@ -37,6 +37,7 @@ public sealed class ComponentMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new CreateComponentPayload(
                 new CreateComponentError(
                     CreateComponentErrorCode.UNAUTHORIZED,
@@ -44,6 +45,7 @@ public sealed class ComponentMutations
                     [nameof(input), nameof(input.ManufacturerId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .AnyAsync(
@@ -52,6 +54,7 @@ public sealed class ComponentMutations
                 )
                 .ConfigureAwait(false)
            )
+        {
             return new CreateComponentPayload(
                 new CreateComponentError(
                     CreateComponentErrorCode.UNKNOWN_MANUFACTURER,
@@ -59,6 +62,7 @@ public sealed class ComponentMutations
                     [nameof(input), nameof(input.ManufacturerId).FirstCharToLower()]
                 )
             );
+        }
 
         if (input.PrimeSurface?.Reference?.Standard is not null
             && input.PrimeSurface?.Reference?.Publication is not null)
@@ -141,6 +145,7 @@ public sealed class ComponentMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new UpdateComponentPayload(
                 new UpdateComponentError(
                     UpdateComponentErrorCode.UNAUTHORIZED,
@@ -148,6 +153,7 @@ public sealed class ComponentMutations
                     []
                 )
             );
+        }
 
         var component =
             await context.Components.AsQueryable()
@@ -155,6 +161,7 @@ public sealed class ComponentMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (component is null)
+        {
             return new UpdateComponentPayload(
                 new UpdateComponentError(
                     UpdateComponentErrorCode.UNKNOWN_COMPONENT,
@@ -162,6 +169,7 @@ public sealed class ComponentMutations
                     [nameof(input), nameof(input.ComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         component.Update(
             input.Name,

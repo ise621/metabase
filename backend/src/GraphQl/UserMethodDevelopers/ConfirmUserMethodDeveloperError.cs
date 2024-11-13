@@ -2,15 +2,11 @@ using System.Collections.Generic;
 
 namespace Metabase.GraphQl.UserMethodDevelopers;
 
-public sealed class ConfirmUserMethodDeveloperError
-    : UserErrorBase<ConfirmUserMethodDeveloperErrorCode>
-{
-    public ConfirmUserMethodDeveloperError(
-        ConfirmUserMethodDeveloperErrorCode code,
-        string message,
-        IReadOnlyList<string> path
+public sealed class ConfirmUserMethodDeveloperError(
+    ConfirmUserMethodDeveloperErrorCode code,
+    string message,
+    IReadOnlyList<string> path
     )
-        : base(code, message, path)
-    {
-    }
+        : UserErrorBase<ConfirmUserMethodDeveloperErrorCode>(code, message, path)
+{
 }

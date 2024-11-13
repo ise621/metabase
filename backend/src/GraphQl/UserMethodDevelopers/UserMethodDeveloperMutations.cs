@@ -38,6 +38,7 @@ public sealed class UserMethodDeveloperMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new AddUserMethodDeveloperPayload(
                 new AddUserMethodDeveloperError(
                     AddUserMethodDeveloperErrorCode.UNAUTHORIZED,
@@ -45,6 +46,7 @@ public sealed class UserMethodDeveloperMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<AddUserMethodDeveloperError>();
         if (!await context.Methods.AsQueryable()
@@ -52,28 +54,35 @@ public sealed class UserMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddUserMethodDeveloperError(
                     AddUserMethodDeveloperErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(i => i.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddUserMethodDeveloperError(
                     AddUserMethodDeveloperErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new AddUserMethodDeveloperPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new AddUserMethodDeveloperPayload(errors.AsReadOnly());
+        }
 
         if (await context.UserMethodDevelopers.AsQueryable()
                 .Where(m =>
@@ -83,13 +92,15 @@ public sealed class UserMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             return new AddUserMethodDeveloperPayload(
                 new AddUserMethodDeveloperError(
                     AddUserMethodDeveloperErrorCode.DUPLICATE,
                     "User method developer already exists.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var userMethodDeveloper = new UserMethodDeveloper
         {
@@ -119,6 +130,7 @@ public sealed class UserMethodDeveloperMutations
                 userManager
             ).ConfigureAwait(false)
            )
+        {
             return new ConfirmUserMethodDeveloperPayload(
                 new ConfirmUserMethodDeveloperError(
                     ConfirmUserMethodDeveloperErrorCode.UNAUTHORIZED,
@@ -126,6 +138,7 @@ public sealed class UserMethodDeveloperMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<ConfirmUserMethodDeveloperError>();
         if (!await context.Methods.AsQueryable()
@@ -133,28 +146,35 @@ public sealed class UserMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmUserMethodDeveloperError(
                     ConfirmUserMethodDeveloperErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(i => i.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmUserMethodDeveloperError(
                     ConfirmUserMethodDeveloperErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new ConfirmUserMethodDeveloperPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new ConfirmUserMethodDeveloperPayload(errors.AsReadOnly());
+        }
 
         var userMethodDeveloper =
             await context.UserMethodDevelopers.AsQueryable()
@@ -165,13 +185,15 @@ public sealed class UserMethodDeveloperMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (userMethodDeveloper is null)
+        {
             return new ConfirmUserMethodDeveloperPayload(
                 new ConfirmUserMethodDeveloperError(
                     ConfirmUserMethodDeveloperErrorCode.UNKNOWN_DEVELOPER,
                     "Unknown developer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         userMethodDeveloper.Pending = false;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -196,6 +218,7 @@ public sealed class UserMethodDeveloperMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveUserMethodDeveloperPayload(
                 new RemoveUserMethodDeveloperError(
                     RemoveUserMethodDeveloperErrorCode.UNAUTHORIZED,
@@ -203,6 +226,7 @@ public sealed class UserMethodDeveloperMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<RemoveUserMethodDeveloperError>();
         if (!await context.Methods.AsQueryable()
@@ -210,28 +234,35 @@ public sealed class UserMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveUserMethodDeveloperError(
                     RemoveUserMethodDeveloperErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Users.AsQueryable()
                 .Where(i => i.Id == input.UserId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveUserMethodDeveloperError(
                     RemoveUserMethodDeveloperErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new RemoveUserMethodDeveloperPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new RemoveUserMethodDeveloperPayload(errors.AsReadOnly());
+        }
 
         var userMethodDeveloper =
             await context.UserMethodDevelopers.AsQueryable()
@@ -242,13 +273,15 @@ public sealed class UserMethodDeveloperMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (userMethodDeveloper is null)
+        {
             return new RemoveUserMethodDeveloperPayload(
                 new RemoveUserMethodDeveloperError(
                     RemoveUserMethodDeveloperErrorCode.UNKNOWN_DEVELOPER,
                     "Unknown developer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         context.UserMethodDevelopers.Remove(userMethodDeveloper);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

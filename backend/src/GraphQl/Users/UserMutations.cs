@@ -38,8 +38,10 @@ public sealed class UserMutations
     {
         var httpContext = httpContextAccessor.HttpContext;
         if (httpContext is null)
+        {
             throw new AntiforgeryValidationException(
                 "Cannot access the HTTP context to validate the antiforgery token.");
+        }
 
         await antiforgeryService.ValidateRequestAsync(httpContext).ConfigureAwait(false);
     }
@@ -62,13 +64,15 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.FindByEmailAsync(input.Email).ConfigureAwait(false);
         if (user is null)
+        {
             return new ConfirmUserEmailPayload(
                 new ConfirmUserEmailError(
                     ConfirmUserEmailErrorCode.UNKNOWN_USER,
                     $"Failed to load user with email address {input.Email}.",
-                    new[] { nameof(input), nameof(input.Email).FirstCharToLower() }
+                    [nameof(input), nameof(input.Email).FirstCharToLower()]
                 )
             );
+        }
 
         var confirmationToken = DecodeCode(input.ConfirmationCode);
         var identityResult = await userManager.ConfirmEmailAsync(user, confirmationToken).ConfigureAwait(false);
@@ -76,6 +80,7 @@ public sealed class UserMutations
         {
             var errors = new List<ConfirmUserEmailError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L140
                     error.Code switch
@@ -84,16 +89,17 @@ public sealed class UserMutations
                             new ConfirmUserEmailError(
                                 ConfirmUserEmailErrorCode.INVALID_CONFIRMATION_CODE,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.ConfirmationCode).FirstCharToLower() }
+                                [nameof(input), nameof(input.ConfirmationCode).FirstCharToLower()]
                             ),
                         _ =>
                             new ConfirmUserEmailError(
                                 ConfirmUserEmailErrorCode.UNKNOWN,
                                 error.Description,
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new ConfirmUserEmailPayload(errors);
         }
@@ -116,13 +122,15 @@ public sealed class UserMutations
         // TODO This public endpoint can be used to test whether there is a user for the given email address. Is this a problem? In other endpoints like `ResetUserPasswordAsync` do not do that on purpose. Why exactly?
         var user = await userManager.FindByEmailAsync(input.CurrentEmail).ConfigureAwait(false);
         if (user is null)
+        {
             return new ConfirmUserEmailChangePayload(
                 new ConfirmUserEmailChangeError(
                     ConfirmUserEmailChangeErrorCode.UNKNOWN_USER,
                     $"Failed to load user with email address {input.CurrentEmail}.",
-                    new[] { nameof(input), nameof(input.CurrentEmail).FirstCharToLower() }
+                    [nameof(input), nameof(input.CurrentEmail).FirstCharToLower()]
                 )
             );
+        }
 
         var changeEmailIdentityResult =
             await userManager.ChangeEmailAsync(
@@ -138,6 +146,7 @@ public sealed class UserMutations
         {
             var errors = new List<ConfirmUserEmailChangeError>();
             foreach (var error in changeEmailIdentityResult.Errors)
+            {
                 errors.Add(
                     // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L140
                     error.Code switch
@@ -146,26 +155,29 @@ public sealed class UserMutations
                             new ConfirmUserEmailChangeError(
                                 ConfirmUserEmailChangeErrorCode.DUPLICATE_EMAIL,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.NewEmail).FirstCharToLower() }
+                                [nameof(input), nameof(input.NewEmail).FirstCharToLower()]
                             ),
                         "InvalidToken" =>
                             new ConfirmUserEmailChangeError(
                                 ConfirmUserEmailChangeErrorCode.INVALID_CONFIRMATION_CODE,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.ConfirmationCode).FirstCharToLower() }
+                                [nameof(input), nameof(input.ConfirmationCode).FirstCharToLower()]
                             ),
                         _ =>
                             new ConfirmUserEmailChangeError(
                                 ConfirmUserEmailChangeErrorCode.UNKNOWN,
                                 error.Description,
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             foreach (var error in setUserNameIdentityResult.Errors)
+            {
                 // Ignore `*UserName` errors that have corresponding `*Email` errors because we use `Email` as `UserName`.
                 if (error.Code != "DuplicateUserName")
+                {
                     errors.Add(
                         // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L140
                         error.Code switch
@@ -174,10 +186,12 @@ public sealed class UserMutations
                                 new ConfirmUserEmailChangeError(
                                     ConfirmUserEmailChangeErrorCode.UNKNOWN,
                                     error.Description,
-                                    new[] { nameof(input) }
+                                    [nameof(input)]
                                 )
                         }
                     );
+                }
+            }
 
             return new ConfirmUserEmailChangePayload(errors);
         }
@@ -206,42 +220,50 @@ public sealed class UserMutations
         ).ConfigureAwait(false);
         // https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.signinresult?view=aspnetcore-5.0
         if (signInResult.IsLockedOut)
+        {
             return new LoginUserPayload(
                 new LoginUserError(
                     LoginUserErrorCode.LOCKED_OUT,
                     "User is locked out.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (signInResult.IsNotAllowed)
+        {
             return new LoginUserPayload(
                 new LoginUserError(
                     LoginUserErrorCode.NOT_ALLOWED,
                     "User is not allowed to login.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (!signInResult.Succeeded && !signInResult.RequiresTwoFactor)
+        {
             return new LoginUserPayload(
                 new LoginUserError(
                     LoginUserErrorCode.INVALID,
                     "Invalid login attempt.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         // TODO Only load the user if requested in the GraphQl query. Use resolver in payload and just pass email address.
         var user = await userManager.FindByEmailAsync(input.Email).ConfigureAwait(false);
         if (user is null)
+        {
             return new LoginUserPayload(
                 new LoginUserError(
                     LoginUserErrorCode.UNKNOWN,
                     "Failed to fetch user.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         // We could set
         // HttpContext.User = await _signInManager.CreateUserPrincipalAsync(user);
@@ -250,7 +272,10 @@ public sealed class UserMutations
         // whereas the antiforgery controller does not making the latter
         // more secure because the antiforgery token should only be
         // requestable from the same domain.
-        if (signInResult.RequiresTwoFactor) return new LoginUserPayload(user, true);
+        if (signInResult.RequiresTwoFactor)
+        {
+            return new LoginUserPayload(user, true);
+        }
 
         return new LoginUserPayload(user, false);
     }
@@ -268,6 +293,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await signInManager.GetTwoFactorAuthenticationUserAsync().ConfigureAwait(false);
         if (user is null)
+        {
             return new LoginUserWithTwoFactorCodePayload(
                 new LoginUserWithTwoFactorCodeError(
                     LoginUserWithTwoFactorCodeErrorCode.UNKNOWN_USER,
@@ -275,6 +301,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var authenticatorCode =
             input.AuthenticatorCode
@@ -287,31 +314,37 @@ public sealed class UserMutations
                 input.RememberMachine
             ).ConfigureAwait(false);
         if (signInResult.IsLockedOut)
+        {
             return new LoginUserWithTwoFactorCodePayload(
                 new LoginUserWithTwoFactorCodeError(
                     LoginUserWithTwoFactorCodeErrorCode.LOCKED_OUT,
                     "User is locked out.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (signInResult.IsNotAllowed)
+        {
             return new LoginUserWithTwoFactorCodePayload(
                 new LoginUserWithTwoFactorCodeError(
                     LoginUserWithTwoFactorCodeErrorCode.NOT_ALLOWED,
                     "User is not allowed to login.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (!signInResult.Succeeded)
+        {
             return new LoginUserWithTwoFactorCodePayload(
                 new LoginUserWithTwoFactorCodeError(
                     LoginUserWithTwoFactorCodeErrorCode.INVALID_AUTHENTICATOR_CODE,
                     "Invalid authenticator code.",
-                    new[] { nameof(input), nameof(input.AuthenticatorCode).FirstCharToLower() }
+                    [nameof(input), nameof(input.AuthenticatorCode).FirstCharToLower()]
                 )
             );
+        }
 
         return new LoginUserWithTwoFactorCodePayload(user);
     }
@@ -329,6 +362,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await signInManager.GetTwoFactorAuthenticationUserAsync().ConfigureAwait(false);
         if (user is null)
+        {
             return new LoginUserWithRecoveryCodePayload(
                 new LoginUserWithRecoveryCodeError(
                     LoginUserWithRecoveryCodeErrorCode.UNKNOWN_USER,
@@ -336,6 +370,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var recoveryCode =
             input.RecoveryCode
@@ -345,31 +380,37 @@ public sealed class UserMutations
                 recoveryCode
             ).ConfigureAwait(false);
         if (signInResult.IsLockedOut)
+        {
             return new LoginUserWithRecoveryCodePayload(
                 new LoginUserWithRecoveryCodeError(
                     LoginUserWithRecoveryCodeErrorCode.LOCKED_OUT,
                     "User is locked out.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (signInResult.IsNotAllowed)
+        {
             return new LoginUserWithRecoveryCodePayload(
                 new LoginUserWithRecoveryCodeError(
                     LoginUserWithRecoveryCodeErrorCode.NOT_ALLOWED,
                     "User is not allowed to login.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (!signInResult.Succeeded)
+        {
             return new LoginUserWithRecoveryCodePayload(
                 new LoginUserWithRecoveryCodeError(
                     LoginUserWithRecoveryCodeErrorCode.INVALID_RECOVERY_CODE,
                     "Invalid recovery code.",
-                    new[] { nameof(input), nameof(input.RecoveryCode).FirstCharToLower() }
+                    [nameof(input), nameof(input.RecoveryCode).FirstCharToLower()]
                 )
             );
+        }
 
         return new LoginUserWithRecoveryCodePayload(user);
     }
@@ -394,13 +435,15 @@ public sealed class UserMutations
             null
         );
         if (input.Password != input.PasswordConfirmation)
+        {
             return new RegisterUserPayload(
                 new RegisterUserError(
                     RegisterUserErrorCode.PASSWORD_CONFIRMATION_MISMATCH,
                     "Password and confirmation password do not match.",
-                    new[] { nameof(input), nameof(input.PasswordConfirmation).FirstCharToLower() }
+                    [nameof(input), nameof(input.PasswordConfirmation).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult =
             await userManager.CreateAsync(
@@ -411,9 +454,11 @@ public sealed class UserMutations
         {
             var errors = new List<RegisterUserError>();
             foreach (var error in identityResult.Errors)
+            {
                 // Ignore `*UserName` errors that have corresponding `*Email` errors because we use `Email` as `UserName`.
                 if (error.Code != "DuplicateUserName"
                     && error.Code != "InvalidUserName")
+                {
                     errors.Add(
                         // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L120
                         error.Code switch
@@ -422,58 +467,60 @@ public sealed class UserMutations
                                 new RegisterUserError(
                                     RegisterUserErrorCode.DUPLICATE_EMAIL,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Email).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Email).FirstCharToLower()]
                                 ),
                             "InvalidEmail" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.INVALID_EMAIL,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Email).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Email).FirstCharToLower()]
                                 ),
                             "PasswordRequiresDigit" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.PASSWORD_REQUIRES_DIGIT,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordRequiresLower" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.PASSWORD_REQUIRES_LOWER,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordRequiresNonAlphanumeric" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.PASSWORD_REQUIRES_NON_ALPHANUMERIC,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordRequiresUpper" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.PASSWORD_REQUIRES_UPPER,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordTooShort" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.PASSWORD_TOO_SHORT,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PropertyTooShort" =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.NULL_OR_EMPTY_EMAIL,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Email).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Email).FirstCharToLower()]
                                 ),
                             _ =>
                                 new RegisterUserError(
                                     RegisterUserErrorCode.UNKNOWN,
                                     $"{error.Description} (error code `{error.Code}`)",
-                                    new[] { nameof(input) }
+                                    [nameof(input)]
                                 )
                         }
                     );
+                }
+            }
 
             return new RegisterUserPayload(errors);
         }
@@ -506,6 +553,7 @@ public sealed class UserMutations
         var user = await userManager.FindByEmailAsync(input.Email).ConfigureAwait(false);
         // Don't reveal that the user does not exist.
         if (user is not null)
+        {
             await SendUserEmailConfirmation(
                 (user.Name, input.Email),
                 await userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false),
@@ -514,6 +562,7 @@ public sealed class UserMutations
                 null,
                 urlEncoder
             ).ConfigureAwait(false);
+        }
 
         return new ResendUserEmailConfirmationPayload();
     }
@@ -563,13 +612,15 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.FindByEmailAsync(input.Email).ConfigureAwait(false);
         if (input.Password != input.PasswordConfirmation)
+        {
             return new ResetUserPasswordPayload(
                 new ResetUserPasswordError(
                     ResetUserPasswordErrorCode.PASSWORD_CONFIRMATION_MISMATCH,
                     "Password and confirmation password do not match.",
-                    new[] { nameof(input), nameof(input.PasswordConfirmation).FirstCharToLower() }
+                    [nameof(input), nameof(input.PasswordConfirmation).FirstCharToLower()]
                 )
             );
+        }
 
         // Don't reveal that the user does not exist
         // TODO As said above, do not reveal that the user does or does not exist. However, right now we reveal whether the user exists or not because errors with the password are only reported when the user exists and not otherwise.
@@ -584,6 +635,7 @@ public sealed class UserMutations
             {
                 var errors = new List<ResetUserPasswordError>();
                 foreach (var error in identityResult.Errors)
+                {
                     errors.Add(
                         // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L120
                         error.Code switch
@@ -592,46 +644,47 @@ public sealed class UserMutations
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.INVALID_RESET_CODE,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.ResetCode).FirstCharToLower() }
+                                    [nameof(input), nameof(input.ResetCode).FirstCharToLower()]
                                 ),
                             "PasswordRequiresDigit" =>
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.PASSWORD_REQUIRES_DIGIT,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordRequiresLower" =>
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.PASSWORD_REQUIRES_LOWER,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordRequiresNonAlphanumeric" =>
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.PASSWORD_REQUIRES_NON_ALPHANUMERIC,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordRequiresUpper" =>
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.PASSWORD_REQUIRES_UPPER,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             "PasswordTooShort" =>
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.PASSWORD_TOO_SHORT,
                                     error.Description,
-                                    new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                    [nameof(input), nameof(input.Password).FirstCharToLower()]
                                 ),
                             _ =>
                                 new ResetUserPasswordError(
                                     ResetUserPasswordErrorCode.UNKNOWN,
                                     $"{error.Description} (error code `{error.Code}`)",
-                                    new[] { nameof(input) }
+                                    [nameof(input)]
                                 )
                         }
                     );
+                }
 
                 return new ResetUserPasswordPayload(errors);
             }
@@ -656,32 +709,37 @@ public sealed class UserMutations
                 userManager
             ).ConfigureAwait(false)
            )
+        {
             return new DeleteUserPayload(
                 new DeleteUserError(
                     DeleteUserErrorCode.UNAUTHORIZED,
                     $"You are not authorized to delete user with identifier {input.UserId}.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
         var user =
             await userManager.Users.SingleOrDefaultAsync(_ =>
                 _.Id == input.UserId
             ).ConfigureAwait(false);
         if (user is null)
+        {
             return new DeleteUserPayload(
                 new DeleteUserError(
                     DeleteUserErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {input.UserId}.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult = await userManager.DeleteAsync(user).ConfigureAwait(false);
         if (!identityResult.Succeeded)
         {
             var errors = new List<DeleteUserError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // TODO Which errors can occur here?
                     error.Code switch
@@ -690,10 +748,11 @@ public sealed class UserMutations
                             new DeleteUserError(
                                 DeleteUserErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new DeleteUserPayload(user, errors);
         }
@@ -736,6 +795,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new ChangeUserPasswordPayload(
                 new ChangeUserPasswordError(
                     ChangeUserPasswordErrorCode.UNKNOWN_USER,
@@ -743,8 +803,10 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (!await userManager.HasPasswordAsync(user).ConfigureAwait(false))
+        {
             return new ChangeUserPasswordPayload(
                 user,
                 new ChangeUserPasswordError(
@@ -753,16 +815,19 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (input.NewPassword != input.NewPasswordConfirmation)
+        {
             return new ChangeUserPasswordPayload(
                 user,
                 new ChangeUserPasswordError(
                     ChangeUserPasswordErrorCode.PASSWORD_CONFIRMATION_MISMATCH,
                     "Password and confirmation password do not match.",
-                    new[] { nameof(input), nameof(input.NewPasswordConfirmation).FirstCharToLower() }
+                    [nameof(input), nameof(input.NewPasswordConfirmation).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult = await userManager.ChangePasswordAsync(user, input.CurrentPassword, input.NewPassword)
             .ConfigureAwait(false);
@@ -770,6 +835,7 @@ public sealed class UserMutations
         {
             var errors = new List<ChangeUserPasswordError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L120
                     error.Code switch
@@ -778,40 +844,41 @@ public sealed class UserMutations
                             new ChangeUserPasswordError(
                                 ChangeUserPasswordErrorCode.PASSWORD_REQUIRES_DIGIT,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.NewPassword).FirstCharToLower() }
+                                [nameof(input), nameof(input.NewPassword).FirstCharToLower()]
                             ),
                         "PasswordRequiresLower" =>
                             new ChangeUserPasswordError(
                                 ChangeUserPasswordErrorCode.PASSWORD_REQUIRES_LOWER,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.NewPassword).FirstCharToLower() }
+                                [nameof(input), nameof(input.NewPassword).FirstCharToLower()]
                             ),
                         "PasswordRequiresNonAlphanumeric" =>
                             new ChangeUserPasswordError(
                                 ChangeUserPasswordErrorCode.PASSWORD_REQUIRES_NON_ALPHANUMERIC,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.NewPassword).FirstCharToLower() }
+                                [nameof(input), nameof(input.NewPassword).FirstCharToLower()]
                             ),
                         "PasswordRequiresUpper" =>
                             new ChangeUserPasswordError(
                                 ChangeUserPasswordErrorCode.PASSWORD_REQUIRES_UPPER,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.NewPassword).FirstCharToLower() }
+                                [nameof(input), nameof(input.NewPassword).FirstCharToLower()]
                             ),
                         "PasswordTooShort" =>
                             new ChangeUserPasswordError(
                                 ChangeUserPasswordErrorCode.PASSWORD_TOO_SHORT,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.NewPassword).FirstCharToLower() }
+                                [nameof(input), nameof(input.NewPassword).FirstCharToLower()]
                             ),
                         _ =>
                             new ChangeUserPasswordError(
                                 ChangeUserPasswordErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new ChangeUserPasswordPayload(user, errors);
         }
@@ -836,6 +903,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new DeletePersonalUserDataPayload(
                 new DeletePersonalUserDataError(
                     DeletePersonalUserDataErrorCode.UNKNOWN_USER,
@@ -843,28 +911,33 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (await userManager.HasPasswordAsync(user).ConfigureAwait(false))
         {
             if (input.Password is null)
+            {
                 return new DeletePersonalUserDataPayload(
                     user,
                     new DeletePersonalUserDataError(
                         DeletePersonalUserDataErrorCode.MISSING_PASSWORD,
                         "Missing password.",
-                        new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                        [nameof(input), nameof(input.Password).FirstCharToLower()]
                     )
                 );
+            }
 
             if (!await userManager.CheckPasswordAsync(user, input.Password).ConfigureAwait(false))
+            {
                 return new DeletePersonalUserDataPayload(
                     user,
                     new DeletePersonalUserDataError(
                         DeletePersonalUserDataErrorCode.INCORRECT_PASSWORD,
                         "Incorrect password.",
-                        new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                        [nameof(input), nameof(input.Password).FirstCharToLower()]
                     )
                 );
+            }
         }
 
         var identityResult = await userManager.DeleteAsync(user).ConfigureAwait(false);
@@ -872,6 +945,7 @@ public sealed class UserMutations
         {
             var errors = new List<DeletePersonalUserDataError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // TODO Which errors can occur here?
                     error.Code switch
@@ -880,10 +954,11 @@ public sealed class UserMutations
                             new DeletePersonalUserDataError(
                                 DeletePersonalUserDataErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new DeletePersonalUserDataPayload(user, errors);
         }
@@ -905,6 +980,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new DisableUserTwoFactorAuthenticationPayload(
                 new DisableUserTwoFactorAuthenticationError(
                     DisableUserTwoFactorAuthenticationErrorCode.UNKNOWN_USER,
@@ -912,9 +988,11 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var disableResult = await userManager.SetTwoFactorEnabledAsync(user, false).ConfigureAwait(false);
         if (!disableResult.Succeeded)
+        {
             return new DisableUserTwoFactorAuthenticationPayload(
                 new DisableUserTwoFactorAuthenticationError(
                     DisableUserTwoFactorAuthenticationErrorCode.UNKNOWN,
@@ -922,6 +1000,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         return new DisableUserTwoFactorAuthenticationPayload(user);
     }
@@ -941,6 +1020,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new ForgetUserTwoFactorAuthenticationClientPayload(
                 new ForgetUserTwoFactorAuthenticationClientError(
                     ForgetUserTwoFactorAuthenticationClientErrorCode.UNKNOWN_USER,
@@ -948,6 +1028,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         await signInManager.ForgetTwoFactorClientAsync().ConfigureAwait(false);
         return new ForgetUserTwoFactorAuthenticationClientPayload(user);
@@ -968,6 +1049,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriPayload(
                 new GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriError(
                     GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriErrorCode.UNKNOWN_USER,
@@ -975,6 +1057,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         return await LoadSharedKeyAndQrCodeUriAsync(userManager, urlEncoder, user).ConfigureAwait(false) switch
         {
@@ -1036,6 +1119,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new EnableUserTwoFactorAuthenticatorPayload(
                 new EnableUserTwoFactorAuthenticatorError(
                     EnableUserTwoFactorAuthenticatorErrorCode.UNKNOWN_USER,
@@ -1043,6 +1127,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var verificationToken =
             input.VerificationCode
@@ -1056,6 +1141,7 @@ public sealed class UserMutations
                 )
                 .ConfigureAwait(false);
         if (!isTokenValid)
+        {
             return await LoadSharedKeyAndQrCodeUriAsync(userManager, urlEncoder, user).ConfigureAwait(false) switch
             {
                 LoadSharedKeyAndQrCodeUriPayload.Success(var sharedKey, var authenticatorUri) =>
@@ -1063,7 +1149,7 @@ public sealed class UserMutations
                         new EnableUserTwoFactorAuthenticatorError(
                             EnableUserTwoFactorAuthenticatorErrorCode.INVALID_VERIFICATION_CODE,
                             "Verification code is invalid.",
-                            new[] { nameof(input), nameof(input.VerificationCode).FirstCharToLower() }
+                            [nameof(input), nameof(input.VerificationCode).FirstCharToLower()]
                         ),
                         sharedKey,
                         authenticatorUri
@@ -1073,13 +1159,15 @@ public sealed class UserMutations
                         new EnableUserTwoFactorAuthenticatorError(
                             EnableUserTwoFactorAuthenticatorErrorCode.INVALID_VERIFICATION_CODE,
                             "Verification code is invalid.",
-                            new[] { nameof(input), nameof(input.VerificationCode).FirstCharToLower() }
+                            [nameof(input), nameof(input.VerificationCode).FirstCharToLower()]
                         )
                     )
             };
+        }
 
         var enableResult = await userManager.SetTwoFactorEnabledAsync(user, true).ConfigureAwait(false);
         if (!enableResult.Succeeded)
+        {
             return await LoadSharedKeyAndQrCodeUriAsync(userManager, urlEncoder, user).ConfigureAwait(false) switch
             {
                 LoadSharedKeyAndQrCodeUriPayload.Success(var sharedKey, var authenticatorUri) =>
@@ -1101,12 +1189,16 @@ public sealed class UserMutations
                         )
                     )
             };
+        }
 
         if (await userManager.CountRecoveryCodesAsync(user).ConfigureAwait(false) == 0)
         {
             var recoveryCodes =
                 await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait(false);
-            if (recoveryCodes is null) return new EnableUserTwoFactorAuthenticatorPayload(user, Array.Empty<string>());
+            if (recoveryCodes is null)
+            {
+                return new EnableUserTwoFactorAuthenticatorPayload(user, Array.Empty<string>());
+            }
             // TODO Inform user that recovery code generation failed and the he/she has none left.
             // return new EnableUserTwoFactorAuthenticatorPayload(
             //     new EnableUserTwoFactorAuthenticatorError(
@@ -1130,16 +1222,23 @@ public sealed class UserMutations
         {
             var identityResult = await userManager.ResetAuthenticatorKeyAsync(user).ConfigureAwait(false);
             if (!identityResult.Succeeded)
+            {
                 return new LoadSharedKeyAndQrCodeUriPayload.ResettingAuthenticatorKeyFailure();
+            }
 
             unformattedKey = await userManager.GetAuthenticatorKeyAsync(user).ConfigureAwait(false);
             if (string.IsNullOrEmpty(unformattedKey))
+            {
                 return new LoadSharedKeyAndQrCodeUriPayload.GettingAuthenticatorKeyFailure();
+            }
         }
 
         var sharedKey = FormatKey(unformattedKey);
         var email = await userManager.GetEmailAsync(user).ConfigureAwait(false);
-        if (email is null) return new LoadSharedKeyAndQrCodeUriPayload.GettingEmailFailure();
+        if (email is null)
+        {
+            return new LoadSharedKeyAndQrCodeUriPayload.GettingEmailFailure();
+        }
 
         var authenticatorUri = GenerateQrCodeUri(urlEncoder, email, unformattedKey);
         return new LoadSharedKeyAndQrCodeUriPayload.Success(sharedKey, authenticatorUri);
@@ -1156,7 +1255,9 @@ public sealed class UserMutations
         }
 
         if (currentPosition < unformattedKey.Length)
+        {
             result.Append(unformattedKey, currentPosition, unformattedKey.Length - currentPosition);
+        }
 
         return result.ToString().ToLowerInvariant();
     }
@@ -1187,6 +1288,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new ResetUserTwoFactorAuthenticatorPayload(
                 new ResetUserTwoFactorAuthenticatorError(
                     ResetUserTwoFactorAuthenticatorErrorCode.UNKNOWN_USER,
@@ -1194,9 +1296,11 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var disableResult = await userManager.SetTwoFactorEnabledAsync(user, false).ConfigureAwait(false);
         if (!disableResult.Succeeded)
+        {
             return new ResetUserTwoFactorAuthenticatorPayload(
                 new ResetUserTwoFactorAuthenticatorError(
                     ResetUserTwoFactorAuthenticatorErrorCode.DISABLING_FAILED,
@@ -1204,9 +1308,11 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var resetResult = await userManager.ResetAuthenticatorKeyAsync(user).ConfigureAwait(false);
         if (!resetResult.Succeeded)
+        {
             return new ResetUserTwoFactorAuthenticatorPayload(
                 new ResetUserTwoFactorAuthenticatorError(
                     ResetUserTwoFactorAuthenticatorErrorCode.RESETTING_FAILED,
@@ -1214,6 +1320,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         await signInManager.RefreshSignInAsync(user).ConfigureAwait(false);
         return new ResetUserTwoFactorAuthenticatorPayload(user);
@@ -1236,6 +1343,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new ChangeUserEmailPayload(
                 new ChangeUserEmailError(
                     ChangeUserEmailErrorCode.UNKNOWN_USER,
@@ -1243,9 +1351,11 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var currentEmail = await userManager.GetEmailAsync(user).ConfigureAwait(false);
         if (currentEmail is null)
+        {
             return new ChangeUserEmailPayload(
                 new ChangeUserEmailError(
                     ChangeUserEmailErrorCode.UNKNOWN_CURRENT_EMAIL,
@@ -1253,16 +1363,19 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (currentEmail == input.NewEmail)
+        {
             return new ChangeUserEmailPayload(
                 user,
                 new ChangeUserEmailError(
                     ChangeUserEmailErrorCode.UNCHANGED_EMAIL,
                     "Your email is unchanged.",
-                    new[] { nameof(input), nameof(input.NewEmail).FirstCharToLower() }
+                    [nameof(input), nameof(input.NewEmail).FirstCharToLower()]
                 )
             );
+        }
 
         // TODO Check validity of `input.NewEmail` (use error code `INVALID_EMAIL`)
         await SendChangeUserEmailConfirmation(
@@ -1293,6 +1406,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new ResendUserEmailVerificationPayload(
                 new ResendUserEmailVerificationError(
                     ResendUserEmailVerificationErrorCode.UNKNOWN_USER,
@@ -1300,9 +1414,11 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var email = await userManager.GetEmailAsync(user).ConfigureAwait(false);
         if (email is null)
+        {
             return new ResendUserEmailVerificationPayload(
                 new ResendUserEmailVerificationError(
                     ResendUserEmailVerificationErrorCode.UNKNOWN_EMAIL,
@@ -1310,6 +1426,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         await SendUserEmailConfirmation(
             (user.Name, email),
@@ -1335,6 +1452,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new GenerateUserTwoFactorRecoveryCodesPayload(
                 new GenerateUserTwoFactorRecoveryCodesError(
                     GenerateUserTwoFactorRecoveryCodesErrorCode.UNKNOWN_USER,
@@ -1342,8 +1460,10 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (!await userManager.GetTwoFactorEnabledAsync(user).ConfigureAwait(false))
+        {
             return new GenerateUserTwoFactorRecoveryCodesPayload(
                 user,
                 new GenerateUserTwoFactorRecoveryCodesError(
@@ -1352,10 +1472,12 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var recoveryCodes =
             await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait(false);
         if (recoveryCodes is null)
+        {
             return new GenerateUserTwoFactorRecoveryCodesPayload(
                 user,
                 new GenerateUserTwoFactorRecoveryCodesError(
@@ -1364,6 +1486,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         return new GenerateUserTwoFactorRecoveryCodesPayload(
             user,
@@ -1387,6 +1510,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new SetUserPhoneNumberPayload(
                 new SetUserPhoneNumberError(
                     SetUserPhoneNumberErrorCode.UNKNOWN_USER,
@@ -1394,23 +1518,27 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var currentPhoneNumber = await userManager.GetPhoneNumberAsync(user).ConfigureAwait(false);
         if (currentPhoneNumber == input.PhoneNumber)
+        {
             return new SetUserPhoneNumberPayload(
                 user,
                 new SetUserPhoneNumberError(
                     SetUserPhoneNumberErrorCode.UNCHANGED_PHONE_NUMBER,
                     "Your phone number is unchanged.",
-                    new[] { nameof(input), nameof(input.PhoneNumber).FirstCharToLower() }
+                    [nameof(input), nameof(input.PhoneNumber).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult = await userManager.SetPhoneNumberAsync(user, input.PhoneNumber).ConfigureAwait(false);
         if (!identityResult.Succeeded)
         {
             var errors = new List<SetUserPhoneNumberError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // TODO Which errors can occur?
                     error.Code switch
@@ -1419,10 +1547,11 @@ public sealed class UserMutations
                             new SetUserPhoneNumberError(
                                 SetUserPhoneNumberErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new SetUserPhoneNumberPayload(user, errors);
         }
@@ -1447,6 +1576,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new SetUserPasswordPayload(
                 new SetUserPasswordError(
                     SetUserPasswordErrorCode.UNKNOWN_USER,
@@ -1454,8 +1584,10 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (await userManager.HasPasswordAsync(user).ConfigureAwait(false))
+        {
             return new SetUserPasswordPayload(
                 user,
                 new SetUserPasswordError(
@@ -1464,22 +1596,26 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (input.Password != input.PasswordConfirmation)
+        {
             return new SetUserPasswordPayload(
                 user,
                 new SetUserPasswordError(
                     SetUserPasswordErrorCode.PASSWORD_CONFIRMATION_MISMATCH,
                     "Password and confirmation password do not match.",
-                    new[] { nameof(input), nameof(input.PasswordConfirmation).FirstCharToLower() }
+                    [nameof(input), nameof(input.PasswordConfirmation).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult = await userManager.AddPasswordAsync(user, input.Password).ConfigureAwait(false);
         if (!identityResult.Succeeded)
         {
             var errors = new List<SetUserPasswordError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // List of codes from https://github.com/aspnet/AspNetIdentity/blob/main/src/Microsoft.AspNet.Identity.Core/Resources.resx#L120
                     error.Code switch
@@ -1488,40 +1624,41 @@ public sealed class UserMutations
                             new SetUserPasswordError(
                                 SetUserPasswordErrorCode.PASSWORD_REQUIRES_DIGIT,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                [nameof(input), nameof(input.Password).FirstCharToLower()]
                             ),
                         "PasswordRequiresLower" =>
                             new SetUserPasswordError(
                                 SetUserPasswordErrorCode.PASSWORD_REQUIRES_LOWER,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                [nameof(input), nameof(input.Password).FirstCharToLower()]
                             ),
                         "PasswordRequiresNonAlphanumeric" =>
                             new SetUserPasswordError(
                                 SetUserPasswordErrorCode.PASSWORD_REQUIRES_NON_ALPHANUMERIC,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                [nameof(input), nameof(input.Password).FirstCharToLower()]
                             ),
                         "PasswordRequiresUpper" =>
                             new SetUserPasswordError(
                                 SetUserPasswordErrorCode.PASSWORD_REQUIRES_UPPER,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                [nameof(input), nameof(input.Password).FirstCharToLower()]
                             ),
                         "PasswordTooShort" =>
                             new SetUserPasswordError(
                                 SetUserPasswordErrorCode.PASSWORD_TOO_SHORT,
                                 error.Description,
-                                new[] { nameof(input), nameof(input.Password).FirstCharToLower() }
+                                [nameof(input), nameof(input.Password).FirstCharToLower()]
                             ),
                         _ =>
                             new SetUserPasswordError(
                                 SetUserPasswordErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new SetUserPasswordPayload(user, errors);
         }
@@ -1545,6 +1682,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         if (!await UserAuthorization.IsAuthorizedToAddOrRemoveRole(claimsPrincipal, input.Role, userManager)
                 .ConfigureAwait(false))
+        {
             return new AddUserRolePayload(
                 new AddUserRoleError(
                     AddUserRoleErrorCode.UNAUTHORIZED,
@@ -1552,6 +1690,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var user = await context.Users.AsQueryable()
             .SingleOrDefaultAsync(
@@ -1559,13 +1698,15 @@ public sealed class UserMutations
                 cancellationToken
             ).ConfigureAwait(false);
         if (user is null)
+        {
             return new AddUserRolePayload(
                 new AddUserRoleError(
                     AddUserRoleErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult = await userManager.AddToRoleAsync(user, Role.EnumToName(input.Role))
             .ConfigureAwait(false);
@@ -1573,6 +1714,7 @@ public sealed class UserMutations
         {
             var errors = new List<AddUserRoleError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Add(
                     // TODO Which error codes occur here? When known, translate the properly into `AddUserRoleErrorCode`.
                     error.Code switch
@@ -1581,10 +1723,11 @@ public sealed class UserMutations
                             new AddUserRoleError(
                                 AddUserRoleErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new AddUserRolePayload(user, errors);
         }
@@ -1607,6 +1750,7 @@ public sealed class UserMutations
         await ValidateAntiforgeryTokenAsync(antiforgeryService, httpContextAccessor).ConfigureAwait(false);
         if (!await UserAuthorization.IsAuthorizedToAddOrRemoveRole(claimsPrincipal, input.Role, userManager)
                 .ConfigureAwait(false))
+        {
             return new RemoveUserRolePayload(
                 new RemoveUserRoleError(
                     RemoveUserRoleErrorCode.UNAUTHORIZED,
@@ -1614,6 +1758,7 @@ public sealed class UserMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var user = await context.Users.AsQueryable()
             .SingleOrDefaultAsync(
@@ -1621,13 +1766,15 @@ public sealed class UserMutations
                 cancellationToken
             ).ConfigureAwait(false);
         if (user is null)
+        {
             return new RemoveUserRolePayload(
                 new RemoveUserRoleError(
                     RemoveUserRoleErrorCode.UNKNOWN_USER,
                     "Unknown user.",
-                    new[] { nameof(input), nameof(input.UserId).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
                 )
             );
+        }
 
         var identityResult = await userManager.RemoveFromRoleAsync(user, Role.EnumToName(input.Role))
             .ConfigureAwait(false);
@@ -1635,6 +1782,7 @@ public sealed class UserMutations
         {
             var errors = new List<RemoveUserRoleError>();
             foreach (var error in identityResult.Errors)
+            {
                 errors.Remove(
                     // TODO Which error codes occur here? When known, translate the properly into `RemoveUserRoleErrorCode`.
                     error.Code switch
@@ -1643,10 +1791,11 @@ public sealed class UserMutations
                             new RemoveUserRoleError(
                                 RemoveUserRoleErrorCode.UNKNOWN,
                                 $"{error.Description} (error code `{error.Code}`)",
-                                new[] { nameof(input) }
+                                [nameof(input)]
                             )
                     }
                 );
+            }
 
             return new RemoveUserRolePayload(user, errors);
         }

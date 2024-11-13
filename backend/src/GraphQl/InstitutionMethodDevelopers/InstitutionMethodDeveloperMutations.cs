@@ -38,6 +38,7 @@ public sealed class InstitutionMethodDeveloperMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new AddInstitutionMethodDeveloperPayload(
                 new AddInstitutionMethodDeveloperError(
                     AddInstitutionMethodDeveloperErrorCode.UNAUTHORIZED,
@@ -45,6 +46,7 @@ public sealed class InstitutionMethodDeveloperMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<AddInstitutionMethodDeveloperError>();
         if (!await context.Methods.AsQueryable()
@@ -52,28 +54,35 @@ public sealed class InstitutionMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddInstitutionMethodDeveloperError(
                     AddInstitutionMethodDeveloperErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .Where(i => i.Id == input.InstitutionId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddInstitutionMethodDeveloperError(
                     AddInstitutionMethodDeveloperErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new AddInstitutionMethodDeveloperPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new AddInstitutionMethodDeveloperPayload(errors.AsReadOnly());
+        }
 
         if (await context.InstitutionMethodDevelopers.AsQueryable()
                 .Where(m =>
@@ -83,13 +92,15 @@ public sealed class InstitutionMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             return new AddInstitutionMethodDeveloperPayload(
                 new AddInstitutionMethodDeveloperError(
                     AddInstitutionMethodDeveloperErrorCode.DUPLICATE,
                     "Institution method developer already exists.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var institutionMethodDeveloper = new InstitutionMethodDeveloper
         {
@@ -122,6 +133,7 @@ public sealed class InstitutionMethodDeveloperMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new ConfirmInstitutionMethodDeveloperPayload(
                 new ConfirmInstitutionMethodDeveloperError(
                     ConfirmInstitutionMethodDeveloperErrorCode.UNAUTHORIZED,
@@ -129,6 +141,7 @@ public sealed class InstitutionMethodDeveloperMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<ConfirmInstitutionMethodDeveloperError>();
         if (!await context.Methods.AsQueryable()
@@ -136,28 +149,35 @@ public sealed class InstitutionMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmInstitutionMethodDeveloperError(
                     ConfirmInstitutionMethodDeveloperErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .Where(i => i.Id == input.InstitutionId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmInstitutionMethodDeveloperError(
                     ConfirmInstitutionMethodDeveloperErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new ConfirmInstitutionMethodDeveloperPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new ConfirmInstitutionMethodDeveloperPayload(errors.AsReadOnly());
+        }
 
         var institutionMethodDeveloper =
             await context.InstitutionMethodDevelopers.AsQueryable()
@@ -168,13 +188,15 @@ public sealed class InstitutionMethodDeveloperMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institutionMethodDeveloper is null)
+        {
             return new ConfirmInstitutionMethodDeveloperPayload(
                 new ConfirmInstitutionMethodDeveloperError(
                     ConfirmInstitutionMethodDeveloperErrorCode.UNKNOWN_DEVELOPER,
                     "Unknown developer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         institutionMethodDeveloper.Pending = false;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -199,6 +221,7 @@ public sealed class InstitutionMethodDeveloperMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveInstitutionMethodDeveloperPayload(
                 new RemoveInstitutionMethodDeveloperError(
                     RemoveInstitutionMethodDeveloperErrorCode.UNAUTHORIZED,
@@ -206,6 +229,7 @@ public sealed class InstitutionMethodDeveloperMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var errors = new List<RemoveInstitutionMethodDeveloperError>();
         if (!await context.Methods.AsQueryable()
@@ -213,28 +237,35 @@ public sealed class InstitutionMethodDeveloperMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveInstitutionMethodDeveloperError(
                     RemoveInstitutionMethodDeveloperErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .Where(i => i.Id == input.InstitutionId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveInstitutionMethodDeveloperError(
                     RemoveInstitutionMethodDeveloperErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new RemoveInstitutionMethodDeveloperPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new RemoveInstitutionMethodDeveloperPayload(errors.AsReadOnly());
+        }
 
         var institutionMethodDeveloper =
             await context.InstitutionMethodDevelopers.AsQueryable()
@@ -245,13 +276,15 @@ public sealed class InstitutionMethodDeveloperMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institutionMethodDeveloper is null)
+        {
             return new RemoveInstitutionMethodDeveloperPayload(
                 new RemoveInstitutionMethodDeveloperError(
                     RemoveInstitutionMethodDeveloperErrorCode.UNKNOWN_DEVELOPER,
                     "Unknown developer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         context.InstitutionMethodDevelopers.Remove(institutionMethodDeveloper);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

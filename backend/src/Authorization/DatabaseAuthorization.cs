@@ -78,7 +78,10 @@ public static class DatabaseAuthorization
                 .Select(x => new { x.OperatorId })
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
-        if (wrappedOperatorId is null) return false;
+        if (wrappedOperatorId is null)
+        {
+            return false;
+        }
 
         return await CommonAuthorization.IsAtLeastAssistantOfVerifiedInstitution(
             user, wrappedOperatorId.OperatorId, context, cancellationToken

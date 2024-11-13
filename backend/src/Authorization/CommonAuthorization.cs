@@ -190,7 +190,10 @@ public static class CommonAuthorization
                 }) // We wrap the role in an object whose default value is `null`. Note that enumerations have the first value as default value.
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
-        if (wrappedRole is not null) return wrappedRole.Role;
+        if (wrappedRole is not null)
+        {
+            return wrappedRole.Role;
+        }
 
         var wrappedManagerRole =
             await context.InstitutionRepresentatives.AsNoTracking()
@@ -235,7 +238,10 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        if (componentIds.Length == 0) return true;
+        if (componentIds.Length == 0)
+        {
+            return true;
+        }
 
         return await context.ComponentManufacturers.AsNoTracking()
             .AnyAsync(x =>

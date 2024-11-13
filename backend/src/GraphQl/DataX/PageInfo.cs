@@ -1,25 +1,16 @@
 namespace Metabase.GraphQl.DataX;
 
-public sealed class PageInfo
-{
-    public PageInfo(
-        bool hasNextPage,
-        bool hasPreviousPage,
-        string startCursor,
-        string endCursor,
-        uint count
+public sealed class PageInfo(
+    bool hasNextPage,
+    bool hasPreviousPage,
+    string startCursor,
+    string endCursor,
+    uint count
     )
-    {
-        HasNextPage = hasNextPage;
-        HasPreviousPage = hasPreviousPage;
-        StartCursor = startCursor;
-        EndCursor = endCursor;
-        Count = count;
-    }
-
-    public bool HasNextPage { get; }
-    public bool HasPreviousPage { get; }
-    public string StartCursor { get; }
-    public string EndCursor { get; }
-    public uint Count { get; }
+{
+    public bool HasNextPage { get; } = hasNextPage;
+    public bool HasPreviousPage { get; } = hasPreviousPage;
+    public string StartCursor { get; } = startCursor;
+    public string EndCursor { get; } = endCursor;
+    public uint Count { get; } = count;
 }

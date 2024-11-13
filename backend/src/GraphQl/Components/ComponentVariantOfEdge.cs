@@ -9,18 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentVariantOfEdge
-    : Edge<Component, ComponentByIdDataLoader>
-{
-    private readonly ComponentVariant _association;
-
-    public ComponentVariantOfEdge(
-        ComponentVariant association
+public sealed class ComponentVariantOfEdge(
+    ComponentVariant association
     )
-        : base(association.OfComponentId)
-    {
-        _association = association;
-    }
+        : Edge<Component, ComponentByIdDataLoader>(association.OfComponentId)
+{
+    private readonly ComponentVariant _association = association;
 
     [UseUserManager]
     public Task<bool> CanCurrentUserRemoveEdgeAsync(
