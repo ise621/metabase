@@ -138,7 +138,7 @@ public sealed class ComponentManufacturerMutations
                 new ConfirmComponentManufacturerError(
                     ConfirmComponentManufacturerErrorCode.UNAUTHORIZED,
                     $"You are not authorized to confirm component manufacturer relation for institution ${input.InstitutionId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
