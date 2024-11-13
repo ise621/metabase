@@ -36,13 +36,8 @@ public sealed class UserMutations
         IHttpContextAccessor httpContextAccessor
     )
     {
-        var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext is null)
-        {
-            throw new AntiforgeryValidationException(
+        var httpContext = httpContextAccessor.HttpContext ?? throw new AntiforgeryValidationException(
                 "Cannot access the HTTP context to validate the antiforgery token.");
-        }
-
         await antiforgeryService.ValidateRequestAsync(httpContext).ConfigureAwait(false);
     }
 
