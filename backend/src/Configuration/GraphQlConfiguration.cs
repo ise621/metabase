@@ -1,9 +1,9 @@
 using System;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Language;
 using HotChocolate.Types;
-using HotChocolate.Types.Pagination;
 using Metabase.Authorization;
 using Metabase.Data;
 using Metabase.GraphQl;
@@ -56,8 +56,8 @@ public static class GraphQlConfiguration
             .AddMutationConventions(new MutationConventionOptions { ApplyToAllMutations = false })
             // Extensions
             .AddProjections()
-            .AddFiltering()
-            .AddSorting()
+            .AddFiltering<CustomFilterConvention>()
+            .AddSorting<CustomSortConvention>()
             .AddAuthorization()
             .AddGlobalObjectIdentification()
             .AddQueryFieldToMutationPayloads()
@@ -190,6 +190,7 @@ public static class GraphQlConfiguration
                                 ComponentManufacturerFilterType>();
                         descriptor.BindRuntimeType<DataFormat, DataFormatFilterType>();
                         descriptor.BindRuntimeType<Database, DatabaseFilterType>();
+                        descriptor.BindRuntimeType<DefinitionOfSurfacesAndPrimeDirection, DefinitionOfSurfacesAndPrimeDirectionFilterType>();
                         descriptor.BindRuntimeType<Institution, InstitutionFilterType>();
                         descriptor
                             .BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperFilterType>();
@@ -248,5 +249,50 @@ public static class GraphQlConfiguration
         {
             SpecifiedBy = new Uri(_specifiedBy, UriKind.Absolute);
         }
+    }
+}
+
+// See https://chillicream.com/docs/hotchocolate/fetching-data/filtering/#filter-conventions
+public partial class CustomFilterConvention : FilterConvention
+{
+    protected override void Configure(IFilterConventionDescriptor descriptor)
+    {
+        descriptor.AddDefaults();
+        // Bind custom types
+        descriptor.BindRuntimeType<DataFormat, DataFormatFilterType>();
+        descriptor.BindRuntimeType<DefinitionOfSurfacesAndPrimeDirection, DefinitionOfSurfacesAndPrimeDirectionFilterType>();
+        descriptor.BindRuntimeType<User, UserFilterType>();
+        descriptor.BindRuntimeType<Institution, InstitutionFilterType>();
+        descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblyFilterType>();
+        descriptor.BindRuntimeType<InstitutionRepresentative, InstitutionRepresentativeFilterType>();
+        descriptor.BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperFilterType>();
+        descriptor.BindRuntimeType<Component, ComponentFilterType>();
+        descriptor.BindRuntimeType<ComponentManufacturer, ComponentManufacturerFilterType>();
+        descriptor.BindRuntimeType<Database, DatabaseFilterType>();
+        descriptor.BindRuntimeType<Method, MethodFilterType>();
+        descriptor.BindRuntimeType<UserMethodDeveloper, UserMethodDeveloperFilterType>();
+    }
+}
+
+
+// See https://chillicream.com/docs/hotchocolate/fetching-data/sorting/#sorting-conventions
+public partial class CustomSortConvention : SortConvention
+{
+    protected override void Configure(ISortConventionDescriptor descriptor)
+    {
+        descriptor.AddDefaults();
+        // Bind custom types
+        descriptor.BindRuntimeType<DataFormat, DataFormatSortType>();
+        descriptor.BindRuntimeType<DefinitionOfSurfacesAndPrimeDirection, DefinitionOfSurfacesAndPrimeDirectionSortType>();
+        descriptor.BindRuntimeType<User, UserSortType>();
+        descriptor.BindRuntimeType<Institution, InstitutionSortType>();
+        descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblySortType>();
+        descriptor.BindRuntimeType<InstitutionRepresentative, InstitutionRepresentativeSortType>();
+        descriptor.BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperSortType>();
+        descriptor.BindRuntimeType<Component, ComponentSortType>();
+        descriptor.BindRuntimeType<ComponentManufacturer, ComponentManufacturerSortType>();
+        descriptor.BindRuntimeType<Database, DatabaseSortType>();
+        descriptor.BindRuntimeType<Method, MethodSortType>();
+        descriptor.BindRuntimeType<UserMethodDeveloper, UserMethodDeveloperSortType>();
     }
 }
