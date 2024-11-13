@@ -25,7 +25,7 @@ public sealed class ChangeInstitutionRepresentativeRolePayload
     public ChangeInstitutionRepresentativeRolePayload(
         ChangeInstitutionRepresentativeRoleError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

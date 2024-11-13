@@ -2,7 +2,10 @@ using System;
 
 namespace Metabase.GraphQl.DataX;
 
-public sealed class GetHttpsResourceTreeRoot : IGetHttpsResourceTreeVertex
+public sealed class GetHttpsResourceTreeRoot(
+    string vertexId,
+    GetHttpsResource value
+    ) : IGetHttpsResourceTreeVertex
 {
     internal static GetHttpsResourceTreeRoot From(GetHttpsResourceTreeRootIgsdb root)
     {
@@ -12,15 +15,6 @@ public sealed class GetHttpsResourceTreeRoot : IGetHttpsResourceTreeVertex
         );
     }
 
-    public GetHttpsResourceTreeRoot(
-        string vertexId,
-        GetHttpsResource value
-    )
-    {
-        VertexId = vertexId;
-        Value = value;
-    }
-
-    public string VertexId { get; }
-    public GetHttpsResource Value { get; }
+    public string VertexId { get; } = vertexId;
+    public GetHttpsResource Value { get; } = value;
 }

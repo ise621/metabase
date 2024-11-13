@@ -2,8 +2,14 @@ using System;
 
 namespace Metabase.GraphQl.DataX;
 
-public sealed class GeometricDataEdge
-    : DataEdgeBase<GeometricData>
+public sealed class GeometricDataEdge(
+    string cursor,
+    GeometricData node
+    )
+        : DataEdgeBase<GeometricData>(
+        cursor,
+        node
+        )
 {
     internal static GeometricDataEdge From(GeometricDataEdgeIgsdb edge)
     {
@@ -11,16 +17,5 @@ public sealed class GeometricDataEdge
             Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(edge.Node.Id)),
             GeometricData.From(edge.Node)
         );
-    }
-
-    public GeometricDataEdge(
-        string cursor,
-        GeometricData node
-    )
-        : base(
-            cursor,
-            node
-        )
-    {
     }
 }

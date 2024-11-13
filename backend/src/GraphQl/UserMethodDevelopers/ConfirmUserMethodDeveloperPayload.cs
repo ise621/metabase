@@ -25,7 +25,7 @@ public sealed class ConfirmUserMethodDeveloperPayload
     public ConfirmUserMethodDeveloperPayload(
         ConfirmUserMethodDeveloperError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

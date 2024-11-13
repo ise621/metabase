@@ -31,7 +31,9 @@ public sealed class OpendIdConnectQueries
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToView(claimsPrincipal, userManager)
                 .ConfigureAwait(false))
+        {
             return Array.Empty<OpenIddictEntityFrameworkCoreApplication>();
+        }
 
         // TODO Is there a more efficient way to return an `AsyncEnumerable` or `AsyncEnumerator` or to turn such a thing into an `Enumerable` or `Enumerator`?
         return await manager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
@@ -49,7 +51,9 @@ public sealed class OpendIdConnectQueries
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToView(claimsPrincipal, userManager)
                 .ConfigureAwait(false))
+        {
             return Array.Empty<OpenIddictEntityFrameworkCoreScope>();
+        }
 
         return await manager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -66,7 +70,9 @@ public sealed class OpendIdConnectQueries
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToView(claimsPrincipal, userManager)
                 .ConfigureAwait(false))
+        {
             return Array.Empty<OpenIddictEntityFrameworkCoreToken>();
+        }
 
         return await manager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -83,7 +89,9 @@ public sealed class OpendIdConnectQueries
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToView(claimsPrincipal, userManager)
                 .ConfigureAwait(false))
+        {
             return Array.Empty<OpenIddictEntityFrameworkCoreAuthorization>();
+        }
 
         return await manager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
             .ConfigureAwait(false);

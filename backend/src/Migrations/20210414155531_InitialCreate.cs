@@ -8,8 +8,8 @@ namespace Metabase.Migrations
 {
     public partial class InitialCreate : Migration
     {
-        private static readonly string[] _openIddictAuthorizationsIndexByApplicationIdStatusSubjectTypeColumns = new[] { "ApplicationId", "Status", "Subject", "Type" };
-        private static readonly string[] _oppenIddictTokensIndexByApplicationIdStatusSubjectTypeColumns = new[] { "ApplicationId", "Status", "Subject", "Type" };
+        private static readonly string[] _openIddictAuthorizationsIndexByApplicationIdStatusSubjectTypeColumns = ["ApplicationId", "Status", "Subject", "Type"];
+        private static readonly string[] _oppenIddictTokensIndexByApplicationIdStatusSubjectTypeColumns = ["ApplicationId", "Status", "Subject", "Type"];
 
         protected override void Up(MigrationBuilder migrationBuilder)
         {

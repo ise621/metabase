@@ -2,15 +2,11 @@ using System.Collections.Generic;
 
 namespace Metabase.GraphQl.Users;
 
-public sealed class RequestUserPasswordResetError
-    : UserErrorBase<RequestUserPasswordResetErrorCode>
-{
-    public RequestUserPasswordResetError(
-        RequestUserPasswordResetErrorCode code,
-        string message,
-        IReadOnlyList<string> path
+public sealed class RequestUserPasswordResetError(
+    RequestUserPasswordResetErrorCode code,
+    string message,
+    IReadOnlyList<string> path
     )
-        : base(code, message, path)
-    {
-    }
+        : UserErrorBase<RequestUserPasswordResetErrorCode>(code, message, path)
+{
 }

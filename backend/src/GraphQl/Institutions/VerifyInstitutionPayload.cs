@@ -22,7 +22,7 @@ public sealed class VerifyInstitutionPayload
     public VerifyInstitutionPayload(
         VerifyInstitutionError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

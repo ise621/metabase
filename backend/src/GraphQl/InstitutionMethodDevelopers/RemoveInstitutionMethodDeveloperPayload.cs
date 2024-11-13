@@ -25,7 +25,7 @@ public sealed class RemoveInstitutionMethodDeveloperPayload
     public RemoveInstitutionMethodDeveloperPayload(
         RemoveInstitutionMethodDeveloperError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

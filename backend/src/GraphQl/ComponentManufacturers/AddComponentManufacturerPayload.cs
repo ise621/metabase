@@ -25,7 +25,7 @@ public sealed class AddComponentManufacturerPayload
     public AddComponentManufacturerPayload(
         AddComponentManufacturerError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

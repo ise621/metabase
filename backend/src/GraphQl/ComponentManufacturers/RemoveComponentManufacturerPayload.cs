@@ -28,7 +28,7 @@ public sealed class RemoveComponentManufacturerPayload
     public RemoveComponentManufacturerPayload(
         RemoveComponentManufacturerError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -39,7 +39,10 @@ public sealed class RemoveComponentManufacturerPayload
         CancellationToken cancellationToken
     )
     {
-        if (_association is null) return null;
+        if (_association is null)
+        {
+            return null;
+        }
 
         return await byId.LoadAsync(_association.ComponentId, cancellationToken)!;
     }
@@ -49,7 +52,10 @@ public sealed class RemoveComponentManufacturerPayload
         CancellationToken cancellationToken
     )
     {
-        if (_association is null) return null;
+        if (_association is null)
+        {
+            return null;
+        }
 
         return await byId.LoadAsync(_association.InstitutionId, cancellationToken)!;
     }

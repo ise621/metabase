@@ -24,7 +24,7 @@ public abstract class InstitutionPayload<TInstitutionError>
     protected InstitutionPayload(
         TInstitutionError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -43,7 +43,7 @@ public abstract class InstitutionPayload<TInstitutionError>
     )
         : this(
             institution,
-            new[] { error }
+            [error]
         )
     {
     }

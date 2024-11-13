@@ -9,20 +9,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionManagedDataFormatConnection
-    : Connection<Institution, DataFormat, InstitutionManagedDataFormatsByInstitutionIdDataLoader,
-        InstitutionManagedDataFormatEdge>
-{
-    public InstitutionManagedDataFormatConnection(
-        Institution institution
+public sealed class InstitutionManagedDataFormatConnection(
+    Institution institution
     )
-        : base(
-            institution,
-            x => new InstitutionManagedDataFormatEdge(x)
+        : Connection<Institution, DataFormat, InstitutionManagedDataFormatsByInstitutionIdDataLoader,
+        InstitutionManagedDataFormatEdge>(
+        institution,
+        x => new InstitutionManagedDataFormatEdge(x)
         )
-    {
-    }
-
+{
     [UseUserManager]
     public Task<bool> CanCurrentUserAddEdgeAsync(
         ClaimsPrincipal claimsPrincipal,

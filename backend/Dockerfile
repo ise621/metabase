@@ -6,7 +6,7 @@
 # Inspired by https://github.com/dotnet/dotnet-docker/tree/master/samples/aspnetapp
 
 # https://hub.docker.com/_/microsoft-dotnet-sdk
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim-amd64
+FROM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim-amd64
 
 ARG GROUP_ID
 ARG USER_ID

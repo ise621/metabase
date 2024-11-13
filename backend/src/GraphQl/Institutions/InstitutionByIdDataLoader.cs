@@ -5,20 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionByIdDataLoader
-    : EntityByIdDataLoader<Institution>
-{
-    public InstitutionByIdDataLoader(
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions options,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory
+public sealed class InstitutionByIdDataLoader(
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options,
+    IDbContextFactory<ApplicationDbContext> dbContextFactory
     )
-        : base(
-            batchScheduler,
-            options,
-            dbContextFactory,
-            dbContext => dbContext.Institutions
+        : EntityByIdDataLoader<Institution>(
+        batchScheduler,
+        options,
+        dbContextFactory,
+        dbContext => dbContext.Institutions
         )
-    {
-    }
+{
 }

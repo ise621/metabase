@@ -10,18 +10,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Methods;
 
-public sealed class InstitutionMethodDeveloperEdge
-    : Edge<Institution, InstitutionByIdDataLoader>
-{
-    private readonly InstitutionMethodDeveloper _association;
-
-    public InstitutionMethodDeveloperEdge(
-        InstitutionMethodDeveloper association
+public sealed class InstitutionMethodDeveloperEdge(
+    InstitutionMethodDeveloper association
     )
-        : base(association.InstitutionId)
-    {
-        _association = association;
-    }
+        : Edge<Institution, InstitutionByIdDataLoader>(association.InstitutionId)
+{
+    private readonly InstitutionMethodDeveloper _association = association;
 
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(

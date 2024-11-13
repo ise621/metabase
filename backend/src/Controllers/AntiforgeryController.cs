@@ -9,11 +9,11 @@ namespace Metabase.Controllers;
 
 // For gotchas regarding antiforgery tokens read
 // [Clarity around IAntiforgery and ValidateAntiForgeryToken](https://github.com/dotnet/aspnetcore/issues/2783)
-public sealed class AntiforgeryController : Controller
+public sealed class AntiforgeryController(IAntiforgery antiforgeryService) : Controller
 {
     private const string XsrfCookieKey = "XSRF-TOKEN";
 
-    private readonly IAntiforgery _antiforgeryService;
+    private readonly IAntiforgery _antiforgeryService = antiforgeryService;
 
     private readonly CookieOptions XsrfCookieOptions =
         new()
@@ -21,11 +21,6 @@ public sealed class AntiforgeryController : Controller
             HttpOnly = false,
             SameSite = SameSiteMode.Strict
         };
-
-    public AntiforgeryController(IAntiforgery antiforgeryService)
-    {
-        _antiforgeryService = antiforgeryService;
-    }
 
     [HttpGet("~/antiforgery/token")]
     public async Task<IActionResult> Token()

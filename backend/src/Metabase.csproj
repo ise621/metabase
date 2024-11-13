@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <LangVersion>12.0</LangVersion>
     <UserSecretsId>31666837686487542159</UserSecretsId>
     <!-- <GenerateDocumentationFile>true</GenerateDocumentationFile> -->
@@ -23,25 +23,25 @@
     <!-- <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" /> -->
     <PackageReference Include="GraphQL.Client" Version="6.1.0" />
     <PackageReference Include="GraphQL.Client.Serializer.SystemTextJson" Version="6.1.0" />
-    <PackageReference Include="HotChocolate" Version="14.0.0" />
-    <PackageReference Include="HotChocolate.AspNetCore" Version="14.0.0" />
-    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="14.0.0" />
-    <PackageReference Include="HotChocolate.Data" Version="14.0.0" />
-    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="14.0.0" />
-    <PackageReference Include="HotChocolate.PersistedOperations.InMemory" Version="14.0.0" />
-    <PackageReference Include="HotChocolate.Types.Scalars" Version="14.0.0" />
+    <PackageReference Include="HotChocolate" Version="14.1.0" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="14.1.0" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="14.1.0" />
+    <PackageReference Include="HotChocolate.Data" Version="14.1.0" />
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="14.1.0" />
+    <PackageReference Include="HotChocolate.PersistedOperations.InMemory" Version="14.1.0" />
+    <PackageReference Include="HotChocolate.Types.Scalars" Version="14.1.0" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="MailKit" Version="4.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="8.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Telemetry.Abstractions" Version="8.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Telemetry.Abstractions" Version="9.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <!-- <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="5.0.0" /> -->
     <!-- <PackageReference Include="StyleCop.Analyzers" Version="1.1.118"> -->
@@ -51,8 +51,8 @@
     <PackageReference Include="OpenIddict.AspNetCore" Version="5.8.0" />
     <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.8.0" />
     <PackageReference Include="OpenIddict.Quartz" Version="5.8.0" />
-    <PackageReference Include="Quartz" Version="3.13.0" />
-    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.0" />
+    <PackageReference Include="Quartz" Version="3.13.1" />
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />

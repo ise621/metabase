@@ -17,7 +17,10 @@ public static class CommonAuthorization
         Guid userId
     )
     {
-        if (user is null) return false;
+        if (user is null)
+        {
+            return false;
+        }
 
         return user.Id == userId;
     }
@@ -52,7 +55,10 @@ public static class CommonAuthorization
         UserManager<User> userManager
     )
     {
-        if (user is null) return false;
+        if (user is null)
+        {
+            return false;
+        }
 
         return await userManager.IsInRoleAsync(
             user,
@@ -160,7 +166,10 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        if (user is null) return null;
+        if (user is null)
+        {
+            return null;
+        }
 
         var wrappedRole =
             await context.InstitutionRepresentatives.AsNoTracking()
@@ -175,7 +184,10 @@ public static class CommonAuthorization
                 }) // We wrap the role in an object whose default value is `null`. Note that enumerations have the first value as default value.
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
-        if (wrappedRole is not null) return wrappedRole.Role;
+        if (wrappedRole is not null)
+        {
+            return wrappedRole.Role;
+        }
 
         var wrappedManagerRole =
             await context.InstitutionRepresentatives.AsNoTracking()
@@ -185,7 +197,7 @@ public static class CommonAuthorization
                     representative => representative.InstitutionId,
                     institution => institution.ManagerId,
                     (representative, institution) => new
-                        { Representative = representative, Institution = institution }
+                    { Representative = representative, Institution = institution }
                 )
                 .Where(x =>
                     x.Institution.Id == institutionId &&
@@ -207,7 +219,10 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        if (componentIds.Length == 0) return true;
+        if (componentIds.Length == 0)
+        {
+            return true;
+        }
 
         return await context.ComponentManufacturers.AsNoTracking()
             .AnyAsync(x =>

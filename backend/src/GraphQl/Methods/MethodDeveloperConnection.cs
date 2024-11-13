@@ -11,19 +11,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Methods;
 
-public sealed class MethodDeveloperConnection
-{
-    private readonly bool _pending;
-    private readonly Method _subject;
-
-    public MethodDeveloperConnection(
-        Method subject,
-        bool pending
+public sealed class MethodDeveloperConnection(
+    Method subject,
+    bool pending
     )
-    {
-        _subject = subject;
-        _pending = pending;
-    }
+{
+    private readonly bool _pending = pending;
+    private readonly Method _subject = subject;
 
     public async Task<IEnumerable<MethodDeveloperEdge>> GetEdgesAsync(
         InstitutionMethodDevelopersByMethodIdDataLoader institutionMethodDevelopersDataLoader,
@@ -91,37 +85,29 @@ public sealed class MethodDeveloperConnection
     }
 }
 
-internal sealed class InstitutionMethodDeveloperConnection
-    : ForkingConnection<Method, InstitutionMethodDeveloper,
-        PendingInstitutionMethodDevelopersByMethodIdDataLoader, InstitutionMethodDevelopersByMethodIdDataLoader,
-        InstitutionMethodDeveloperEdge>
-{
-    public InstitutionMethodDeveloperConnection(
-        Method subject,
-        bool pending
+internal sealed class InstitutionMethodDeveloperConnection(
+    Method subject,
+    bool pending
     )
-        : base(
-            subject,
-            pending,
-            x => new InstitutionMethodDeveloperEdge(x)
+        : ForkingConnection<Method, InstitutionMethodDeveloper,
+        PendingInstitutionMethodDevelopersByMethodIdDataLoader, InstitutionMethodDevelopersByMethodIdDataLoader,
+        InstitutionMethodDeveloperEdge>(
+        subject,
+        pending,
+        x => new InstitutionMethodDeveloperEdge(x)
         )
-    {
-    }
+{
 }
 
-internal sealed class UserMethodDeveloperConnection
-    : ForkingConnection<Method, UserMethodDeveloper, PendingUserMethodDevelopersByMethodIdDataLoader,
-        UserMethodDevelopersByMethodIdDataLoader, UserMethodDeveloperEdge>
-{
-    public UserMethodDeveloperConnection(
-        Method subject,
-        bool pending
+internal sealed class UserMethodDeveloperConnection(
+    Method subject,
+    bool pending
     )
-        : base(
-            subject,
-            pending,
-            x => new UserMethodDeveloperEdge(x)
+        : ForkingConnection<Method, UserMethodDeveloper, PendingUserMethodDevelopersByMethodIdDataLoader,
+        UserMethodDevelopersByMethodIdDataLoader, UserMethodDeveloperEdge>(
+        subject,
+        pending,
+        x => new UserMethodDeveloperEdge(x)
         )
-    {
-    }
+{
 }

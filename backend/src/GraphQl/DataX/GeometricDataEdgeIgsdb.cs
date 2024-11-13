@@ -1,13 +1,8 @@
 namespace Metabase.GraphQl.DataX;
 
-public sealed class GeometricDataEdgeIgsdb
-{
-    public GeometricDataIgsdb Node { get; }
-
-    public GeometricDataEdgeIgsdb(
-        GeometricDataIgsdb node
+public sealed class GeometricDataEdgeIgsdb(
+    GeometricDataIgsdb node
     )
-    {
-        Node = node;
-    }
+{
+    public GeometricDataIgsdb Node { get; } = node;
 }

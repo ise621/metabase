@@ -2,15 +2,11 @@ using System.Collections.Generic;
 
 namespace Metabase.GraphQl.Users;
 
-public sealed class ForgetUserTwoFactorAuthenticationClientError
-    : UserErrorBase<ForgetUserTwoFactorAuthenticationClientErrorCode>
-{
-    public ForgetUserTwoFactorAuthenticationClientError(
-        ForgetUserTwoFactorAuthenticationClientErrorCode code,
-        string message,
-        IReadOnlyList<string> path
+public sealed class ForgetUserTwoFactorAuthenticationClientError(
+    ForgetUserTwoFactorAuthenticationClientErrorCode code,
+    string message,
+    IReadOnlyList<string> path
     )
-        : base(code, message, path)
-    {
-    }
+        : UserErrorBase<ForgetUserTwoFactorAuthenticationClientErrorCode>(code, message, path)
+{
 }

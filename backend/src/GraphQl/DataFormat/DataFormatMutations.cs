@@ -37,13 +37,15 @@ public sealed class DataFormatMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new CreateDataFormatPayload(
                 new CreateDataFormatError(
                     CreateDataFormatErrorCode.UNAUTHORIZED,
                     "You are not authorized to create data formats for the institution.",
-                    new[] { nameof(input), nameof(input.ManagerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManagerId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .AnyAsync(
@@ -52,24 +54,28 @@ public sealed class DataFormatMutations
                 )
                 .ConfigureAwait(false)
            )
+        {
             return new CreateDataFormatPayload(
                 new CreateDataFormatError(
                     CreateDataFormatErrorCode.UNKNOWN_MANAGER,
                     "Unknown manager.",
-                    new[] { nameof(input), nameof(input.ManagerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManagerId).FirstCharToLower()]
                 )
             );
+        }
 
         if (input.Reference?.Standard is not null &&
             input.Reference?.Publication is not null
            )
+        {
             return new CreateDataFormatPayload(
                 new CreateDataFormatError(
                     CreateDataFormatErrorCode.TWO_REFERENCES,
                     "Specify either a standard or a publication as reference.",
-                    new[] { nameof(input), nameof(input.Reference).FirstCharToLower() }
+                    [nameof(input), nameof(input.Reference).FirstCharToLower()]
                 )
             );
+        }
 
         var dataFormat = new DataFormat(
             input.Name,
@@ -112,24 +118,28 @@ public sealed class DataFormatMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new UpdateDataFormatPayload(
                 new UpdateDataFormatError(
                     UpdateDataFormatErrorCode.UNAUTHORIZED,
                     "You are not authorized to the update data format.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (input.Reference?.Standard is not null &&
             input.Reference?.Publication is not null
            )
+        {
             return new UpdateDataFormatPayload(
                 new UpdateDataFormatError(
                     UpdateDataFormatErrorCode.TWO_REFERENCES,
                     "Specify either a standard or a publication as reference.",
-                    new[] { nameof(input), nameof(input.Reference).FirstCharToLower() }
+                    [nameof(input), nameof(input.Reference).FirstCharToLower()]
                 )
             );
+        }
 
         var dataFormat =
             await context.DataFormats.AsQueryable()
@@ -137,13 +147,15 @@ public sealed class DataFormatMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (dataFormat is null)
+        {
             return new UpdateDataFormatPayload(
                 new UpdateDataFormatError(
                     UpdateDataFormatErrorCode.UNKNOWN_DATA_FORMAT,
                     "Unknown data format.",
-                    new[] { nameof(input), nameof(input.DataFormatId).FirstCharToLower() }
+                    [nameof(input), nameof(input.DataFormatId).FirstCharToLower()]
                 )
             );
+        }
 
         dataFormat.Update(
             input.Name,

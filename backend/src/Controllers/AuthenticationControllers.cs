@@ -16,20 +16,14 @@ namespace Metabase.Controllers;
 
 // Inspired by https://github.com/openiddict/openiddict-samples/blob/dev/samples/Velusia/Velusia.Client/Controllers/AuthenticationController.cs
 // https://github.com/openiddict/openiddict-samples/blob/855c31f91d6bf5cde735ef3f96fcc3c015b51d79/samples/Velusia/Velusia.Client/Controllers/AuthenticationController.cs
-public class AuthenticationController : Controller
+public class AuthenticationController(
+    AppSettings appSettings,
+    IOptions<IdentityOptions> identityOptions
+    ) : Controller
 {
-    private readonly IdentityOptions _identityOptions;
-    private readonly string _issuer;
-
-    public AuthenticationController(
-        AppSettings appSettings,
-        IOptions<IdentityOptions> identityOptions
-    )
-    {
-        _issuer = appSettings.Host;
-        _identityOptions = identityOptions.Value ??
+    private readonly IdentityOptions _identityOptions = identityOptions.Value ??
                            throw new InvalidOperationException("There are no identity options.");
-    }
+    private readonly string _issuer = appSettings.Host;
 
     [HttpGet("~/connect/client/login")]
     public ActionResult LogIn(string? returnUrl)
@@ -61,9 +55,11 @@ public class AuthenticationController : Controller
         // this indicate that the user is already logged out locally (or has not logged in yet).
         var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         if (result is not { Succeeded: true })
+        {
             // Only allow local return URLs to prevent open redirect attacks.
             // https://learn.microsoft.com/en-us/aspnet/core/security/preventing-open-redirects
             return LocalRedirect(SanitizeReturnUrl(returnUrl));
+        }
 
         // Remove the local authentication cookie before triggering a redirection to the remote server.
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).ConfigureAwait(false);
@@ -128,8 +124,10 @@ public class AuthenticationController : Controller
         // antiforgery stack requires at least a name claim to bind CSRF cookies to the user's identity) but
         // the access/refresh tokens can be retrieved using result.Properties.GetTokens() to make API calls.
         if (result.Principal?.Identity is not ClaimsIdentity { IsAuthenticated: true })
+        {
             throw new InvalidOperationException(
                 "The external authorization data cannot be used for authentication.");
+        }
 
         // Build an identity based on the external claims and that will be used to create the authentication cookie.
         //

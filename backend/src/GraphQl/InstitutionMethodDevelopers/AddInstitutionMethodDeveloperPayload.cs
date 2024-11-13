@@ -25,7 +25,7 @@ public sealed class AddInstitutionMethodDeveloperPayload
     public AddInstitutionMethodDeveloperPayload(
         AddInstitutionMethodDeveloperError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

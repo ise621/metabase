@@ -22,7 +22,10 @@ public static class CommonMethodAuthorization
                 .Select(x => new { x.ManagerId })
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
-        if (wrappedManagerId is null) return false;
+        if (wrappedManagerId is null)
+        {
+            return false;
+        }
 
         return await CommonAuthorization.IsAtLeastAssistantOfVerifiedInstitution(
             user, wrappedManagerId.ManagerId, context, cancellationToken

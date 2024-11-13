@@ -6,24 +6,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Methods;
 
-public sealed class PendingInstitutionMethodDevelopersByMethodIdDataLoader
-    : AssociationsByAssociateIdDataLoader<InstitutionMethodDeveloper>
-{
-    public PendingInstitutionMethodDevelopersByMethodIdDataLoader(
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions options,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory
+public sealed class PendingInstitutionMethodDevelopersByMethodIdDataLoader(
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options,
+    IDbContextFactory<ApplicationDbContext> dbContextFactory
     )
-        : base(
-            batchScheduler,
-            options,
-            dbContextFactory,
-            (dbContext, ids) =>
+        : AssociationsByAssociateIdDataLoader<InstitutionMethodDeveloper>(
+        batchScheduler,
+        options,
+        dbContextFactory,
+        (dbContext, ids) =>
                 dbContext.InstitutionMethodDevelopers.AsNoTracking().Where(x =>
                     x.Pending && ids.Contains(x.MethodId)
                 ),
-            x => x.MethodId
+        x => x.MethodId
         )
-    {
-    }
+{
 }

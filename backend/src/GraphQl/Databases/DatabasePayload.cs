@@ -24,7 +24,7 @@ public abstract class DatabasePayload<TDatabaseError>
     protected DatabasePayload(
         TDatabaseError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -43,7 +43,7 @@ public abstract class DatabasePayload<TDatabaseError>
     )
         : this(
             database,
-            new[] { error }
+            [error]
         )
     {
     }

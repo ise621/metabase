@@ -3,13 +3,9 @@ using Metabase.GraphQl.Methods;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionDevelopedMethodEdge
-    : Edge<Method, MethodByIdDataLoader>
-{
-    public InstitutionDevelopedMethodEdge(
-        InstitutionMethodDeveloper association
+public sealed class InstitutionDevelopedMethodEdge(
+    InstitutionMethodDeveloper association
     )
-        : base(association.MethodId)
-    {
-    }
+        : Edge<Method, MethodByIdDataLoader>(association.MethodId)
+{
 }

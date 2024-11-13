@@ -1,5 +1,4 @@
 using System;
-using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Language;

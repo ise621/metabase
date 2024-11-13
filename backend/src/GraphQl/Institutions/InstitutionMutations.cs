@@ -43,16 +43,19 @@ public sealed class InstitutionMutations
                     cancellationToken
                 ).ConfigureAwait(false)
            )
+        {
             return new CreateInstitutionPayload(
                 new CreateInstitutionError(
                     CreateInstitutionErrorCode.UNAUTHORIZED,
                     "You are not authorized to create institutions.",
-                    new[] { nameof(input), nameof(input.ManagerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManagerId).FirstCharToLower()]
                 )
             );
+        }
 
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         if (user is null)
+        {
             return new CreateInstitutionPayload(
                 new CreateInstitutionError(
                     CreateInstitutionErrorCode.UNKNOWN,
@@ -60,15 +63,18 @@ public sealed class InstitutionMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         if (input.OwnerIds.Count is 0 && input.ManagerId is null)
+        {
             return new CreateInstitutionPayload(
                 new CreateInstitutionError(
                     CreateInstitutionErrorCode.NEITHER_OWNER_NOR_MANAGER,
                     "Neither owner nor manager given.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var unknownOwnerIds =
             input.OwnerIds.Except(
@@ -79,13 +85,15 @@ public sealed class InstitutionMutations
                     .ConfigureAwait(false)
             );
         if (unknownOwnerIds.Any())
+        {
             return new CreateInstitutionPayload(
                 new CreateInstitutionError(
                     CreateInstitutionErrorCode.UNKNOWN_OWNERS,
                     $"There are no users with identifier(s) {string.Join(", ", unknownOwnerIds)}.",
-                    new[] { nameof(input), nameof(input.OwnerIds).FirstCharToLower() }
+                    [nameof(input), nameof(input.OwnerIds).FirstCharToLower()]
                 )
             );
+        }
 
         if (input.ManagerId is not null &&
             !await context.Institutions.AsQueryable()
@@ -95,13 +103,15 @@ public sealed class InstitutionMutations
                 )
                 .ConfigureAwait(false)
            )
+        {
             return new CreateInstitutionPayload(
                 new CreateInstitutionError(
                     CreateInstitutionErrorCode.UNKNOWN_MANAGER,
                     "Unknown manager.",
-                    new[] { nameof(input), nameof(input.ManagerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManagerId).FirstCharToLower()]
                 )
             );
+        }
 
         var institution = new Institution(
             input.Name,
@@ -116,6 +126,7 @@ public sealed class InstitutionMutations
             ManagerId = input.ManagerId
         };
         foreach (var ownerId in input.OwnerIds)
+        {
             institution.RepresentativeEdges.Add(
                 new InstitutionRepresentative
                 {
@@ -125,6 +136,7 @@ public sealed class InstitutionMutations
                         .IsAuthorizedToConfirm(claimsPrincipal, ownerId, userManager).ConfigureAwait(false)
                 }
             );
+        }
 
         context.Institutions.Add(institution);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -162,7 +174,9 @@ public sealed class InstitutionMutations
             || await userManager.IsInRoleAsync(user, Role.EnumToName(UserRole.VERIFIER))
                 .ConfigureAwait(false)
            )
+        {
             return InstitutionState.VERIFIED;
+        }
 
         return InstitutionState.PENDING;
     }
@@ -182,6 +196,7 @@ public sealed class InstitutionMutations
                 userManager
             ).ConfigureAwait(false)
            )
+        {
             return new VerifyInstitutionPayload(
                 new VerifyInstitutionError(
                     VerifyInstitutionErrorCode.UNAUTHORIZED,
@@ -189,6 +204,7 @@ public sealed class InstitutionMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var institution =
             await context.Institutions.AsQueryable()
@@ -196,13 +212,15 @@ public sealed class InstitutionMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institution is null)
+        {
             return new VerifyInstitutionPayload(
                 new VerifyInstitutionError(
                     VerifyInstitutionErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         institution.Verify();
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -227,6 +245,7 @@ public sealed class InstitutionMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new UpdateInstitutionPayload(
                 new UpdateInstitutionError(
                     UpdateInstitutionErrorCode.UNAUTHORIZED,
@@ -234,6 +253,7 @@ public sealed class InstitutionMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var institution =
             await context.Institutions.AsQueryable()
@@ -241,13 +261,15 @@ public sealed class InstitutionMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institution is null)
+        {
             return new UpdateInstitutionPayload(
                 new UpdateInstitutionError(
                     UpdateInstitutionErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         institution.Update(
             input.Name,
@@ -278,6 +300,7 @@ public sealed class InstitutionMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new DeleteInstitutionPayload(
                 new DeleteInstitutionError(
                     DeleteInstitutionErrorCode.UNAUTHORIZED,
@@ -285,6 +308,7 @@ public sealed class InstitutionMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var institution =
             await context.Institutions.AsQueryable()
@@ -292,13 +316,15 @@ public sealed class InstitutionMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institution is null)
+        {
             return new DeleteInstitutionPayload(
                 new DeleteInstitutionError(
                     DeleteInstitutionErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         if (
             await context
@@ -336,13 +362,15 @@ public sealed class InstitutionMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
         )
+        {
             return new DeleteInstitutionPayload(
                 new DeleteInstitutionError(
                     DeleteInstitutionErrorCode.MANAGING,
                     "The institution manages or is associated to other entities.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
         context.Institutions.Remove(institution);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -367,6 +395,7 @@ public sealed class InstitutionMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new SwitchInstitutionOperatingStatePayload(
                 new SwitchInstitutionOperatingStateError(
                     SwitchInstitutionOperatingStateErrorCode.UNAUTHORIZED,
@@ -374,6 +403,7 @@ public sealed class InstitutionMutations
                     Array.Empty<string>()
                 )
             );
+        }
 
         var institution =
             await context.Institutions.AsQueryable()
@@ -381,13 +411,16 @@ public sealed class InstitutionMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (institution is null)
+        {
             return new SwitchInstitutionOperatingStatePayload(
                 new SwitchInstitutionOperatingStateError(
                     SwitchInstitutionOperatingStateErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
+
         switch (institution.OperatingState)
         {
             case InstitutionOperatingState.NOT_OPERATING:

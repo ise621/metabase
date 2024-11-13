@@ -9,20 +9,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentGeneralizationOfConnection
-    : Connection<Component, ComponentConcretizationAndGeneralization,
-        ComponentConcretizationsByComponentIdDataLoader, ComponentGeneralizationOfEdge>
-{
-    public ComponentGeneralizationOfConnection(
-        Component subject
+public sealed class ComponentGeneralizationOfConnection(
+    Component subject
     )
-        : base(
-            subject,
-            x => new ComponentGeneralizationOfEdge(x)
+        : Connection<Component, ComponentConcretizationAndGeneralization,
+        ComponentConcretizationsByComponentIdDataLoader, ComponentGeneralizationOfEdge>(
+        subject,
+        x => new ComponentGeneralizationOfEdge(x)
         )
-    {
-    }
-
+{
     [UseUserManager]
     public Task<bool> CanCurrentUserAddEdgeAsync(
         ClaimsPrincipal claimsPrincipal,

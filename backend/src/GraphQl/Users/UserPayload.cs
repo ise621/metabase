@@ -24,7 +24,7 @@ public abstract class UserPayload<TUserError>
     protected UserPayload(
         TUserError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -41,7 +41,7 @@ public abstract class UserPayload<TUserError>
         User user,
         TUserError error
     )
-        : this(user, new[] { error })
+        : this(user, [error])
     {
     }
 

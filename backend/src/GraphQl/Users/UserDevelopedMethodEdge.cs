@@ -3,13 +3,9 @@ using Metabase.GraphQl.Methods;
 
 namespace Metabase.GraphQl.Users;
 
-public sealed class UserDevelopedMethodEdge
-    : Edge<Method, MethodByIdDataLoader>
-{
-    public UserDevelopedMethodEdge(
-        UserMethodDeveloper association
+public sealed class UserDevelopedMethodEdge(
+    UserMethodDeveloper association
     )
-        : base(association.MethodId)
-    {
-    }
+        : Edge<Method, MethodByIdDataLoader>(association.MethodId)
+{
 }

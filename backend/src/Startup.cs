@@ -28,24 +28,18 @@ using Serilog;
 
 namespace Metabase;
 
-public sealed class Startup
+public sealed class Startup(
+    IWebHostEnvironment environment,
+    IConfiguration configuration
+    )
 {
     private const string GraphQlCorsPolicy = "GraphQlCorsPolicy";
     private const string AntiforgeryHeaderName = "X-XSRF-TOKEN";
-    private readonly AppSettings _appSettings;
-
-    private readonly IWebHostEnvironment _environment;
-
-    public Startup(
-        IWebHostEnvironment environment,
-        IConfiguration configuration
-    )
-    {
-        _environment = environment;
-        _appSettings = configuration.Get<AppSettings>() ??
+    private readonly AppSettings _appSettings = configuration.Get<AppSettings>() ??
                        throw new InvalidOperationException(
                            "Failed to get application settings from configuration.");
-    }
+
+    private readonly IWebHostEnvironment _environment = environment;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -159,13 +153,18 @@ public sealed class Startup
         )
     {
         if (!environment.IsProduction())
+        {
             options
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors();
+        }
+
         if (environment.IsEnvironment(Program.TestEnvironment))
+        {
             options.ConfigureWarnings(x =>
                 x.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)
             );
+        }
     }
 
     private void ConfigureDatabaseServices(IServiceCollection services)
@@ -317,7 +316,10 @@ public sealed class Startup
                 jsonWriter.WriteString("duration",
                     healthReportEntry.Value.Duration.ToString());
                 jsonWriter.WriteStartArray("tags");
-                foreach (var tag in healthReportEntry.Value.Tags) jsonWriter.WriteStringValue(tag);
+                foreach (var tag in healthReportEntry.Value.Tags)
+                {
+                    jsonWriter.WriteStringValue(tag);
+                }
 
                 jsonWriter.WriteEndArray();
                 var exception = healthReportEntry.Value.Exception;
@@ -325,15 +327,25 @@ public sealed class Startup
                 {
                     jsonWriter.WriteStartObject("exception");
                     jsonWriter.WriteString("message", exception.Message);
-                    if (exception.StackTrace is not null) jsonWriter.WriteString("stackTrace", exception.StackTrace);
+                    if (exception.StackTrace is not null)
+                    {
+                        jsonWriter.WriteString("stackTrace", exception.StackTrace);
+                    }
 
                     if (exception.InnerException is not null)
+                    {
                         jsonWriter.WriteString("innerException", exception.InnerException.ToString());
+                    }
 
-                    if (exception.Source is not null) jsonWriter.WriteString("source", exception.Source);
+                    if (exception.Source is not null)
+                    {
+                        jsonWriter.WriteString("source", exception.Source);
+                    }
 
                     if (exception.TargetSite is not null)
+                    {
                         jsonWriter.WriteString("targetSite", exception.TargetSite.ToString());
+                    }
 
                     jsonWriter.WriteEndObject();
                 }

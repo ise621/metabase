@@ -4,22 +4,15 @@ using Microsoft.EntityFrameworkCore;
 namespace Metabase.Data;
 
 [Owned]
-public sealed class Numeration
-{
-    public Numeration(
-        string? prefix,
-        string mainNumber,
-        string? suffix
+public sealed class Numeration(
+    string? prefix,
+    string mainNumber,
+    string? suffix
     )
-    {
-        Prefix = prefix;
-        MainNumber = mainNumber;
-        Suffix = suffix;
-    }
+{
+    [MinLength(1)] public string? Prefix { get; private set; } = prefix;
 
-    [MinLength(1)] public string? Prefix { get; private set; }
+    [Required][MinLength(1)] public string MainNumber { get; private set; } = mainNumber;
 
-    [Required] [MinLength(1)] public string MainNumber { get; private set; }
-
-    [MinLength(1)] public string? Suffix { get; private set; }
+    [MinLength(1)] public string? Suffix { get; private set; } = suffix;
 }

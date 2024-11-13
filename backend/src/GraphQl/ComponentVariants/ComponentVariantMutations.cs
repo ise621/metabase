@@ -38,13 +38,15 @@ public sealed class ComponentVariantMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new AddComponentVariantPayload(
                 new AddComponentVariantError(
                     AddComponentVariantErrorCode.UNAUTHORIZED,
                     "You are not authorized to add the component variant.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<AddComponentVariantError>();
         if (!await context.Components.AsQueryable()
@@ -52,28 +54,35 @@ public sealed class ComponentVariantMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddComponentVariantError(
                     AddComponentVariantErrorCode.UNKNOWN_ONE_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.OneComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.OneComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Components.AsQueryable()
                 .Where(c => c.Id == input.OtherComponentId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddComponentVariantError(
                     AddComponentVariantErrorCode.UNKNOWN_OTHER_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.OtherComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.OtherComponentId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new AddComponentVariantPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new AddComponentVariantPayload(errors.AsReadOnly());
+        }
 
         if (await context.ComponentVariants.AsQueryable()
                 .Where(a =>
@@ -83,13 +92,15 @@ public sealed class ComponentVariantMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             return new AddComponentVariantPayload(
                 new AddComponentVariantError(
                     AddComponentVariantErrorCode.DUPLICATE,
                     "Component variant already exists.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var componentVariant = new ComponentVariant
         {
@@ -126,13 +137,15 @@ public sealed class ComponentVariantMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveComponentVariantPayload(
                 new RemoveComponentVariantError(
                     RemoveComponentVariantErrorCode.UNAUTHORIZED,
                     "You are not authorized to remove the component variant.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<RemoveComponentVariantError>();
         if (!await context.Components.AsQueryable()
@@ -140,28 +153,35 @@ public sealed class ComponentVariantMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveComponentVariantError(
                     RemoveComponentVariantErrorCode.UNKNOWN_ONE_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.OneComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.OneComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Components.AsQueryable()
                 .Where(c => c.Id == input.OtherComponentId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveComponentVariantError(
                     RemoveComponentVariantErrorCode.UNKNOWN_OTHER_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.OtherComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.OtherComponentId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new RemoveComponentVariantPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new RemoveComponentVariantPayload(errors.AsReadOnly());
+        }
 
         var componentVariant =
             await context.ComponentVariants.AsQueryable()
@@ -182,17 +202,25 @@ public sealed class ComponentVariantMutations
         // Note that if the database is consistent, due to the reflivity of
         // the variant association, either both variants exist or none.
         if (componentVariant is null && reverseComponentVariant is null)
+        {
             return new RemoveComponentVariantPayload(
                 new RemoveComponentVariantError(
                     RemoveComponentVariantErrorCode.UNKNOWN_VARIANT,
                     "Unknown variant.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
-        if (componentVariant is not null) context.ComponentVariants.Remove(componentVariant);
+        if (componentVariant is not null)
+        {
+            context.ComponentVariants.Remove(componentVariant);
+        }
 
-        if (reverseComponentVariant is not null) context.ComponentVariants.Remove(reverseComponentVariant);
+        if (reverseComponentVariant is not null)
+        {
+            context.ComponentVariants.Remove(reverseComponentVariant);
+        }
 
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new RemoveComponentVariantPayload(input.OneComponentId, input.OtherComponentId);

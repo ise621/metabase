@@ -38,13 +38,15 @@ public sealed class ComponentAssemblyMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new AddComponentAssemblyPayload(
                 new AddComponentAssemblyError(
                     AddComponentAssemblyErrorCode.UNAUTHORIZED,
                     "You are not authorized to add the component assembly.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<AddComponentAssemblyError>();
         if (!await context.Components.AsQueryable()
@@ -52,28 +54,35 @@ public sealed class ComponentAssemblyMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddComponentAssemblyError(
                     AddComponentAssemblyErrorCode.UNKNOWN_ASSEMBLED_COMPONENT,
                     "Unknown assembled component.",
-                    new[] { nameof(input), nameof(input.AssembledComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.AssembledComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Components.AsQueryable()
                 .Where(c => c.Id == input.PartComponentId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddComponentAssemblyError(
                     AddComponentAssemblyErrorCode.UNKNOWN_PART_COMPONENT,
                     "Unknown part component.",
-                    new[] { nameof(input), nameof(input.PartComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.PartComponentId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new AddComponentAssemblyPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new AddComponentAssemblyPayload(errors.AsReadOnly());
+        }
 
         if (await context.ComponentAssemblies.AsQueryable()
                 .Where(a =>
@@ -83,13 +92,15 @@ public sealed class ComponentAssemblyMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             return new AddComponentAssemblyPayload(
                 new AddComponentAssemblyError(
                     AddComponentAssemblyErrorCode.DUPLICATE,
                     "Component assembly already exists.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var componentAssembly = new ComponentAssembly
         {
@@ -122,13 +133,15 @@ public sealed class ComponentAssemblyMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new UpdateComponentAssemblyPayload(
                 new UpdateComponentAssemblyError(
                     UpdateComponentAssemblyErrorCode.UNAUTHORIZED,
                     "You are not authorized to update the component assembly.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<UpdateComponentAssemblyError>();
         if (!await context.Components.AsQueryable()
@@ -136,28 +149,35 @@ public sealed class ComponentAssemblyMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new UpdateComponentAssemblyError(
                     UpdateComponentAssemblyErrorCode.UNKNOWN_ASSEMBLED_COMPONENT,
                     "Unknown assembled component.",
-                    new[] { nameof(input), nameof(input.AssembledComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.AssembledComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Components.AsQueryable()
                 .Where(c => c.Id == input.PartComponentId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new UpdateComponentAssemblyError(
                     UpdateComponentAssemblyErrorCode.UNKNOWN_PART_COMPONENT,
                     "Unknown part component.",
-                    new[] { nameof(input), nameof(input.PartComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.PartComponentId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new UpdateComponentAssemblyPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new UpdateComponentAssemblyPayload(errors.AsReadOnly());
+        }
 
         var componentAssembly =
             await context.ComponentAssemblies.AsQueryable()
@@ -168,13 +188,15 @@ public sealed class ComponentAssemblyMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (componentAssembly is null)
+        {
             return new UpdateComponentAssemblyPayload(
                 new UpdateComponentAssemblyError(
                     UpdateComponentAssemblyErrorCode.UNKNOWN_ASSEMBLY,
                     "Unknown assembly.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         componentAssembly.Index = input.Index;
         componentAssembly.PrimeSurface = input.PrimeSurface;
@@ -202,13 +224,15 @@ public sealed class ComponentAssemblyMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveComponentAssemblyPayload(
                 new RemoveComponentAssemblyError(
                     RemoveComponentAssemblyErrorCode.UNAUTHORIZED,
                     "You are not authorized to remove the component assembly.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<RemoveComponentAssemblyError>();
         if (!await context.Components.AsQueryable()
@@ -216,28 +240,35 @@ public sealed class ComponentAssemblyMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveComponentAssemblyError(
                     RemoveComponentAssemblyErrorCode.UNKNOWN_ASSEMBLED_COMPONENT,
                     "Unknown assembled component.",
-                    new[] { nameof(input), nameof(input.AssembledComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.AssembledComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Components.AsQueryable()
                 .Where(c => c.Id == input.PartComponentId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveComponentAssemblyError(
                     RemoveComponentAssemblyErrorCode.UNKNOWN_PART_COMPONENT,
                     "Unknown part component.",
-                    new[] { nameof(input), nameof(input.PartComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.PartComponentId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new RemoveComponentAssemblyPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new RemoveComponentAssemblyPayload(errors.AsReadOnly());
+        }
 
         var componentAssembly =
             await context.ComponentAssemblies.AsQueryable()
@@ -248,13 +279,15 @@ public sealed class ComponentAssemblyMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (componentAssembly is null)
+        {
             return new RemoveComponentAssemblyPayload(
                 new RemoveComponentAssemblyError(
                     RemoveComponentAssemblyErrorCode.UNKNOWN_ASSEMBLY,
                     "Unknown assembly.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         context.ComponentAssemblies.Remove(componentAssembly);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

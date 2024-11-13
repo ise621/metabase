@@ -11,11 +11,11 @@ public sealed class Role : IdentityRole<Guid>
     private const string Verifier = "Verifier";
 
     public static readonly ReadOnlyCollection<Enumerations.UserRole> AllEnum =
-        Array.AsReadOnly(new[]
-        {
+        Array.AsReadOnly(
+        [
             Enumerations.UserRole.ADMINISTRATOR,
             Enumerations.UserRole.VERIFIER
-        });
+        ]);
 
     // public ICollection<UserRole> UserRoles { get; } = new List<UserRole>();
 

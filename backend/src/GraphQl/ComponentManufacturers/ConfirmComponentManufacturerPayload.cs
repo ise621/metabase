@@ -25,7 +25,7 @@ public sealed class ConfirmComponentManufacturerPayload
     public ConfirmComponentManufacturerPayload(
         ConfirmComponentManufacturerError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

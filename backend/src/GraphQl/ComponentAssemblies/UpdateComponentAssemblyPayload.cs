@@ -24,7 +24,7 @@ public sealed class UpdateComponentAssemblyPayload
     public UpdateComponentAssemblyPayload(
         UpdateComponentAssemblyError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

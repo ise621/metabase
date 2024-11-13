@@ -31,7 +31,7 @@ public sealed class RemoveUserRolePayload
     public RemoveUserRolePayload(
         RemoveUserRoleError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

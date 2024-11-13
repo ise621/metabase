@@ -26,15 +26,23 @@ public static class UserAuthorization
     )
     {
         var loggedInUser = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
-        if (loggedInUser is null) return false;
+        if (loggedInUser is null)
+        {
+            return false;
+        }
 
-        if (loggedInUser.Id == userId) return true;
+        if (loggedInUser.Id == userId)
+        {
+            return true;
+        }
 
         if (await userManager.IsInRoleAsync(
                 loggedInUser,
                 Role.EnumToName(UserRole.ADMINISTRATOR)
             ).ConfigureAwait(false))
+        {
             return true;
+        }
 
         return false;
     }
@@ -46,9 +54,15 @@ public static class UserAuthorization
     )
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
-        if (user is null) return false;
+        if (user is null)
+        {
+            return false;
+        }
 
-        if (await CommonAuthorization.IsAdministrator(user, userManager).ConfigureAwait(false)) return true;
+        if (await CommonAuthorization.IsAdministrator(user, userManager).ConfigureAwait(false))
+        {
+            return true;
+        }
 
         return role switch
         {
