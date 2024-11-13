@@ -38,7 +38,7 @@ public sealed class Institution
 
     [MinLength(1)] public string? Abbreviation { get; private set; }
 
-    [Required] [MinLength(1)] public string Description { get; private set; }
+    [Required][MinLength(1)] public string Description { get; private set; }
 
     [Url] public Uri? WebsiteLocator { get; private set; }
 
@@ -49,23 +49,23 @@ public sealed class Institution
     public InstitutionOperatingState OperatingState { get; private set; }
 
     public ICollection<InstitutionMethodDeveloper> DevelopedMethodEdges { get; } =
-        new List<InstitutionMethodDeveloper>();
+        [];
 
-    public ICollection<Method> DevelopedMethods { get; } = new List<Method>();
+    public ICollection<Method> DevelopedMethods { get; } = [];
 
     [InverseProperty(nameof(Method.Manager))]
-    public ICollection<Method> ManagedMethods { get; } = new List<Method>();
+    public ICollection<Method> ManagedMethods { get; } = [];
 
     [InverseProperty(nameof(DataFormat.Manager))]
-    public ICollection<DataFormat> ManagedDataFormats { get; } = new List<DataFormat>();
+    public ICollection<DataFormat> ManagedDataFormats { get; } = [];
 
     public ICollection<ComponentManufacturer> ManufacturedComponentEdges { get; } =
-        new List<ComponentManufacturer>();
+        [];
 
-    public ICollection<Component> ManufacturedComponents { get; } = new List<Component>();
+    public ICollection<Component> ManufacturedComponents { get; } = [];
 
     [InverseProperty(nameof(Database.Operator))]
-    public ICollection<Database> OperatedDatabases { get; } = new List<Database>();
+    public ICollection<Database> OperatedDatabases { get; } = [];
 
     public Guid? ManagerId { get; set; }
 
@@ -73,13 +73,13 @@ public sealed class Institution
     public Institution? Manager { get; set; }
 
     [InverseProperty(nameof(Manager))]
-    public ICollection<Institution> ManagedInstitutions { get; } = new List<Institution>();
+    public ICollection<Institution> ManagedInstitutions { get; } = [];
 
     public ICollection<InstitutionRepresentative> RepresentativeEdges { get; } =
-        new List<InstitutionRepresentative>();
+        [];
 
-    public ICollection<User> Representatives { get; } = new List<User>();
-    [Required] [MinLength(1)] public string Name { get; private set; }
+    public ICollection<User> Representatives { get; } = [];
+    [Required][MinLength(1)] public string Name { get; private set; }
 
     public void Update(
         string name,

@@ -35,9 +35,9 @@ public sealed class Method
         Categories = categories;
     }
 
-    [Required] [MinLength(1)] public string Name { get; private set; }
+    [Required][MinLength(1)] public string Name { get; private set; }
 
-    [Required] [MinLength(1)] public string Description { get; private set; }
+    [Required][MinLength(1)] public string Description { get; private set; }
 
     // Standard, being an owned type, is included by default as told on https://docs.microsoft.com/en-us/ef/core/modeling/owned-entities#querying-owned-types
     public Standard? Standard { get; set; }
@@ -71,12 +71,12 @@ public sealed class Method
     [Required] public MethodCategory[] Categories { get; private set; }
 
     public ICollection<InstitutionMethodDeveloper> InstitutionDeveloperEdges { get; } =
-        new List<InstitutionMethodDeveloper>();
+        [];
 
-    public ICollection<Institution> InstitutionDevelopers { get; } = new List<Institution>();
+    public ICollection<Institution> InstitutionDevelopers { get; } = [];
 
-    public ICollection<UserMethodDeveloper> UserDeveloperEdges { get; } = new List<UserMethodDeveloper>();
-    public ICollection<User> UserDevelopers { get; } = new List<User>();
+    public ICollection<UserMethodDeveloper> UserDeveloperEdges { get; } = [];
+    public ICollection<User> UserDevelopers { get; } = [];
 
     [NotMapped]
     public IEnumerable<IStakeholder> Developers =>

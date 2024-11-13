@@ -54,30 +54,30 @@ public sealed class Component
     public DescriptionOrReference? PrimeDirection { get; set; }
     public DescriptionOrReference? SwitchableLayers { get; set; }
 
-    public ICollection<ComponentAssembly> PartOfEdges { get; } = new List<ComponentAssembly>();
-    public ICollection<Component> PartOf { get; } = new List<Component>();
+    public ICollection<ComponentAssembly> PartOfEdges { get; } = [];
+    public ICollection<Component> PartOf { get; } = [];
 
-    public ICollection<ComponentAssembly> PartEdges { get; } = new List<ComponentAssembly>();
-    public ICollection<Component> Parts { get; } = new List<Component>();
+    public ICollection<ComponentAssembly> PartEdges { get; } = [];
+    public ICollection<Component> Parts { get; } = [];
 
     public ICollection<ComponentConcretizationAndGeneralization> ConcretizationEdges { get; } =
-        new List<ComponentConcretizationAndGeneralization>();
+        [];
 
-    public ICollection<Component> Concretizations { get; } = new List<Component>();
+    public ICollection<Component> Concretizations { get; } = [];
 
     public ICollection<ComponentConcretizationAndGeneralization> GeneralizationEdges { get; } =
-        new List<ComponentConcretizationAndGeneralization>();
+        [];
 
-    public ICollection<Component> Generalizations { get; } = new List<Component>();
+    public ICollection<Component> Generalizations { get; } = [];
 
-    public ICollection<ComponentVariant> VariantOfEdges { get; } = new List<ComponentVariant>();
-    public ICollection<Component> VariantOf { get; } = new List<Component>();
+    public ICollection<ComponentVariant> VariantOfEdges { get; } = [];
+    public ICollection<Component> VariantOf { get; } = [];
 
-    public ICollection<ComponentVariant> VariantEdges { get; } = new List<ComponentVariant>();
-    public ICollection<Component> Variants { get; } = new List<Component>();
+    public ICollection<ComponentVariant> VariantEdges { get; } = [];
+    public ICollection<Component> Variants { get; } = [];
 
-    public ICollection<ComponentManufacturer> ManufacturerEdges { get; } = new List<ComponentManufacturer>();
-    public ICollection<Institution> Manufacturers { get; } = new List<Institution>();
+    public ICollection<ComponentManufacturer> ManufacturerEdges { get; } = [];
+    public ICollection<Institution> Manufacturers { get; } = [];
 
     public void Update(
         string name,
