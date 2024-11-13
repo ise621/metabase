@@ -133,8 +133,8 @@ public static class CommonAuthorization
                 cancellationToken
             ).ConfigureAwait(false);
         return
-            role == InstitutionRepresentativeRole.OWNER
-            || role == InstitutionRepresentativeRole.ASSISTANT;
+            role is InstitutionRepresentativeRole.OWNER
+            or InstitutionRepresentativeRole.ASSISTANT;
     }
 
     public static async Task<bool> IsAtLeastAssistantOfVerifiedInstitution(
