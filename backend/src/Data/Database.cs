@@ -37,15 +37,15 @@ public sealed class Database
     //     return Convert.ToBase64String(hashValue);
     // }
 
-    [Required] [MinLength(1)] public string Name { get; private set; }
+    [Required][MinLength(1)] public string Name { get; private set; }
 
-    [Required] [MinLength(1)] public string Description { get; private set; }
+    [Required][MinLength(1)] public string Description { get; private set; }
 
-    [Required] [Url] public Uri Locator { get; private set; }
+    [Required][Url] public Uri Locator { get; private set; }
 
     [Required] public DatabaseVerificationState VerificationState { get; private set; }
 
-    [Required] [MinLength(32)] public string VerificationCode { get; private set; }
+    [Required][MinLength(32)] public string VerificationCode { get; private set; }
 
     public Guid OperatorId { get; set; }
 
