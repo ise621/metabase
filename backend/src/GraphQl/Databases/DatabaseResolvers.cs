@@ -1011,7 +1011,7 @@ public sealed class DatabaseResolvers(
             resolverContext.ReportError(
                 ErrorBuilder.New()
                     .SetCode("DESERIALIZATION_FAILED")
-                    .SetPath(resolverContext.Path.ToList().Concat(e.Path?.Split('.') ?? Array.Empty<string>())
+                    .SetPath(resolverContext.Path.ToList().Concat(e.Path?.Split('.') ?? [])
                         .ToList()) // TODO Splitting the path at '.' is wrong in general.
                     .SetMessage(
                         $"Failed to deserialize GraphQL response of request to {database.Locator} for {JsonSerializer.Serialize(request, QueryingDatabases.SerializerOptions)}. The details given are: Zero-based number of bytes read within the current line before the exception are {e.BytePositionInLine}, zero-based number of lines read before the exception are {e.LineNumber}, message that describes the current exception is '{e.Message}', path within the JSON where the exception was encountered is {e.Path}.")

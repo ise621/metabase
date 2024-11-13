@@ -60,7 +60,7 @@ public sealed class InstitutionMutations
                 new CreateInstitutionError(
                     CreateInstitutionErrorCode.UNKNOWN,
                     "Unknown user.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -201,7 +201,7 @@ public sealed class InstitutionMutations
                 new VerifyInstitutionError(
                     VerifyInstitutionErrorCode.UNAUTHORIZED,
                     "You are not authorized to verify institutions.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -250,7 +250,7 @@ public sealed class InstitutionMutations
                 new UpdateInstitutionError(
                     UpdateInstitutionErrorCode.UNAUTHORIZED,
                     "You are not authorized to update the institution.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -305,7 +305,7 @@ public sealed class InstitutionMutations
                 new DeleteInstitutionError(
                     DeleteInstitutionErrorCode.UNAUTHORIZED,
                     "You are not authorized to delete the institution.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -400,7 +400,7 @@ public sealed class InstitutionMutations
                 new SwitchInstitutionOperatingStateError(
                     SwitchInstitutionOperatingStateErrorCode.UNAUTHORIZED,
                     "You are not authorized to switch institution operating state.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }

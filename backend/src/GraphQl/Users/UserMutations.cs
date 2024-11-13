@@ -293,7 +293,7 @@ public sealed class UserMutations
                 new LoginUserWithTwoFactorCodeError(
                     LoginUserWithTwoFactorCodeErrorCode.UNKNOWN_USER,
                     "Failed to load two-factor authentication user.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -362,7 +362,7 @@ public sealed class UserMutations
                 new LoginUserWithRecoveryCodeError(
                     LoginUserWithRecoveryCodeErrorCode.UNKNOWN_USER,
                     "Failed to load two-factor authentication user.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -795,7 +795,7 @@ public sealed class UserMutations
                 new ChangeUserPasswordError(
                     ChangeUserPasswordErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -807,7 +807,7 @@ public sealed class UserMutations
                 new ChangeUserPasswordError(
                     ChangeUserPasswordErrorCode.NO_PASSWORD,
                     "You do not have a password yet.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -903,7 +903,7 @@ public sealed class UserMutations
                 new DeletePersonalUserDataError(
                     DeletePersonalUserDataErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -980,7 +980,7 @@ public sealed class UserMutations
                 new DisableUserTwoFactorAuthenticationError(
                     DisableUserTwoFactorAuthenticationErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -992,7 +992,7 @@ public sealed class UserMutations
                 new DisableUserTwoFactorAuthenticationError(
                     DisableUserTwoFactorAuthenticationErrorCode.UNKNOWN,
                     "Unknown error.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1020,7 +1020,7 @@ public sealed class UserMutations
                 new ForgetUserTwoFactorAuthenticationClientError(
                     ForgetUserTwoFactorAuthenticationClientErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1049,7 +1049,7 @@ public sealed class UserMutations
                 new GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriError(
                     GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1068,7 +1068,7 @@ public sealed class UserMutations
                         GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriErrorCode
                             .RESETTING_AUTHENTICATOR_KEY_FAILED,
                         "Failed to reset authenticator key.",
-                        Array.Empty<string>()
+                        []
                     )
                 ),
             LoadSharedKeyAndQrCodeUriPayload.GettingAuthenticatorKeyFailure =>
@@ -1077,7 +1077,7 @@ public sealed class UserMutations
                         GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriErrorCode
                             .GETTING_AUTHENTICATOR_KEY_FAILED,
                         "Failed to get authenticator key.",
-                        Array.Empty<string>()
+                        []
                     )
                 ),
             LoadSharedKeyAndQrCodeUriPayload.GettingEmailFailure =>
@@ -1085,7 +1085,7 @@ public sealed class UserMutations
                     new GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriError(
                         GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriErrorCode.GETTING_EMAIL_FAILED,
                         "Failed to get email.",
-                        Array.Empty<string>()
+                        []
                     )
                 ),
             _ =>
@@ -1093,7 +1093,7 @@ public sealed class UserMutations
                     new GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriError(
                         GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriErrorCode.UNKNOWN,
                         "Failed to load shared key and QR code URI.",
-                        Array.Empty<string>()
+                        []
                     )
                 )
         };
@@ -1119,7 +1119,7 @@ public sealed class UserMutations
                 new EnableUserTwoFactorAuthenticatorError(
                     EnableUserTwoFactorAuthenticatorErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1170,7 +1170,7 @@ public sealed class UserMutations
                         new EnableUserTwoFactorAuthenticatorError(
                             EnableUserTwoFactorAuthenticatorErrorCode.ENABLING_FAILED,
                             "Unknown error enabling.",
-                            Array.Empty<string>()
+                            []
                         ),
                         sharedKey,
                         authenticatorUri
@@ -1180,7 +1180,7 @@ public sealed class UserMutations
                         new EnableUserTwoFactorAuthenticatorError(
                             EnableUserTwoFactorAuthenticatorErrorCode.ENABLING_FAILED,
                             "Unknown error enabling.",
-                            Array.Empty<string>()
+                            []
                         )
                     )
             };
@@ -1192,7 +1192,7 @@ public sealed class UserMutations
                 await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait(false);
             if (recoveryCodes is null)
             {
-                return new EnableUserTwoFactorAuthenticatorPayload(user, Array.Empty<string>());
+                return new EnableUserTwoFactorAuthenticatorPayload(user, []);
             }
             // TODO Inform user that recovery code generation failed and the he/she has none left.
             // return new EnableUserTwoFactorAuthenticatorPayload(
@@ -1288,7 +1288,7 @@ public sealed class UserMutations
                 new ResetUserTwoFactorAuthenticatorError(
                     ResetUserTwoFactorAuthenticatorErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1300,7 +1300,7 @@ public sealed class UserMutations
                 new ResetUserTwoFactorAuthenticatorError(
                     ResetUserTwoFactorAuthenticatorErrorCode.DISABLING_FAILED,
                     "Unknown error disabling.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1312,7 +1312,7 @@ public sealed class UserMutations
                 new ResetUserTwoFactorAuthenticatorError(
                     ResetUserTwoFactorAuthenticatorErrorCode.RESETTING_FAILED,
                     "Unknown error resetting.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1343,7 +1343,7 @@ public sealed class UserMutations
                 new ChangeUserEmailError(
                     ChangeUserEmailErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1355,7 +1355,7 @@ public sealed class UserMutations
                 new ChangeUserEmailError(
                     ChangeUserEmailErrorCode.UNKNOWN_CURRENT_EMAIL,
                     "Failed to load current email address.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1406,7 +1406,7 @@ public sealed class UserMutations
                 new ResendUserEmailVerificationError(
                     ResendUserEmailVerificationErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1418,7 +1418,7 @@ public sealed class UserMutations
                 new ResendUserEmailVerificationError(
                     ResendUserEmailVerificationErrorCode.UNKNOWN_EMAIL,
                     "Failed to load email address.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1452,7 +1452,7 @@ public sealed class UserMutations
                 new GenerateUserTwoFactorRecoveryCodesError(
                     GenerateUserTwoFactorRecoveryCodesErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1464,7 +1464,7 @@ public sealed class UserMutations
                 new GenerateUserTwoFactorRecoveryCodesError(
                     GenerateUserTwoFactorRecoveryCodesErrorCode.TWO_FACTOR_AUTHENTICATION_DISABLED,
                     "You have disabled two-factor authentication.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1478,7 +1478,7 @@ public sealed class UserMutations
                 new GenerateUserTwoFactorRecoveryCodesError(
                     GenerateUserTwoFactorRecoveryCodesErrorCode.CODE_GENERATION_FAILED,
                     "Code generation failed.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1510,7 +1510,7 @@ public sealed class UserMutations
                 new SetUserPhoneNumberError(
                     SetUserPhoneNumberErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1576,7 +1576,7 @@ public sealed class UserMutations
                 new SetUserPasswordError(
                     SetUserPasswordErrorCode.UNKNOWN_USER,
                     $"Failed to load user with identifier {userManager.GetUserId(claimsPrincipal)}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1588,7 +1588,7 @@ public sealed class UserMutations
                 new SetUserPasswordError(
                     SetUserPasswordErrorCode.EXISTING_PASSWORD,
                     "You already have a password.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1682,7 +1682,7 @@ public sealed class UserMutations
                 new AddUserRoleError(
                     AddUserRoleErrorCode.UNAUTHORIZED,
                     $"You are not authorized to add role {input.Role}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -1750,7 +1750,7 @@ public sealed class UserMutations
                 new RemoveUserRoleError(
                     RemoveUserRoleErrorCode.UNAUTHORIZED,
                     $"You are not authorized to remove role {input.Role}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }

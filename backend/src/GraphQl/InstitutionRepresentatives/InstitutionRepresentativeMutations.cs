@@ -43,7 +43,7 @@ public sealed class InstitutionRepresentativeMutations
                 new AddInstitutionRepresentativeError(
                     AddInstitutionRepresentativeErrorCode.UNAUTHORIZED,
                     "You are not authorized to add institution representatives.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -138,7 +138,7 @@ public sealed class InstitutionRepresentativeMutations
                 new RemoveInstitutionRepresentativeError(
                     RemoveInstitutionRepresentativeErrorCode.UNAUTHORIZED,
                     "You are not authorized to remove institution representatives.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -244,7 +244,7 @@ public sealed class InstitutionRepresentativeMutations
                 new ChangeInstitutionRepresentativeRoleError(
                     ChangeInstitutionRepresentativeRoleErrorCode.UNAUTHORIZED,
                     "You are not authorized to change institution representative roles.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }

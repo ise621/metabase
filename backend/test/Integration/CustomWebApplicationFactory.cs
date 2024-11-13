@@ -76,7 +76,7 @@ public sealed class CustomWebApplicationFactory
                 Metabase.Program.ConfigureAppConfiguration(
                     configurationBuilder,
                     webHostBuilderContext.HostingEnvironment,
-                    Array.Empty<string>()
+                    []
                 );
             }
         );

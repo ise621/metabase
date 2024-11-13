@@ -18,7 +18,7 @@ public abstract class ComponentIntegrationTests
         "C!A",
         "Best component ever!",
         null,
-        Array.Empty<ComponentCategory>(),
+        [],
         null,
         null,
         null,

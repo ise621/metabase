@@ -43,7 +43,7 @@ public sealed class InstitutionMethodDeveloperMutations
                 new AddInstitutionMethodDeveloperError(
                     AddInstitutionMethodDeveloperErrorCode.UNAUTHORIZED,
                     $"You are not authorized to add method developer relation for method ${input.MethodId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -138,7 +138,7 @@ public sealed class InstitutionMethodDeveloperMutations
                 new ConfirmInstitutionMethodDeveloperError(
                     ConfirmInstitutionMethodDeveloperErrorCode.UNAUTHORIZED,
                     $"You are not authorized to confirm method developer relation for institution ${input.InstitutionId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -226,7 +226,7 @@ public sealed class InstitutionMethodDeveloperMutations
                 new RemoveInstitutionMethodDeveloperError(
                     RemoveInstitutionMethodDeveloperErrorCode.UNAUTHORIZED,
                     $"You are not authorized to remove method developer relation for method ${input.MethodId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }

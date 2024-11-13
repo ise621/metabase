@@ -92,7 +92,7 @@ public abstract partial class IntegrationTests
     {
         if (!response.Headers.TryGetValues("Set-Cookie", out var cookieEntries))
         {
-            return Enumerable.Empty<Cookie>();
+            return [];
         }
         var uri = response.RequestMessage?.RequestUri ?? throw new ArgumentException($"The request URI cannot be extracted from the given response {response}.");
         var cookieContainer = new CookieContainer();

@@ -43,7 +43,7 @@ public sealed class UserMethodDeveloperMutations
                 new AddUserMethodDeveloperError(
                     AddUserMethodDeveloperErrorCode.UNAUTHORIZED,
                     $"You are not authorized to add method developer relation for method ${input.MethodId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -135,7 +135,7 @@ public sealed class UserMethodDeveloperMutations
                 new ConfirmUserMethodDeveloperError(
                     ConfirmUserMethodDeveloperErrorCode.UNAUTHORIZED,
                     $"You are not authorized to confirm method developer relation for user ${input.UserId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
@@ -223,7 +223,7 @@ public sealed class UserMethodDeveloperMutations
                 new RemoveUserMethodDeveloperError(
                     RemoveUserMethodDeveloperErrorCode.UNAUTHORIZED,
                     $"You are not authorized to remove method developer relation for method ${input.MethodId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
         }
