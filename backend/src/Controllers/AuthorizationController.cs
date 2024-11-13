@@ -616,12 +616,6 @@ public sealed class AuthorizationController(
                 result.Principal?.GetScopes() ??
                 throw new InvalidOperationException("The scopes cannot be retrieved.")
             ).ConfigureAwait(false);
-            var properties = new AuthenticationProperties
-            {
-                // This property points to the address OpenIddict will automatically
-                // redirect the user to after validating the authorization demand.
-                RedirectUri = "/"
-            };
             return await DoSignIn(principal).ConfigureAwait(false);
         }
 
