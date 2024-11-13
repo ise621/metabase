@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using HotChocolate.Types;
 using Metabase.Data;
 using Metabase.GraphQl.DataX;
+using Metabase.GraphQl.Entities;
 using Metabase.GraphQl.Users;
 
 namespace Metabase.GraphQl.Databases;

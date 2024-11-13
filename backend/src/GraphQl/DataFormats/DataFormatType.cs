@@ -5,6 +5,7 @@ using HotChocolate;
 using HotChocolate.Types;
 using Metabase.Authorization;
 using Metabase.Data;
+using Metabase.GraphQl.Entities;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 
