@@ -291,7 +291,7 @@ public sealed class Startup(
             {
                 ResponseWriter = WriteJsonResponse
             }
-        );
+        ).DisableHttpMetrics();
     }
 
     // Inspired by https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-7.0#customize-output
