@@ -8,8 +8,8 @@ namespace Metabase.Migrations
 {
     public partial class InitialCreate : Migration
     {
-        private static readonly string[] _openIddictAuthorizationsIndexByApplicationIdStatusSubjectTypeColumns = ["ApplicationId", "Status", "Subject", "Type"];
-        private static readonly string[] _oppenIddictTokensIndexByApplicationIdStatusSubjectTypeColumns = ["ApplicationId", "Status", "Subject", "Type"];
+        private static readonly string[] s_openIddictAuthorizationsIndexByApplicationIdStatusSubjectTypeColumns = ["ApplicationId", "Status", "Subject", "Type"];
+        private static readonly string[] s_oppenIddictTokensIndexByApplicationIdStatusSubjectTypeColumns = ["ApplicationId", "Status", "Subject", "Type"];
 
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -624,7 +624,7 @@ namespace Metabase.Migrations
                 name: "IX_OpenIddictAuthorizations_ApplicationId_Status_Subject_Type",
                 schema: "metabase",
                 table: "OpenIddictAuthorizations",
-                columns: _openIddictAuthorizationsIndexByApplicationIdStatusSubjectTypeColumns);
+                columns: s_openIddictAuthorizationsIndexByApplicationIdStatusSubjectTypeColumns);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictScopes_Name",
@@ -637,7 +637,7 @@ namespace Metabase.Migrations
                 name: "IX_OpenIddictTokens_ApplicationId_Status_Subject_Type",
                 schema: "metabase",
                 table: "OpenIddictTokens",
-                columns: _oppenIddictTokensIndexByApplicationIdStatusSubjectTypeColumns);
+                columns: s_oppenIddictTokensIndexByApplicationIdStatusSubjectTypeColumns);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictTokens_AuthorizationId",

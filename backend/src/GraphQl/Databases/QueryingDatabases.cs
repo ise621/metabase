@@ -48,7 +48,7 @@ public sealed class QueryingDatabases
         }
     }
 
-    private static readonly JsonSerializerOptions NonDataSerializerOptions =
+    private static readonly JsonSerializerOptions s_nonDataSerializerOptions =
         new()
         {
             Converters =
@@ -79,7 +79,7 @@ public sealed class QueryingDatabases
             {
                 new JsonStringEnumConverter(new ConstantCaseJsonNamingPolicy(), false),
                 new DateTimeConverterUsingDateTimeParseAsFallback(),
-                new DataConverterWithTypeDiscriminatorProperty(NonDataSerializerOptions)
+                new DataConverterWithTypeDiscriminatorProperty(s_nonDataSerializerOptions)
             },
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             IgnoreReadOnlyFields = true,

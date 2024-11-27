@@ -34,7 +34,7 @@ public abstract class AuthConfiguration
     public const string ManageUserApiScope = ScopePrefixApi + ":user:manage";
 
     // Keep in sync with the scopes set in `OpenIddictClientRegistration`.
-    private static readonly HashSet<string> _clientScopes =
+    private static readonly HashSet<string> s_clientScopes =
     [
         OpenIddictConstants.Scopes.Address,
         OpenIddictConstants.Scopes.Email,
@@ -168,7 +168,7 @@ public abstract class AuthConfiguration
                         // `ClaimsPrincipal.HasScope`. And it is also allowed to read data, write
                         // data, and manage users. The corresponding policies `*Policy` use scopes,
                         // so we need to add them.
-                        identity.SetScopes(_clientScopes);
+                        identity.SetScopes(s_clientScopes);
                         context.Principal.AddIdentity(identity);
                     }
 
@@ -410,7 +410,7 @@ public abstract class AuthConfiguration
                         // https://auth0.com/docs/get-started/apis/scopes/openid-connect-scopes#standard-claims
                         Scopes =
                         {
-                            // Keep in sync with `_clientScopes`.
+                            // Keep in sync with `s_clientScopes`.
                             OpenIddictConstants.Scopes.Address,
                             OpenIddictConstants.Scopes.Email,
                             OpenIddictConstants.Scopes.Phone,

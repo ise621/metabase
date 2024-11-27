@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Metabase.Data;
 using Metabase.GraphQl.Institutions;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Metabase.Tests.Integration.GraphQl.Institutions;
 

@@ -3,14 +3,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.GraphQl.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Users;
 

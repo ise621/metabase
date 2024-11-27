@@ -33,11 +33,10 @@ public abstract class ComponentIntegrationTests
             new DateTime(2020, 1, 1, 8, 0, 0, DateTimeKind.Utc),
             new DateTime(2020, 11, 5, 20, 0, 0, DateTimeKind.Utc)
         ),
-        new[]
-        {
+        [
             ComponentCategory.MATERIAL,
             ComponentCategory.UNIT
-        },
+        ],
         null,
         null,
         null,
@@ -52,10 +51,9 @@ public abstract class ComponentIntegrationTests
             null,
             new DateTime(2021, 11, 5, 20, 0, 0, DateTimeKind.Utc)
         ),
-        new[]
-        {
+        [
             ComponentCategory.UNIT
-        },
+        ],
         null,
         null,
         null,
@@ -70,12 +68,11 @@ public abstract class ComponentIntegrationTests
             new DateTime(2019, 4, 3, 0, 0, 0, DateTimeKind.Utc),
             null
         ),
-        new[]
-        {
+        [
             ComponentCategory.LAYER,
             ComponentCategory.MATERIAL,
             ComponentCategory.UNIT
-        },
+        ],
         null,
         null,
         null,

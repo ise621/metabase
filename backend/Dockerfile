@@ -44,6 +44,7 @@ RUN \
     --no-install-recommends \
     curl \
     dumb-init \
+    editorconfig \
     gawk \
     lldb \
     make \
