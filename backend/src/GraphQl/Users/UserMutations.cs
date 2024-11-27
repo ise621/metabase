@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
@@ -28,7 +27,7 @@ namespace Metabase.GraphQl.Users;
 public sealed class UserMutations
 {
     // Key Uri Format https://github.com/google/google-authenticator/wiki/Key-Uri-Format
-    private static readonly CompositeFormat AuthenticatorUriFormat =
+    private static readonly CompositeFormat s_authenticatorUriFormat =
         CompositeFormat.Parse("otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6");
 
     private static async Task ValidateAntiforgeryTokenAsync(
@@ -1261,7 +1260,7 @@ public sealed class UserMutations
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            AuthenticatorUriFormat,
+            s_authenticatorUriFormat,
             urlEncoder.Encode("buildingenvelopedata.org"), // issuer
             urlEncoder.Encode(email), // account name
             unformattedKey // secret

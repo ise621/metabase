@@ -4,15 +4,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Types;
+using Metabase.Authorization;
+using Metabase.Data;
+using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Core;
 using OpenIddict.EntityFrameworkCore.Models;
-using Metabase.Authorization;
-using Metabase.Data;
-using Metabase.GraphQl.Users;
 
 namespace Metabase.GraphQl.OpenIdConnect;
 

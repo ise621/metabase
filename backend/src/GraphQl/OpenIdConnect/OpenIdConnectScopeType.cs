@@ -10,7 +10,7 @@ public sealed class OpenIdConnectScopeType
         IObjectTypeDescriptor<OpenIddictEntityFrameworkCoreScope> descriptor
     )
     {
-        const string suffixedName = nameof(OpenIdConnectScopeType);
-        descriptor.Name(suffixedName.Remove(suffixedName.Length - "Type".Length));
+        const string SuffixedName = nameof(OpenIdConnectScopeType);
+        descriptor.Name(SuffixedName.Remove(SuffixedName.Length - "Type".Length));
     }
 }

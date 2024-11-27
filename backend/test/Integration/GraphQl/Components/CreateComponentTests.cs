@@ -59,7 +59,7 @@ public sealed class CreateComponentTests
             AppSettings.BootstrapUserPassword,
             InstitutionIntegrationTests.PendingInstitutionInput with
             {
-                OwnerIds = new[] { userId }
+                OwnerIds = [userId]
             }
         ).ConfigureAwait(false);
         // Act
@@ -100,7 +100,7 @@ public sealed class CreateComponentTests
             AppSettings.BootstrapUserPassword,
             InstitutionIntegrationTests.PendingInstitutionInput with
             {
-                OwnerIds = new[] { userId }
+                OwnerIds = [userId]
             }
         ).ConfigureAwait(false);
         // Act

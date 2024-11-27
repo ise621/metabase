@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GreenDonut;
-using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Entities;
 

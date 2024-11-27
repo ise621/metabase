@@ -23,8 +23,8 @@ public sealed class OpenEndedDateTimeRangeType
     {
         descriptor.BindFieldsExplicitly();
 
-        const string suffixedName = nameof(OpenEndedDateTimeRangeType);
-        descriptor.Name(suffixedName.Remove(suffixedName.Length - "Type".Length));
+        const string SuffixedName = nameof(OpenEndedDateTimeRangeType);
+        descriptor.Name(SuffixedName.Remove(SuffixedName.Length - "Type".Length));
 
         descriptor
             .Field("from")

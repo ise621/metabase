@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -92,6 +93,7 @@ public class AuthenticationController(
     [HttpGet("~/connect/callback/login/{provider}")]
     [HttpPost("~/connect/callback/login/{provider}")]
     [IgnoreAntiforgeryToken]
+    [SuppressMessage("Style", "IDE0060")]
     public async Task<ActionResult> LogInCallback(string provider)
     {
         // Retrieve the authorization data validated by OpenIddict as part of the callback handling.
@@ -208,6 +210,7 @@ public class AuthenticationController(
     [HttpGet("~/connect/callback/logout/{provider}")]
     [HttpPost("~/connect/callback/logout/{provider}")]
     [IgnoreAntiforgeryToken]
+    [SuppressMessage("Style", "IDE0060")]
     public async Task<ActionResult> LogOutCallback(string provider)
     {
         // Retrieve the data stored by OpenIddict in the state token created when the logout was triggered.

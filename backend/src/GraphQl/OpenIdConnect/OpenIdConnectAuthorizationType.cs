@@ -10,7 +10,7 @@ public sealed class OpenIdConnectAuthorizationType
         IObjectTypeDescriptor<OpenIddictEntityFrameworkCoreAuthorization> descriptor
     )
     {
-        const string suffixedName = nameof(OpenIdConnectAuthorizationType);
-        descriptor.Name(suffixedName.Remove(suffixedName.Length - "Type".Length));
+        const string SuffixedName = nameof(OpenIdConnectAuthorizationType);
+        descriptor.Name(SuffixedName.Remove(SuffixedName.Length - "Type".Length));
     }
 }

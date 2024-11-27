@@ -192,7 +192,7 @@ public static class GraphQlConfiguration
 
     private sealed class MyUuidType : UuidType
     {
-        private const string _specifiedBy = "https://tools.ietf.org/html/rfc4122";
+        private const string SpecifiedByString = "https://tools.ietf.org/html/rfc4122";
 
         public MyUuidType(
             string name,
@@ -204,13 +204,13 @@ public static class GraphQlConfiguration
             : base(name, description, defaultFormat, enforceFormat,
                 bind)
         {
-            SpecifiedBy = new Uri(_specifiedBy, UriKind.Absolute);
+            SpecifiedBy = new Uri(SpecifiedByString, UriKind.Absolute);
         }
     }
 
     private sealed class MyUrlType : UrlType
     {
-        private const string _specifiedBy = "https://tools.ietf.org/html/rfc3986";
+        private const string SpecifiedByString = "https://tools.ietf.org/html/rfc3986";
 
         public MyUrlType(
             string name,
@@ -218,7 +218,7 @@ public static class GraphQlConfiguration
             BindingBehavior bind = BindingBehavior.Explicit)
             : base(name, description, bind)
         {
-            SpecifiedBy = new Uri(_specifiedBy, UriKind.Absolute);
+            SpecifiedBy = new Uri(SpecifiedByString, UriKind.Absolute);
         }
     }
 }

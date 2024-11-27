@@ -1,4 +1,4 @@
-﻿using Metabase.Enumerations;
+using Metabase.Enumerations;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable

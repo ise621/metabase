@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GraphQL;
-using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
@@ -22,7 +21,7 @@ namespace Metabase.GraphQl.Databases;
 [ExtendObjectType(nameof(Mutation))]
 public sealed class DatabaseMutations
 {
-    private static readonly string[] _verificationCodeFileNames =
+    private static readonly string[] s_verificationCodeFileNames =
     [
         "VerificationCode.graphql"
     ];
@@ -242,7 +241,7 @@ public sealed class DatabaseMutations
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _verificationCodeFileNames
+                            s_verificationCodeFileNames
                         ).ConfigureAwait(false),
                         operationName: "VerificationCode"
                     ),

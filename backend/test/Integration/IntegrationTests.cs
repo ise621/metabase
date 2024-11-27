@@ -30,7 +30,7 @@ public abstract partial class IntegrationTests
     public const string DefaultEmail = "john.doe@ise.fraunhofer.de";
     public const string DefaultPassword = "aaaAAA123$!@";
 
-    private static readonly JsonSerializerOptions _customJsonSerializerOptions =
+    private static readonly JsonSerializerOptions s_customJsonSerializerOptions =
         new()
         {
             Converters = { new JsonStringEnumConverter() },
@@ -651,7 +651,7 @@ public abstract partial class IntegrationTests
             new ByteArrayContent(
                 JsonSerializer.SerializeToUtf8Bytes(
                     content,
-                    _customJsonSerializerOptions
+                    s_customJsonSerializerOptions
                 )
             );
         result.Headers.ContentType =

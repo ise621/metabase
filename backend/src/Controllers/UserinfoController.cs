@@ -18,6 +18,24 @@ namespace Metabase.Controllers;
 public sealed class UserinfoController(UserManager<User> userManager) : Controller
 {
     private readonly UserManager<User> _userManager = userManager;
+    private bool _disposed;
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (!_disposed)
+        {
+            // Dispose of resources held by this instance.
+            _userManager.Dispose();
+            _disposed = true;
+        }
+    }
+
+    // Disposable types implement a finalizer.
+    ~UserinfoController()
+    {
+        Dispose(false);
+    }
 
     // GET: /connect/userinfo
     [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]

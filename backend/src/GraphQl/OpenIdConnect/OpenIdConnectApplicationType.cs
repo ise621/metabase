@@ -10,7 +10,7 @@ public sealed class OpenIdConnectApplicationType
         IObjectTypeDescriptor<OpenIddictEntityFrameworkCoreApplication> descriptor
     )
     {
-        const string suffixedName = nameof(OpenIdConnectApplicationType);
-        descriptor.Name(suffixedName.Remove(suffixedName.Length - "Type".Length));
+        const string SuffixedName = nameof(OpenIdConnectApplicationType);
+        descriptor.Name(SuffixedName.Remove(SuffixedName.Length - "Type".Length));
     }
 }

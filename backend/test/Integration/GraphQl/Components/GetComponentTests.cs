@@ -36,7 +36,7 @@ public sealed class GetComponentTests
             AppSettings.BootstrapUserPassword,
             InstitutionIntegrationTests.PendingInstitutionInput with
             {
-                OwnerIds = new[] { userId }
+                OwnerIds = [userId]
             }
         ).ConfigureAwait(false);
         await CreateComponentReturningIdAndUuid(
@@ -67,7 +67,7 @@ public sealed class GetComponentTests
             AppSettings.BootstrapUserPassword,
             InstitutionIntegrationTests.PendingInstitutionInput with
             {
-                OwnerIds = new[] { userId }
+                OwnerIds = [userId]
             }
         ).ConfigureAwait(false);
         var componentIdsAndUuids = new List<(string, string)>();

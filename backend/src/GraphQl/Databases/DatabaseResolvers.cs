@@ -80,65 +80,65 @@ public sealed class DatabaseResolvers(
     private const string IgsdbUrl = "https://igsdb-v2.herokuapp.com/graphql/";
     private const string IgsdbStagingUrl = "https://igsdb-v2-staging.herokuapp.com/graphql/";
 
-    private static readonly string[] _dataFileNames =
+    private static readonly string[] s_dataFileNames =
     [
         "DataFields.graphql",
         "Data.graphql"
     ];
 
-    private static readonly string[] _opticalDataFileNames =
+    private static readonly string[] s_opticalDataFileNames =
     [
         "DataFields.graphql",
         "OpticalDataFields.graphql",
         "OpticalData.graphql"
     ];
 
-    private static readonly string[] _hygrothermalDataFileNames =
+    private static readonly string[] s_hygrothermalDataFileNames =
     [
         "DataFields.graphql",
         "HygrothermalDataFields.graphql",
         "HygrothermalData.graphql"
     ];
 
-    private static readonly string[] _calorimetricDataFileNames =
+    private static readonly string[] s_calorimetricDataFileNames =
     [
         "DataFields.graphql",
         "CalorimetricDataFields.graphql",
         "CalorimetricData.graphql"
     ];
 
-    private static readonly string[] _photovoltaicDataFileNames =
+    private static readonly string[] s_photovoltaicDataFileNames =
     [
         "DataFields.graphql",
         "PhotovoltaicDataFields.graphql",
         "PhotovoltaicData.graphql"
     ];
 
-    private static readonly string[] _geometricDataFileNames =
+    private static readonly string[] s_geometricDataFileNames =
     [
         "DataFields.graphql",
         "GeometricDataFields.graphql",
         "GeometricData.graphql"
     ];
 
-    private static readonly string[] _igsdbAllDataFileNames =
+    private static readonly string[] s_igsdbAllDataFileNames =
     [
         "AllDataIgsdb.graphql"
     ];
 
-    private static readonly string[] _allDataFileNames =
+    private static readonly string[] s_allDataFileNames =
     [
         "DataFields.graphql",
         // "PageInfoFields.graphql",
         "AllData.graphql"
     ];
 
-    private static readonly string[] _igsdbAllOpticalDataFileNames =
+    private static readonly string[] s_igsdbAllOpticalDataFileNames =
     [
         "AllOpticalDataIgsdb.graphql"
     ];
 
-    private static readonly string[] _allOpticalDataFileNames =
+    private static readonly string[] s_allOpticalDataFileNames =
     [
         "DataFields.graphql",
         "OpticalDataFields.graphql",
@@ -146,7 +146,7 @@ public sealed class DatabaseResolvers(
         "AllOpticalData.graphql"
     ];
 
-    private static readonly string[] _allHygrothermalDataFileNames =
+    private static readonly string[] s_allHygrothermalDataFileNames =
     [
         "DataFields.graphql",
         "HygrothermalDataFields.graphql",
@@ -154,7 +154,7 @@ public sealed class DatabaseResolvers(
         "AllHygrothermalData.graphql"
     ];
 
-    private static readonly string[] _allCalorimetricDataFileNames =
+    private static readonly string[] s_allCalorimetricDataFileNames =
     [
         "DataFields.graphql",
         "CalorimetricDataFields.graphql",
@@ -162,7 +162,7 @@ public sealed class DatabaseResolvers(
         "AllCalorimetricData.graphql"
     ];
 
-    private static readonly string[] _allPhotovoltaicDataFileNames =
+    private static readonly string[] s_allPhotovoltaicDataFileNames =
     [
         "DataFields.graphql",
         "PhotovoltaicDataFields.graphql",
@@ -170,44 +170,44 @@ public sealed class DatabaseResolvers(
         "AllPhotovoltaicData.graphql"
     ];
 
-    private static readonly string[] _igsdbAllGeometricDataFileNames =
+    private static readonly string[] s_igsdbAllGeometricDataFileNames =
     [
         "AllGeometricDataIgsdb.graphql"
     ];
 
-    private static readonly string[] _allGeometricDataFileNames =
+    private static readonly string[] s_allGeometricDataFileNames =
     [
         "DataFields.graphql",
         "GeometricDataFields.graphql",
         "AllGeometricData.graphql"
     ];
 
-    private static readonly string[] _hasDataFileNames =
+    private static readonly string[] s_hasDataFileNames =
     [
         "HasData.graphql"
     ];
 
-    private static readonly string[] _hasOpticalDataFileNames =
+    private static readonly string[] s_hasOpticalDataFileNames =
     [
         "HasOpticalData.graphql"
     ];
 
-    private static readonly string[] _hasCalorimetricDataFileNames =
+    private static readonly string[] s_hasCalorimetricDataFileNames =
     [
         "HasCalorimetricData.graphql"
     ];
 
-    private static readonly string[] _hasHygrothermalDataFileNames =
+    private static readonly string[] s_hasHygrothermalDataFileNames =
     [
         "HasHygrothermalData.graphql"
     ];
 
-    private static readonly string[] _hasPhotovoltaicDataFileNames =
+    private static readonly string[] s_hasPhotovoltaicDataFileNames =
     [
         "HasPhotovoltaicData.graphql"
     ];
 
-    private static readonly string[] _hasGeometricDataFileNames =
+    private static readonly string[] s_hasGeometricDataFileNames =
     [
         "HasGeometricData.graphql"
     ];
@@ -260,7 +260,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _dataFileNames
+                            s_dataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -291,7 +291,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _opticalDataFileNames
+                            s_opticalDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -322,7 +322,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hygrothermalDataFileNames
+                            s_hygrothermalDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -353,7 +353,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _calorimetricDataFileNames
+                            s_calorimetricDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -384,7 +384,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _photovoltaicDataFileNames
+                            s_photovoltaicDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -415,7 +415,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _geometricDataFileNames
+                            s_geometricDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -452,7 +452,7 @@ public sealed class DatabaseResolvers(
                 (await QueryDatabase<AllDataDataIgsdb>(
                         database,
                         new GraphQLRequest(
-                            await QueryingDatabases.ConstructQuery(_igsdbAllDataFileNames).ConfigureAwait(false),
+                            await QueryingDatabases.ConstructQuery(s_igsdbAllDataFileNames).ConfigureAwait(false),
                             new
                             {
                                 where = RewriteDataPropositionInput(where, database)
@@ -469,7 +469,7 @@ public sealed class DatabaseResolvers(
         return (await QueryDatabase<AllDataData>(
                     database,
                     new GraphQLRequest(
-                        await QueryingDatabases.ConstructQuery(_allDataFileNames).ConfigureAwait(false),
+                        await QueryingDatabases.ConstructQuery(s_allDataFileNames).ConfigureAwait(false),
                         new
                         {
                             where = RewriteDataPropositionInput(where, database),
@@ -520,7 +520,7 @@ public sealed class DatabaseResolvers(
                         database,
                         new GraphQLRequest(
                             await QueryingDatabases.ConstructQuery(
-                                _igsdbAllOpticalDataFileNames).ConfigureAwait(false),
+                                s_igsdbAllOpticalDataFileNames).ConfigureAwait(false),
                             new
                             {
                                 where = RewriteOpticalDataPropositionInput(where, database)
@@ -538,7 +538,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _allOpticalDataFileNames).ConfigureAwait(false),
+                            s_allOpticalDataFileNames).ConfigureAwait(false),
                         new
                         {
                             where,
@@ -586,7 +586,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _allHygrothermalDataFileNames
+                            s_allHygrothermalDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -625,7 +625,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _allCalorimetricDataFileNames
+                            s_allCalorimetricDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -664,7 +664,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _allPhotovoltaicDataFileNames
+                            s_allPhotovoltaicDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -716,7 +716,7 @@ public sealed class DatabaseResolvers(
                         database,
                         new GraphQLRequest(
                             await QueryingDatabases.ConstructQuery(
-                                _igsdbAllGeometricDataFileNames).ConfigureAwait(false),
+                                s_igsdbAllGeometricDataFileNames).ConfigureAwait(false),
                             new
                             {
                                 where = RewriteGeometricDataPropositionInput(where, database)
@@ -734,7 +734,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _allGeometricDataFileNames).ConfigureAwait(false),
+                            s_allGeometricDataFileNames).ConfigureAwait(false),
                         new
                         {
                             where,
@@ -768,7 +768,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hasDataFileNames
+                            s_hasDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -799,7 +799,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hasOpticalDataFileNames
+                            s_hasOpticalDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -830,7 +830,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hasCalorimetricDataFileNames
+                            s_hasCalorimetricDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -861,7 +861,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hasHygrothermalDataFileNames
+                            s_hasHygrothermalDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -892,7 +892,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hasPhotovoltaicDataFileNames
+                            s_hasPhotovoltaicDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
@@ -923,7 +923,7 @@ public sealed class DatabaseResolvers(
                     database,
                     new GraphQLRequest(
                         await QueryingDatabases.ConstructQuery(
-                            _hasGeometricDataFileNames
+                            s_hasGeometricDataFileNames
                         ).ConfigureAwait(false),
                         new
                         {
