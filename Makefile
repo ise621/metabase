@@ -220,7 +220,7 @@ prepare-release : ## Prepare release
 
 diagrams-plantuml : ## Draw images from textual UML diagrams
 	plantuml diagrams/plantuml/*.puml
-.PHONY : diagrams
+.PHONY : diagrams-plantuml
 
 # `diagrams-structurizr starts a server which can be accessed with a browser at localhost:9090. The diagrams can be downloaded manually from there.
 diagrams-structurizr : ## Serve diagrams to browser localhost Port 9090
