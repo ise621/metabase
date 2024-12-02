@@ -30,13 +30,15 @@ public sealed class ApplicationMutations
         OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication> applicationManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
+        ApplicationDbContext context,
         IWebHostEnvironment environment,
         CancellationToken cancellationToken
     )
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplications(
                 claimsPrincipal,
-                userManager).ConfigureAwait(false))
+                userManager,
+                context, cancellationToken).ConfigureAwait(false))
         {
             return new CreateApplicationPayload(
                 new CreateApplicationError(
@@ -108,6 +110,7 @@ public sealed class ApplicationMutations
         OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication> applicationManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
+        ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
@@ -120,7 +123,9 @@ public sealed class ApplicationMutations
         }
         if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplications(
                 claimsPrincipal,
-                userManager
+                userManager,
+                context,
+                cancellationToken
             ).ConfigureAwait(false))
         {
             return new UpdateApplicationPayload(
@@ -171,6 +176,7 @@ public sealed class ApplicationMutations
         OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication> applicationManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
+        ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
@@ -183,7 +189,9 @@ public sealed class ApplicationMutations
         }
         if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplications(
                 claimsPrincipal,
-                userManager
+                userManager,
+                context,
+                cancellationToken
             ).ConfigureAwait(false))
         {
             return new DeleteApplicationPayload(

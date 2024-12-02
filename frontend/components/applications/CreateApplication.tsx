@@ -17,7 +17,7 @@ type FormValues = {
 
 export default function CreateApplication() {
     const scopes = useScopesQuery()?.data?.scopes;
-    const institutions = useIn
+    // const institutions = useIn
     const currentUser = useCurrentUserQuery()?.data?.currentUser;
     const router = useRouter();
     const shouldRedirect = !(currentUser);
@@ -66,6 +66,7 @@ export default function CreateApplication() {
                 );
                 if (data) {
                     message.success('Successfully created application ' + data.createApplication.application?.displayName)
+                    console.log('Client Secret: ' + data.createApplication.application?.clientSecret)
                     router.push(paths.openIdConnect)
                 }
             } catch (error) {
@@ -107,19 +108,19 @@ export default function CreateApplication() {
                 <Form.Item
                     label="Assosiated Institution"
                     name="assosiatedInstitution"
-                    rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                 >
                     <Select
                         allowClear
                         style={{ width: '100%' }}
                         placeholder="Please select"
                     >
-                        {scopes?.map((scope => {
+                        {/* {scopes?.map((scope => {
                             return <Select.Option key={scope.id!} value={scope.name}>
                                 {scope.displayName}
                             </Select.Option>
                         }))
-                        }
+                        } */}
                     </Select>
                 </Form.Item>
                 <Form.Item
@@ -138,14 +139,14 @@ export default function CreateApplication() {
                 </Form.Item>
                 <Form.Item
                     label="Login Redirect URL"
-                    name="newRedirectUri"
+                    name="redirectUri"
                     rules={[{ required: true }, { type: 'url' }, { type: 'string', min: 6 }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
                     label="Logout Redirect URL"
-                    name="newPostLogoutRedirectUri"
+                    name="postLogoutRedirectUri"
                     rules={[{ required: true }, { type: 'url' }, { type: 'string', min: 6 }]}
                 >
                     <Input />
