@@ -74,6 +74,10 @@ inspect : ## Inspect with ReSharper, for example, `make OUTPUT=./inspection.xml 
 	dotnet tool run jb inspectcode --build ./Metabase.sln -o ${OUTPUT}
 .PHONY : inspect
 
+editorconfig : ## Debug editorconfig
+	editorconfig ./.editorconfig
+.PHONY : editorconfig
+
 play : ## Run tests in `Metabase.Tests.Play` (semi-alternative to the buggy `dotnet script` REPL)
 	dotnet test --filter "FullyQualifiedName~Metabase.Tests.Play"
 .PHONY : play
