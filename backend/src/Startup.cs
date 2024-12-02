@@ -149,9 +149,25 @@ public sealed class Startup(
 
     private static void ConfigureDatabaseContext(
         DbContextOptionsBuilder options,
-        IWebHostEnvironment environment
+        IWebHostEnvironment environment,
+        AppSettings appSettings
         )
     {
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(appSettings.Database.ConnectionString);
+        // https://www.npgsql.org/efcore/mapping/enum.html#mapping-your-enum
+        // Keep in sync with `ApplicationDbContext.CreateEnumerations`.
+        dataSourceBuilder.MapEnum<ComponentCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.ComponentCategoryTypeName}");
+        dataSourceBuilder.MapEnum<DatabaseVerificationState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.DatabaseVerificationStateTypeName}");
+        dataSourceBuilder.MapEnum<InstitutionRepresentativeRole>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionRepresentativeRoleTypeName}");
+        dataSourceBuilder.MapEnum<InstitutionState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionStateTypeName}");
+        dataSourceBuilder.MapEnum<InstitutionOperatingState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionOperatingStateTypeName}");
+        dataSourceBuilder.MapEnum<MethodCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.MethodCategoryTypeName}");
+        dataSourceBuilder.MapEnum<PrimeSurface>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.PrimeSurfaceTypeName}");
+        dataSourceBuilder.MapEnum<Standardizer>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.StandardizerTypeName}");
+        options
+            .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
+            .UseSchemaName(appSettings.Database.SchemaName)
+            .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
         if (!environment.IsProduction())
         {
             options
@@ -169,38 +185,20 @@ public sealed class Startup(
 
     private void ConfigureDatabaseServices(IServiceCollection services)
     {
-        services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
-            {
-                var dataSourceBuilder = new NpgsqlDataSourceBuilder(_appSettings.Database.ConnectionString);
-                // https://www.npgsql.org/efcore/mapping/enum.html#mapping-your-enum
-                // Keep in sync with `ApplicationDbContext.CreateEnumerations`.
-                dataSourceBuilder.MapEnum<ComponentCategory>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.ComponentCategoryTypeName}");
-                dataSourceBuilder.MapEnum<DatabaseVerificationState>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.DatabaseVerificationStateTypeName}");
-                dataSourceBuilder.MapEnum<InstitutionRepresentativeRole>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionRepresentativeRoleTypeName}");
-                dataSourceBuilder.MapEnum<InstitutionState>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionStateTypeName}");
-                dataSourceBuilder.MapEnum<InstitutionOperatingState>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionOperatingStateTypeName}");
-                dataSourceBuilder.MapEnum<MethodCategory>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.MethodCategoryTypeName}");
-                dataSourceBuilder.MapEnum<PrimeSurface>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.PrimeSurfaceTypeName}");
-                dataSourceBuilder.MapEnum<Standardizer>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.StandardizerTypeName}");
-                options
-                    .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
-                    .UseSchemaName(_appSettings.Database.SchemaName)
-                    .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
-                ConfigureDatabaseContext(options, _environment);
-            }
-        );
+        services.AddPooledDbContextFactory<ApplicationDbContext>(options => { });
         // Database context as services are used by `Identity` and
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
         services.AddDbContext<ApplicationDbContext>(
             (services, options) =>
-            {
-                ConfigureDatabaseContext(options, _environment);
                 services
                     .GetRequiredService<IDbContextFactory<ApplicationDbContext>>()
-                    .CreateDbContext();
-            },
-            ServiceLifetime.Transient
+                    .CreateDbContext(),
+            ServiceLifetime.Singleton
+        );
+        services.ConfigureDbContext<ApplicationDbContext>(options =>
+            ConfigureDatabaseContext(options, _environment, _appSettings),
+            ServiceLifetime.Singleton
         );
     }
 
