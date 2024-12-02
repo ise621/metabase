@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Metabase.Enumerations;
 using NpgsqlTypes;
 using DateTime = System.DateTime;
+using Metabase.Enumerations;
 
 namespace Metabase.Data;
 
@@ -50,7 +50,9 @@ public sealed class Component
     // https://www.npgsql.org/efcore/mapping/array.html
     [Required] public ComponentCategory[] Categories { get; private set; }
 
-    public DefinitionOfSurfacesAndPrimeDirection? DefinitionOfSurfacesAndPrimeDirection { get; set; }
+    public DescriptionOrReference? PrimeSurface { get; set; }
+    public DescriptionOrReference? PrimeDirection { get; set; }
+    public DescriptionOrReference? SwitchableLayers { get; set; }
 
     public ICollection<ComponentAssembly> PartOfEdges { get; } = new List<ComponentAssembly>();
     public ICollection<Component> PartOf { get; } = new List<Component>();

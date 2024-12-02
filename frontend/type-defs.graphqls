@@ -227,13 +227,14 @@ type Component implements Node {
   canCurrentUserUpdateNode: Boolean! @cost(weight: "10")
   categories: [ComponentCategory!]!
   concretizationOf: ComponentConcretizationOfConnection! @cost(weight: "10")
-  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirection
   description: String!
   generalizationOf: ComponentGeneralizationOfConnection! @cost(weight: "10")
   id: ID!
   manufacturers(pending: Boolean! = false): ComponentManufacturerConnection! @cost(weight: "10")
   name: String!
   partOf: ComponentPartOfConnection! @cost(weight: "10")
+  prime: PrimeSurfaceOrDirection @cost(weight: "10")
+  switchableLayers: DescriptionOrReference
   uuid: Uuid! @cost(weight: "10")
   variantOf: ComponentVariantOfConnection! @cost(weight: "10")
 }
@@ -576,11 +577,6 @@ type DatabasesEdge {
   node: Database!
 }
 
-type DefinitionOfSurfacesAndPrimeDirection {
-  description: String
-  reference: Reference @cost(weight: "10")
-}
-
 type DeleteInstitutionError {
   code: DeleteInstitutionErrorCode!
   message: String!
@@ -614,6 +610,11 @@ type DeleteUserPayload {
   errors: [DeleteUserError!]
   query: Query!
   user: User
+}
+
+type DescriptionOrReference {
+  description: String
+  reference: Reference @cost(weight: "10")
 }
 
 type DisableUserTwoFactorAuthenticationError {
@@ -1253,6 +1254,11 @@ type PhotovoltaicDataEdge {
   node: PhotovoltaicData!
 }
 
+type PrimeSurfaceOrDirection {
+  primeDirection: DescriptionOrReference
+  primeSurface: DescriptionOrReference
+}
+
 type Publication implements Reference {
   abstract: String
   "The website arXiv.org is a free and open-access archive for publications. The arXiv identifier can be used to define a publication."
@@ -1890,10 +1896,12 @@ input CreateComponentInput {
   abbreviation: String
   availability: OpenEndedDateTimeRangeInput
   categories: [ComponentCategory!]!
-  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
   description: String!
   manufacturerId: Uuid!
   name: String!
+  primeDirection: DescriptionOrReferenceInput
+  primeSurface: DescriptionOrReferenceInput
+  switchableLayers: DescriptionOrReferenceInput
 }
 
 input CreateDataFormatInput {
@@ -1999,11 +2007,6 @@ input DatabaseSortInput {
   operator: InstitutionSortInput @cost(weight: "10")
 }
 
-input DefinitionOfSurfacesAndPrimeDirectionInput {
-  description: String
-  reference: ReferenceInput
-}
-
 input DeleteInstitutionInput {
   institutionId: Uuid!
 }
@@ -2014,6 +2017,11 @@ input DeletePersonalUserDataInput {
 
 input DeleteUserInput {
   userId: Uuid!
+}
+
+input DescriptionOrReferenceInput {
+  description: String
+  reference: ReferenceInput
 }
 
 input EnableUserTwoFactorAuthenticatorInput {
@@ -2434,9 +2442,11 @@ input UpdateComponentInput {
   availability: OpenEndedDateTimeRangeInput
   categories: [ComponentCategory!]!
   componentId: Uuid!
-  definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
   description: String!
   name: String!
+  primeDirection: DescriptionOrReferenceInput
+  primeSurface: DescriptionOrReferenceInput
+  switchableLayers: DescriptionOrReferenceInput
 }
 
 input UpdateDataFormatInput {
@@ -2719,7 +2729,7 @@ enum CreateComponentErrorCode {
   UNKNOWN
   UNKNOWN_MANUFACTURER
   UNAUTHORIZED
-  AMBIGUOUS_REFERENCE_IN_DEFINITION_OF_SURFACES_AND_PRIME_DIRECTION
+  AMBIGUOUS_REFERENCE
 }
 
 enum CreateDataFormatErrorCode {

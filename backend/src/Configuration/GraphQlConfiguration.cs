@@ -16,7 +16,7 @@ using Metabase.GraphQl.ComponentVariants;
 using Metabase.GraphQl.Databases;
 using Metabase.GraphQl.DataFormats;
 using Metabase.GraphQl.DataX;
-using Metabase.GraphQl.DefinitionOfSurfacesAndPrimeDirections;
+using Metabase.GraphQl.DescriptionOrReferences;
 using Metabase.GraphQl.InstitutionMethodDevelopers;
 using Metabase.GraphQl.InstitutionRepresentatives;
 using Metabase.GraphQl.Institutions;
@@ -147,7 +147,7 @@ public static class GraphQlConfiguration
             .AddType<OpenEndedDateTimeRangeType>()
             .AddType<ComponentType>()
             .AddType<DataFormatType>()
-            .AddType<DefinitionOfSurfacesAndPrimeDirectionType>()
+            .AddType<DescriptionOrReferenceType>()
             .AddType<CalorimetricData>()
             .AddType<DataApproval>()
             .AddType<GetHttpsResourceTreeNonRootVertex>()
@@ -155,6 +155,7 @@ public static class GraphQlConfiguration
             .AddType<HygrothermalData>()
             .AddType<OpticalData>()
             .AddType<PhotovoltaicData>()
+            .AddType<GeometricData>()
             .AddType<ResponseApproval>()
             .AddType<DatabaseType>()
             .AddType<InstitutionType>()
@@ -169,7 +170,6 @@ public static class GraphQlConfiguration
             .AddType<StakeholderType>()
             .AddType<StandardType>()
             .AddType<UserType>()
-            .AddType<GeometricData>()
             // Data Loaders
             .AddDataLoader<ComponentByIdDataLoader>()
             .AddDataLoader<DataFormatByIdDataLoader>()
@@ -177,34 +177,6 @@ public static class GraphQlConfiguration
             .AddDataLoader<InstitutionByIdDataLoader>()
             .AddDataLoader<InstitutionRepresentativesByInstitutionIdDataLoader>()
             .AddDataLoader<MethodByIdDataLoader>()
-            // Filtering
-            .AddConvention<IFilterConvention>(
-                new FilterConventionExtension(descriptor =>
-                    {
-                        descriptor.BindRuntimeType<Component, ComponentFilterType>();
-                        descriptor
-                            .BindRuntimeType<ComponentAssembly,
-                                ComponentAssemblyFilterType>();
-                        descriptor
-                            .BindRuntimeType<ComponentManufacturer,
-                                ComponentManufacturerFilterType>();
-                        descriptor.BindRuntimeType<DataFormat, DataFormatFilterType>();
-                        descriptor.BindRuntimeType<Database, DatabaseFilterType>();
-                        descriptor.BindRuntimeType<DefinitionOfSurfacesAndPrimeDirection, DefinitionOfSurfacesAndPrimeDirectionFilterType>();
-                        descriptor.BindRuntimeType<Institution, InstitutionFilterType>();
-                        descriptor
-                            .BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperFilterType>();
-                        descriptor
-                            .BindRuntimeType<InstitutionRepresentative,
-                                InstitutionRepresentativeFilterType>();
-                        descriptor.BindRuntimeType<Method, MethodFilterType>();
-                        descriptor.BindRuntimeType<User, UserFilterType>();
-                        descriptor
-                            .BindRuntimeType<UserMethodDeveloper,
-                                UserMethodDeveloperFilterType>();
-                    }
-                )
-            )
             // Paging
             .AddDbContextCursorPagingProvider()
             .ModifyPagingOptions(_ =>
@@ -259,17 +231,17 @@ public partial class CustomFilterConvention : FilterConvention
     {
         descriptor.AddDefaults();
         // Bind custom types
-        descriptor.BindRuntimeType<DataFormat, DataFormatFilterType>();
-        descriptor.BindRuntimeType<DefinitionOfSurfacesAndPrimeDirection, DefinitionOfSurfacesAndPrimeDirectionFilterType>();
-        descriptor.BindRuntimeType<User, UserFilterType>();
-        descriptor.BindRuntimeType<Institution, InstitutionFilterType>();
-        descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblyFilterType>();
-        descriptor.BindRuntimeType<InstitutionRepresentative, InstitutionRepresentativeFilterType>();
-        descriptor.BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperFilterType>();
         descriptor.BindRuntimeType<Component, ComponentFilterType>();
+        descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblyFilterType>();
         descriptor.BindRuntimeType<ComponentManufacturer, ComponentManufacturerFilterType>();
+        descriptor.BindRuntimeType<DataFormat, DataFormatFilterType>();
         descriptor.BindRuntimeType<Database, DatabaseFilterType>();
+        descriptor.BindRuntimeType<DescriptionOrReference, DescriptionOrReferenceFilterType>();
+        descriptor.BindRuntimeType<Institution, InstitutionFilterType>();
+        descriptor.BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperFilterType>();
+        descriptor.BindRuntimeType<InstitutionRepresentative, InstitutionRepresentativeFilterType>();
         descriptor.BindRuntimeType<Method, MethodFilterType>();
+        descriptor.BindRuntimeType<User, UserFilterType>();
         descriptor.BindRuntimeType<UserMethodDeveloper, UserMethodDeveloperFilterType>();
     }
 }
@@ -282,17 +254,17 @@ public partial class CustomSortConvention : SortConvention
     {
         descriptor.AddDefaults();
         // Bind custom types
-        descriptor.BindRuntimeType<DataFormat, DataFormatSortType>();
-        descriptor.BindRuntimeType<DefinitionOfSurfacesAndPrimeDirection, DefinitionOfSurfacesAndPrimeDirectionSortType>();
-        descriptor.BindRuntimeType<User, UserSortType>();
-        descriptor.BindRuntimeType<Institution, InstitutionSortType>();
-        descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblySortType>();
-        descriptor.BindRuntimeType<InstitutionRepresentative, InstitutionRepresentativeSortType>();
-        descriptor.BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperSortType>();
         descriptor.BindRuntimeType<Component, ComponentSortType>();
+        descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblySortType>();
         descriptor.BindRuntimeType<ComponentManufacturer, ComponentManufacturerSortType>();
+        descriptor.BindRuntimeType<DataFormat, DataFormatSortType>();
         descriptor.BindRuntimeType<Database, DatabaseSortType>();
+        descriptor.BindRuntimeType<DescriptionOrReference, DescriptionOrReferenceSortType>();
+        descriptor.BindRuntimeType<Institution, InstitutionSortType>();
+        descriptor.BindRuntimeType<InstitutionMethodDeveloper, InstitutionMethodDeveloperSortType>();
+        descriptor.BindRuntimeType<InstitutionRepresentative, InstitutionRepresentativeSortType>();
         descriptor.BindRuntimeType<Method, MethodSortType>();
+        descriptor.BindRuntimeType<User, UserSortType>();
         descriptor.BindRuntimeType<UserMethodDeveloper, UserMethodDeveloperSortType>();
     }
 }

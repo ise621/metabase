@@ -1,9 +1,7 @@
-using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
@@ -11,8 +9,7 @@ using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.Extensions;
 using Metabase.GraphQl.Common;
-using Metabase.GraphQl.Publications;
-using Metabase.GraphQl.Standards;
+using Metabase.GraphQl.DescriptionOrReferences;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -63,14 +60,38 @@ public sealed class ComponentMutations
                 )
             );
 
-        if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Standard is not null
-            && input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Publication is not null)
+        if (input.PrimeSurface?.Reference?.Standard is not null
+            && input.PrimeSurface?.Reference?.Publication is not null)
         {
             return new CreateComponentPayload(
                 new CreateComponentError(
-                    CreateComponentErrorCode.AMBIGUOUS_REFERENCE_IN_DEFINITION_OF_SURFACES_AND_PRIME_DIRECTION,
+                    CreateComponentErrorCode.AMBIGUOUS_REFERENCE,
                     "Both standard and publication are non-null.",
-                    [nameof(input), nameof(input.DefinitionOfSurfacesAndPrimeDirection).FirstCharToLower(), nameof(input.DefinitionOfSurfacesAndPrimeDirection.Reference).FirstCharToLower()]
+                    [nameof(input), nameof(input.PrimeSurface).FirstCharToLower(), nameof(input.PrimeSurface.Reference).FirstCharToLower()]
+                )
+            );
+        }
+
+        if (input.PrimeDirection?.Reference?.Standard is not null
+            && input.PrimeDirection?.Reference?.Publication is not null)
+        {
+            return new CreateComponentPayload(
+                new CreateComponentError(
+                    CreateComponentErrorCode.AMBIGUOUS_REFERENCE,
+                    "Both standard and publication are non-null.",
+                    [nameof(input), nameof(input.PrimeDirection).FirstCharToLower(), nameof(input.PrimeDirection.Reference).FirstCharToLower()]
+                )
+            );
+        }
+
+        if (input.SwitchableLayers?.Reference?.Standard is not null
+            && input.SwitchableLayers?.Reference?.Publication is not null)
+        {
+            return new CreateComponentPayload(
+                new CreateComponentError(
+                    CreateComponentErrorCode.AMBIGUOUS_REFERENCE,
+                    "Both standard and publication are non-null.",
+                    [nameof(input), nameof(input.SwitchableLayers).FirstCharToLower(), nameof(input.SwitchableLayers.Reference).FirstCharToLower()]
                 )
             );
         }
@@ -84,18 +105,11 @@ public sealed class ComponentMutations
                 : OpenEndedDateTimeRangeType.FromInput(input.Availability),
             input.Categories
         );
-        // Note that above we make sure that standard and publication are *not* both non-null.
-        Reference? reference = null;
-        if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Standard is not null)
-            reference = new Reference(StandardType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Standard));
-        else if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Publication is not null)
-            reference = new Reference(PublicationType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Publication));
-        if (reference is null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
-            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(input.DefinitionOfSurfacesAndPrimeDirection.Description);
-        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is null)
-            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference);
-        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
-            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference, input.DefinitionOfSurfacesAndPrimeDirection.Description);
+
+        // Note that above we make sure that, for each reference, standard and publication are *not* both non-null.
+        component.PrimeSurface = input.PrimeSurface is null ? null : DescriptionOrReferenceType.FromInput(input.PrimeSurface);
+        component.PrimeDirection = input.PrimeDirection is null ? null : DescriptionOrReferenceType.FromInput(input.PrimeDirection);
+        component.SwitchableLayers = input.SwitchableLayers is null ? null : DescriptionOrReferenceType.FromInput(input.SwitchableLayers);
 
         component.ManufacturerEdges.Add(
                         new ComponentManufacturer
@@ -158,18 +172,12 @@ public sealed class ComponentMutations
                 : OpenEndedDateTimeRangeType.FromInput(input.Availability),
             input.Categories
         );
-        // Note that above we make sure that standard and publication are *not* both non-null.
-        Reference? reference = null;
-        if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Standard is not null)
-            reference = new Reference(StandardType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Standard));
-        else if (input.DefinitionOfSurfacesAndPrimeDirection?.Reference?.Publication is not null)
-            reference = new Reference(PublicationType.FromInput(input.DefinitionOfSurfacesAndPrimeDirection.Reference.Publication));
-        if (reference is null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
-            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(input.DefinitionOfSurfacesAndPrimeDirection.Description);
-        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is null)
-            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference);
-        else if (reference is not null && input.DefinitionOfSurfacesAndPrimeDirection?.Description is not null)
-            component.DefinitionOfSurfacesAndPrimeDirection = new DefinitionOfSurfacesAndPrimeDirection(reference, input.DefinitionOfSurfacesAndPrimeDirection.Description);
+
+        // Note that above we make sure that, for each reference, standard and publication are *not* both non-null.
+        component.PrimeSurface = input.PrimeSurface is null ? null : DescriptionOrReferenceType.FromInput(input.PrimeSurface);
+        component.PrimeDirection = input.PrimeDirection is null ? null : DescriptionOrReferenceType.FromInput(input.PrimeDirection);
+        component.SwitchableLayers = input.SwitchableLayers is null ? null : DescriptionOrReferenceType.FromInput(input.SwitchableLayers);
+
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new UpdateComponentPayload(component);
     }

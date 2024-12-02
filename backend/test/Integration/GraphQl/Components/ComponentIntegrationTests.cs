@@ -20,6 +20,8 @@ public abstract class ComponentIntegrationTests
         null,
         Array.Empty<ComponentCategory>(),
         null,
+        null,
+        null,
         Guid.Empty
     );
 
@@ -37,6 +39,8 @@ public abstract class ComponentIntegrationTests
             ComponentCategory.UNIT
         },
         null,
+        null,
+        null,
         Guid.Empty
     );
 
@@ -52,6 +56,8 @@ public abstract class ComponentIntegrationTests
         {
             ComponentCategory.UNIT
         },
+        null,
+        null,
         null,
         Guid.Empty
     );
@@ -70,6 +76,8 @@ public abstract class ComponentIntegrationTests
             ComponentCategory.MATERIAL,
             ComponentCategory.UNIT
         },
+        null,
+        null,
         null,
         Guid.Empty
     );

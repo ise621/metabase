@@ -809,7 +809,7 @@ namespace Metabase.Migrations
 
             modelBuilder.Entity("Metabase.Data.Component", b =>
                 {
-                    b.OwnsOne("Metabase.Data.DefinitionOfSurfacesAndPrimeDirection", "DefinitionOfSurfacesAndPrimeDirection", b1 =>
+                    b.OwnsOne("Metabase.Data.DescriptionOrReference", "PrimeDirection", b1 =>
                         {
                             b1.Property<Guid>("ComponentId")
                                 .HasColumnType("uuid");
@@ -829,22 +829,22 @@ namespace Metabase.Migrations
 
                             b1.OwnsOne("Metabase.Data.Reference", "Reference", b2 =>
                                 {
-                                    b2.Property<Guid>("DefinitionOfSurfacesAndPrimeDirectionComponentId")
+                                    b2.Property<Guid>("DescriptionOrReferenceComponentId")
                                         .HasColumnType("uuid");
 
                                     b2.Property<bool>("Exists")
                                         .HasColumnType("boolean");
 
-                                    b2.HasKey("DefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                    b2.HasKey("DescriptionOrReferenceComponentId");
 
                                     b2.ToTable("component", "metabase");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("DefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                        .HasForeignKey("DescriptionOrReferenceComponentId");
 
                                     b2.OwnsOne("Metabase.Data.Publication", "Publication", b3 =>
                                         {
-                                            b3.Property<Guid>("ReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId")
+                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
                                                 .HasColumnType("uuid");
 
                                             b3.Property<string>("Abstract")
@@ -871,17 +871,17 @@ namespace Metabase.Migrations
                                             b3.Property<string>("WebAddress")
                                                 .HasColumnType("text");
 
-                                            b3.HasKey("ReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
 
                                             b3.ToTable("component", "metabase");
 
                                             b3.WithOwner()
-                                                .HasForeignKey("ReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
                                         });
 
                                     b2.OwnsOne("Metabase.Data.Standard", "Standard", b3 =>
                                         {
-                                            b3.Property<Guid>("ReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId")
+                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
                                                 .HasColumnType("uuid");
 
                                             b3.Property<string>("Abstract")
@@ -903,18 +903,17 @@ namespace Metabase.Migrations
                                             b3.Property<int?>("Year")
                                                 .HasColumnType("integer");
 
-                                            b3.HasKey("ReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
 
                                             b3.ToTable("component", "metabase");
 
                                             b3.WithOwner()
-                                                .HasForeignKey("ReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
 
                                             b3.OwnsOne("Metabase.Data.Numeration", "Numeration", b4 =>
                                                 {
-                                                    b4.Property<Guid>("StandardReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId")
-                                                        .HasColumnType("uuid")
-                                                        .HasColumnName("StandardReferenceDefinitionOfSurfacesAndPrimeDirectionComponen~");
+                                                    b4.Property<Guid>("StandardReferenceDescriptionOrReferenceComponentId")
+                                                        .HasColumnType("uuid");
 
                                                     b4.Property<string>("MainNumber")
                                                         .IsRequired()
@@ -926,19 +925,12 @@ namespace Metabase.Migrations
                                                     b4.Property<string>("Suffix")
                                                         .HasColumnType("text");
 
-                                                    b4.HasKey("StandardReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                                    b4.HasKey("StandardReferenceDescriptionOrReferenceComponentId");
 
-                                                    b4.ToTable("component", "metabase", t =>
-                                                        {
-                                                            t.Property("Prefix")
-                                                                .HasColumnName("DefinitionOfSurfacesAndPrimeDirection_Reference_Standard_Nume~1");
-
-                                                            t.Property("Suffix")
-                                                                .HasColumnName("DefinitionOfSurfacesAndPrimeDirection_Reference_Standard_Nume~2");
-                                                        });
+                                                    b4.ToTable("component", "metabase");
 
                                                     b4.WithOwner()
-                                                        .HasForeignKey("StandardReferenceDefinitionOfSurfacesAndPrimeDirectionComponentId");
+                                                        .HasForeignKey("StandardReferenceDescriptionOrReferenceComponentId");
                                                 });
 
                                             b3.Navigation("Numeration")
@@ -953,7 +945,283 @@ namespace Metabase.Migrations
                             b1.Navigation("Reference");
                         });
 
-                    b.Navigation("DefinitionOfSurfacesAndPrimeDirection");
+                    b.OwnsOne("Metabase.Data.DescriptionOrReference", "PrimeSurface", b1 =>
+                        {
+                            b1.Property<Guid>("ComponentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Description")
+                                .HasColumnType("text");
+
+                            b1.Property<bool>("Exists")
+                                .HasColumnType("boolean");
+
+                            b1.HasKey("ComponentId");
+
+                            b1.ToTable("component", "metabase");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComponentId");
+
+                            b1.OwnsOne("Metabase.Data.Reference", "Reference", b2 =>
+                                {
+                                    b2.Property<Guid>("DescriptionOrReferenceComponentId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<bool>("Exists")
+                                        .HasColumnType("boolean");
+
+                                    b2.HasKey("DescriptionOrReferenceComponentId");
+
+                                    b2.ToTable("component", "metabase");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("DescriptionOrReferenceComponentId");
+
+                                    b2.OwnsOne("Metabase.Data.Publication", "Publication", b3 =>
+                                        {
+                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Abstract")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("ArXiv")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string[]>("Authors")
+                                                .HasColumnType("text[]");
+
+                                            b3.Property<string>("Doi")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Section")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Title")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Urn")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("WebAddress")
+                                                .HasColumnType("text");
+
+                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
+
+                                            b3.ToTable("component", "metabase");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
+                                        });
+
+                                    b2.OwnsOne("Metabase.Data.Standard", "Standard", b3 =>
+                                        {
+                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Abstract")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Locator")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Section")
+                                                .HasColumnType("text");
+
+                                            b3.Property<Standardizer[]>("Standardizers")
+                                                .IsRequired()
+                                                .HasColumnType("metabase.standardizer[]");
+
+                                            b3.Property<string>("Title")
+                                                .HasColumnType("text");
+
+                                            b3.Property<int?>("Year")
+                                                .HasColumnType("integer");
+
+                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
+
+                                            b3.ToTable("component", "metabase");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
+
+                                            b3.OwnsOne("Metabase.Data.Numeration", "Numeration", b4 =>
+                                                {
+                                                    b4.Property<Guid>("StandardReferenceDescriptionOrReferenceComponentId")
+                                                        .HasColumnType("uuid");
+
+                                                    b4.Property<string>("MainNumber")
+                                                        .IsRequired()
+                                                        .HasColumnType("text");
+
+                                                    b4.Property<string>("Prefix")
+                                                        .HasColumnType("text");
+
+                                                    b4.Property<string>("Suffix")
+                                                        .HasColumnType("text");
+
+                                                    b4.HasKey("StandardReferenceDescriptionOrReferenceComponentId");
+
+                                                    b4.ToTable("component", "metabase");
+
+                                                    b4.WithOwner()
+                                                        .HasForeignKey("StandardReferenceDescriptionOrReferenceComponentId");
+                                                });
+
+                                            b3.Navigation("Numeration")
+                                                .IsRequired();
+                                        });
+
+                                    b2.Navigation("Publication");
+
+                                    b2.Navigation("Standard");
+                                });
+
+                            b1.Navigation("Reference");
+                        });
+
+                    b.OwnsOne("Metabase.Data.DescriptionOrReference", "SwitchableLayers", b1 =>
+                        {
+                            b1.Property<Guid>("ComponentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Description")
+                                .HasColumnType("text");
+
+                            b1.Property<bool>("Exists")
+                                .HasColumnType("boolean");
+
+                            b1.HasKey("ComponentId");
+
+                            b1.ToTable("component", "metabase");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComponentId");
+
+                            b1.OwnsOne("Metabase.Data.Reference", "Reference", b2 =>
+                                {
+                                    b2.Property<Guid>("DescriptionOrReferenceComponentId")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<bool>("Exists")
+                                        .HasColumnType("boolean");
+
+                                    b2.HasKey("DescriptionOrReferenceComponentId");
+
+                                    b2.ToTable("component", "metabase");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("DescriptionOrReferenceComponentId");
+
+                                    b2.OwnsOne("Metabase.Data.Publication", "Publication", b3 =>
+                                        {
+                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Abstract")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("ArXiv")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string[]>("Authors")
+                                                .HasColumnType("text[]");
+
+                                            b3.Property<string>("Doi")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Section")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Title")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Urn")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("WebAddress")
+                                                .HasColumnType("text");
+
+                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
+
+                                            b3.ToTable("component", "metabase");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
+                                        });
+
+                                    b2.OwnsOne("Metabase.Data.Standard", "Standard", b3 =>
+                                        {
+                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<string>("Abstract")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Locator")
+                                                .HasColumnType("text");
+
+                                            b3.Property<string>("Section")
+                                                .HasColumnType("text");
+
+                                            b3.Property<Standardizer[]>("Standardizers")
+                                                .IsRequired()
+                                                .HasColumnType("metabase.standardizer[]");
+
+                                            b3.Property<string>("Title")
+                                                .HasColumnType("text");
+
+                                            b3.Property<int?>("Year")
+                                                .HasColumnType("integer");
+
+                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
+
+                                            b3.ToTable("component", "metabase");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
+
+                                            b3.OwnsOne("Metabase.Data.Numeration", "Numeration", b4 =>
+                                                {
+                                                    b4.Property<Guid>("StandardReferenceDescriptionOrReferenceComponentId")
+                                                        .HasColumnType("uuid");
+
+                                                    b4.Property<string>("MainNumber")
+                                                        .IsRequired()
+                                                        .HasColumnType("text");
+
+                                                    b4.Property<string>("Prefix")
+                                                        .HasColumnType("text");
+
+                                                    b4.Property<string>("Suffix")
+                                                        .HasColumnType("text");
+
+                                                    b4.HasKey("StandardReferenceDescriptionOrReferenceComponentId");
+
+                                                    b4.ToTable("component", "metabase");
+
+                                                    b4.WithOwner()
+                                                        .HasForeignKey("StandardReferenceDescriptionOrReferenceComponentId");
+                                                });
+
+                                            b3.Navigation("Numeration")
+                                                .IsRequired();
+                                        });
+
+                                    b2.Navigation("Publication");
+
+                                    b2.Navigation("Standard");
+                                });
+
+                            b1.Navigation("Reference");
+                        });
+
+                    b.Navigation("PrimeDirection");
+
+                    b.Navigation("PrimeSurface");
+
+                    b.Navigation("SwitchableLayers");
                 });
 
             modelBuilder.Entity("Metabase.Data.ComponentAssembly", b =>
