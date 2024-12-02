@@ -1,3 +1,5 @@
+import { NextRouter } from "next/router";
+
 export default {
   home: "/",
   antiforgeryToken: "/antiforgery/token",
@@ -30,11 +32,6 @@ export default {
     },
   },
   personalUserData: "/personal-user-data",
-  openIdApplication(uuid: string) {
-    return `/application/${encodeURIComponent(uuid)}`;
-  },
-  openIdConnectClientLogin: "https://local.buildingenvelopedata.org:4041/connect/client/login",
-  openIdConnectClientLogout: "/connect/client/logout",
   userLogin: "/users/login",
   userRegister: "/users/register",
   userConfirmEmail: "/users/confirm-email",
@@ -63,5 +60,18 @@ export default {
   opticalData: "/data/optical",
   photovoltaicData: "/data/photovoltaic",
   geometricData: "/data/geometric",
+  application(uuid: string) {
+    return `/application/${encodeURIComponent(uuid)}`;
+  },
+  applicationCreate: "/application/create",
   openIdConnect: "/openIdConnect",
+  openIdConnectClientLogin: "https://local.buildingenvelopedata.org:4041/connect/client/login",
+  openIdConnectClientLogout: "/connect/client/logout",
 };
+
+export function redirectToLoginPage(router: NextRouter, returnToPage: string): void {
+  router.push({
+    pathname: "/users/login",
+    query: { returnTo: returnToPage },
+  });
+}

@@ -1,0 +1,79 @@
+#import "./openIdConnect.graphql"
+
+query Applications {
+  applications {
+    ...ApplicationPartial
+  }
+}
+
+query Application($uuid: Uuid!) {
+  application(uuid: $uuid) {    
+    ...ApplicationPartial
+  }
+}
+
+mutation CreateApplication(
+  $clientId: String!
+  $displayName: String!
+  $permissions: String!
+  $redirectUri: String!
+  $postLogoutRedirectUri: String!
+) {
+  createApplication(
+    input: {
+      clientId: $clientId
+      displayName: $displayName
+      permissions: $permissions
+      redirectUri: $redirectUri
+      postLogoutRedirectUri: $postLogoutRedirectUri
+    }
+  ) {
+    application{
+      ...ApplicationPartial
+    }
+    errors {
+      code
+      message
+      path
+    }
+  }
+}
+
+mutation UpdateApplication(
+  $id: String!
+  $clientId: String!
+  $displayName: String!
+  $permissions: String!
+  $redirectUri: String!
+  $postLogoutRedirectUri: String!
+) {
+  updateApplication(
+    input: {
+      id: $id
+      clientId: $clientId
+      displayName: $displayName
+      permissions: $permissions
+      redirectUri: $redirectUri
+      postLogoutRedirectUri: $postLogoutRedirectUri
+    }
+  ) {
+    application{
+      ...ApplicationPartial
+    }
+    errors {
+      code
+      message
+      path
+    }
+  }
+}
+
+mutation DeleteApplication($id: String!) {
+  deleteApplication(input: { id: $id }) {
+    errors {
+      code
+      message
+      path
+    }
+  }
+}

@@ -7,6 +7,10 @@ fragment CurrentUserPartial on User {
   isEmailConfirmed
   phoneNumber
   roles
+  canCurrentUserDeleteAuthorizations
+  canCurrentUserManageApplications
+  canCurrentUserRevokeTokens
+  canCurrentUserViewApplications
 }
 
 query CurrentUser {

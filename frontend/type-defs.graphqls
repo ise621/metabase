@@ -137,11 +137,29 @@ type AddUserRolePayload {
   user: User
 }
 
+type Application {
+  clientId: String
+  clientSecret: String
+  displayName: String
+  id: String
+  permissions: [String]! @cost(weight: "10")
+  postLogoutRedirectUris: String! @cost(weight: "10")
+  redirectUris: String! @cost(weight: "10")
+}
+
 type AppliedMethod {
   arguments: [NamedMethodArgument!]!
   method: Method @cost(weight: "10")
   methodId: Uuid!
   sources: [NamedMethodSource!]!
+}
+
+type Authorization {
+  creationDate: DateTime
+  id: String
+  status: String
+  subject: String
+  type: String
 }
 
 type CalorimetricData implements Data {
@@ -398,6 +416,18 @@ type ConfirmUserMethodDeveloperPayload {
   query: Query!
 }
 
+type CreateApplicationError {
+  code: CreateApplicationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type CreateApplicationPayload {
+  application: Application
+  errors: [CreateApplicationError!]
+  query: Query!
+}
+
 type CreateComponentError {
   code: CreateComponentErrorCode!
   message: String!
@@ -573,6 +603,28 @@ type DatabasesEdge {
   cursor: String!
   "The item at the end of the edge."
   node: Database!
+}
+
+type DeleteApplicationError {
+  code: DeleteApplicationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type DeleteApplicationPayload {
+  errors: [DeleteApplicationError!]
+  query: Query!
+}
+
+type DeleteAuthorizationError {
+  code: DeleteAuthorizationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type DeleteAuthorizationPayload {
+  errors: [DeleteAuthorizationError!]
+  query: Query!
 }
 
 type DeleteInstitutionError {
@@ -1003,11 +1055,14 @@ type Mutation {
   confirmUserEmail(input: ConfirmUserEmailInput!): ConfirmUserEmailPayload! @cost(weight: "10")
   confirmUserEmailChange(input: ConfirmUserEmailChangeInput!): ConfirmUserEmailChangePayload! @cost(weight: "10")
   confirmUserMethodDeveloper(input: ConfirmUserMethodDeveloperInput!): ConfirmUserMethodDeveloperPayload! @authorize(policy: "Write") @cost(weight: "10")
+  createApplication(input: CreateApplicationInput!): CreateApplicationPayload! @authorize(policy: "Write") @cost(weight: "10")
   createComponent(input: CreateComponentInput!): CreateComponentPayload! @authorize(policy: "Write") @cost(weight: "10")
   createDatabase(input: CreateDatabaseInput!): CreateDatabasePayload! @authorize(policy: "Write") @cost(weight: "10")
   createDataFormat(input: CreateDataFormatInput!): CreateDataFormatPayload! @authorize(policy: "Write") @cost(weight: "10")
   createInstitution(input: CreateInstitutionInput!): CreateInstitutionPayload! @authorize(policy: "Write") @cost(weight: "10")
   createMethod(input: CreateMethodInput!): CreateMethodPayload! @authorize(policy: "Write") @cost(weight: "10")
+  deleteApplication(input: DeleteApplicationInput!): DeleteApplicationPayload! @authorize(policy: "Write") @cost(weight: "10")
+  deleteAuthorization(input: DeleteAuthorizationInput!): DeleteAuthorizationPayload! @authorize(policy: "Write") @cost(weight: "10")
   deleteInstitution(input: DeleteInstitutionInput!): DeleteInstitutionPayload! @authorize(policy: "Write") @cost(weight: "10")
   deletePersonalUserData(input: DeletePersonalUserDataInput!): DeletePersonalUserDataPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   deleteUser(input: DeleteUserInput!): DeleteUserPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
@@ -1034,9 +1089,11 @@ type Mutation {
   resendUserEmailVerification: ResendUserEmailVerificationPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   resetUserPassword(input: ResetUserPasswordInput!): ResetUserPasswordPayload! @cost(weight: "10")
   resetUserTwoFactorAuthenticator: ResetUserTwoFactorAuthenticatorPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
+  revokeToken(input: RevokeTokenInput!): RevokeTokenPayload! @authorize(policy: "Write") @cost(weight: "10")
   setUserPassword(input: SetUserPasswordInput!): SetUserPasswordPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   setUserPhoneNumber(input: SetUserPhoneNumberInput!): SetUserPhoneNumberPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   switchInstitutionOperatingState(input: SwitchInstitutionOperatingStateInput!): SwitchInstitutionOperatingStatePayload! @authorize(policy: "Write") @cost(weight: "10")
+  updateApplication(input: UpdateApplicationInput!): UpdateApplicationPayload! @authorize(policy: "Write") @cost(weight: "10")
   updateComponent(input: UpdateComponentInput!): UpdateComponentPayload! @authorize(policy: "Write") @cost(weight: "10")
   updateComponentAssembly(input: UpdateComponentAssemblyInput!): UpdateComponentAssemblyPayload! @authorize(policy: "Write") @cost(weight: "10")
   updateDatabase(input: UpdateDatabaseInput!): UpdateDatabasePayload! @authorize(policy: "Write") @cost(weight: "10")
@@ -1045,67 +1102,6 @@ type Mutation {
   updateMethod(input: UpdateMethodInput!): UpdateMethodPayload! @authorize(policy: "Write") @cost(weight: "10")
   verifyDatabase(input: VerifyDatabaseInput!): VerifyDatabasePayload! @authorize(policy: "Write") @cost(weight: "10")
   verifyInstitution(input: VerifyInstitutionInput!): VerifyInstitutionPayload! @authorize(policy: "Write") @cost(weight: "10")
-  addComponentAssembly(input: AddComponentAssemblyInput!): AddComponentAssemblyPayload! @authorize(policy: "Write")
-  addComponentGeneralization(input: AddComponentGeneralizationInput!): AddComponentGeneralizationPayload! @authorize(policy: "Write")
-  addComponentManufacturer(input: AddComponentManufacturerInput!): AddComponentManufacturerPayload! @authorize(policy: "Write")
-  addComponentVariant(input: AddComponentVariantInput!): AddComponentVariantPayload! @authorize(policy: "Write")
-  addInstitutionMethodDeveloper(input: AddInstitutionMethodDeveloperInput!): AddInstitutionMethodDeveloperPayload! @authorize(policy: "Write")
-  addInstitutionRepresentative(input: AddInstitutionRepresentativeInput!): AddInstitutionRepresentativePayload! @authorize(policy: "Write")
-  addUserMethodDeveloper(input: AddUserMethodDeveloperInput!): AddUserMethodDeveloperPayload! @authorize(policy: "Write")
-  addUserRole(input: AddUserRoleInput!): AddUserRolePayload! @authorize(policy: "ManageUser")
-  changeInstitutionRepresentativeRole(input: ChangeInstitutionRepresentativeRoleInput!): ChangeInstitutionRepresentativeRolePayload! @authorize(policy: "Write")
-  changeUserEmail(input: ChangeUserEmailInput!): ChangeUserEmailPayload! @authorize(policy: "ManageUser")
-  changeUserPassword(input: ChangeUserPasswordInput!): ChangeUserPasswordPayload! @authorize(policy: "ManageUser")
-  confirmComponentManufacturer(input: ConfirmComponentManufacturerInput!): ConfirmComponentManufacturerPayload! @authorize(policy: "Write")
-  confirmInstitutionMethodDeveloper(input: ConfirmInstitutionMethodDeveloperInput!): ConfirmInstitutionMethodDeveloperPayload! @authorize(policy: "Write")
-  confirmInstitutionRepresentative(input: ConfirmInstitutionRepresentativeInput!): ConfirmInstitutionRepresentativePayload! @authorize(policy: "Write")
-  confirmUserEmail(input: ConfirmUserEmailInput!): ConfirmUserEmailPayload!
-  confirmUserEmailChange(input: ConfirmUserEmailChangeInput!): ConfirmUserEmailChangePayload!
-  confirmUserMethodDeveloper(input: ConfirmUserMethodDeveloperInput!): ConfirmUserMethodDeveloperPayload! @authorize(policy: "Write")
-  createApplication(application: ApplicationDtoInput!): OpenIdConnectApplication! @authorize(policy: "Write")
-  createComponent(input: CreateComponentInput!): CreateComponentPayload! @authorize(policy: "Write")
-  createDatabase(input: CreateDatabaseInput!): CreateDatabasePayload! @authorize(policy: "Write")
-  createDataFormat(input: CreateDataFormatInput!): CreateDataFormatPayload! @authorize(policy: "Write")
-  createInstitution(input: CreateInstitutionInput!): CreateInstitutionPayload! @authorize(policy: "Write")
-  createMethod(input: CreateMethodInput!): CreateMethodPayload! @authorize(policy: "Write")
-  deleteInstitution(input: DeleteInstitutionInput!): DeleteInstitutionPayload! @authorize(policy: "Write")
-  deletePersonalUserData(input: DeletePersonalUserDataInput!): DeletePersonalUserDataPayload! @authorize(policy: "ManageUser")
-  deleteUser(input: DeleteUserInput!): DeleteUserPayload! @authorize(policy: "ManageUser")
-  disableUserTwoFactorAuthentication: DisableUserTwoFactorAuthenticationPayload! @authorize(policy: "ManageUser")
-  enableUserTwoFactorAuthenticator(input: EnableUserTwoFactorAuthenticatorInput!): EnableUserTwoFactorAuthenticatorPayload! @authorize(policy: "ManageUser")
-  forgetUserTwoFactorAuthenticationClient: ForgetUserTwoFactorAuthenticationClientPayload! @authorize(policy: "ManageUser")
-  generateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUri: GenerateUserTwoFactorAuthenticatorSharedKeyAndQrCodeUriPayload! @authorize(policy: "ManageUser")
-  generateUserTwoFactorRecoveryCodes: GenerateUserTwoFactorRecoveryCodesPayload! @authorize(policy: "ManageUser")
-  loginUser(input: LoginUserInput!): LoginUserPayload!
-  loginUserWithRecoveryCode(input: LoginUserWithRecoveryCodeInput!): LoginUserWithRecoveryCodePayload!
-  loginUserWithTwoFactorCode(input: LoginUserWithTwoFactorCodeInput!): LoginUserWithTwoFactorCodePayload!
-  logoutUser: LogoutUserPayload! @authorize(policy: "ManageUser")
-  registerUser(input: RegisterUserInput!): RegisterUserPayload!
-  removeComponentAssembly(input: RemoveComponentAssemblyInput!): RemoveComponentAssemblyPayload! @authorize(policy: "Write")
-  removeComponentGeneralization(input: RemoveComponentGeneralizationInput!): RemoveComponentGeneralizationPayload! @authorize(policy: "Write")
-  removeComponentManufacturer(input: RemoveComponentManufacturerInput!): RemoveComponentManufacturerPayload! @authorize(policy: "Write")
-  removeComponentVariant(input: RemoveComponentVariantInput!): RemoveComponentVariantPayload! @authorize(policy: "Write")
-  removeInstitutionMethodDeveloper(input: RemoveInstitutionMethodDeveloperInput!): RemoveInstitutionMethodDeveloperPayload! @authorize(policy: "Write")
-  removeInstitutionRepresentative(input: RemoveInstitutionRepresentativeInput!): RemoveInstitutionRepresentativePayload! @authorize(policy: "Write")
-  removeUserMethodDeveloper(input: RemoveUserMethodDeveloperInput!): RemoveUserMethodDeveloperPayload! @authorize(policy: "Write")
-  removeUserRole(input: RemoveUserRoleInput!): RemoveUserRolePayload! @authorize(policy: "ManageUser")
-  requestUserPasswordReset(input: RequestUserPasswordResetInput!): RequestUserPasswordResetPayload!
-  resendUserEmailConfirmation(input: ResendUserEmailConfirmationInput!): ResendUserEmailConfirmationPayload!
-  resendUserEmailVerification: ResendUserEmailVerificationPayload! @authorize(policy: "ManageUser")
-  resetUserPassword(input: ResetUserPasswordInput!): ResetUserPasswordPayload!
-  resetUserTwoFactorAuthenticator: ResetUserTwoFactorAuthenticatorPayload! @authorize(policy: "ManageUser")
-  setUserPassword(input: SetUserPasswordInput!): SetUserPasswordPayload! @authorize(policy: "ManageUser")
-  setUserPhoneNumber(input: SetUserPhoneNumberInput!): SetUserPhoneNumberPayload! @authorize(policy: "ManageUser")
-  switchInstitutionOperatingState(input: SwitchInstitutionOperatingStateInput!): SwitchInstitutionOperatingStatePayload! @authorize(policy: "Write")
-  updateApplication(applicationDto: ApplicationDtoInput!): OpenIdConnectApplication! @authorize(policy: "Write")
-  updateComponent(input: UpdateComponentInput!): UpdateComponentPayload! @authorize(policy: "Write")
-  updateComponentAssembly(input: UpdateComponentAssemblyInput!): UpdateComponentAssemblyPayload! @authorize(policy: "Write")
-  updateDatabase(input: UpdateDatabaseInput!): UpdateDatabasePayload! @authorize(policy: "Write")
-  updateDataFormat(input: UpdateDataFormatInput!): UpdateDataFormatPayload! @authorize(policy: "Write")
-  updateInstitution(input: UpdateInstitutionInput!): UpdateInstitutionPayload! @authorize(policy: "Write")
-  updateMethod(input: UpdateMethodInput!): UpdateMethodPayload! @authorize(policy: "Write")
-  verifyDatabase(input: VerifyDatabaseInput!): VerifyDatabasePayload! @authorize(policy: "Write")
-  verifyInstitution(input: VerifyInstitutionInput!): VerifyInstitutionPayload! @authorize(policy: "Write")
 }
 
 type NamedMethodArgument {
@@ -1127,68 +1123,6 @@ type Numeration {
 type OpenEndedDateTimeRange {
   from: DateTime @cost(weight: "10")
   to: DateTime @cost(weight: "10")
-}
-
-type OpenIdConnectApplication {
-  applicationType: String
-  authorizations: [OpenIdConnectAuthorization!]!
-  clientId: String
-  clientSecret: String
-  clientType: String
-  concurrencyToken: String
-  consentType: String
-  displayName: String
-  displayNames: String
-  id: String
-  jsonWebKeySet: String
-  permissions: String
-  postLogoutRedirectUris: String
-  properties: String
-  redirectUris: String
-  requirements: String
-  settings: String
-  tokens: [OpenIdConnectToken!]!
-}
-
-type OpenIdConnectAuthorization {
-  application: OpenIdConnectApplication
-  concurrencyToken: String
-  creationDate: DateTime
-  id: String
-  properties: String
-  scopes: String
-  status: String
-  subject: String
-  tokens: [OpenIdConnectToken!]!
-  type: String
-}
-
-type OpenIdConnectScope {
-  concurrencyToken: String
-  description: String
-  descriptions: String
-  displayName: String
-  displayNames: String
-  id: String
-  name: String
-  properties: String
-  resources: String
-}
-
-type OpenIdConnectToken {
-  application: OpenIdConnectApplication
-  authorization: OpenIdConnectAuthorization
-  concurrencyToken: String
-  creationDate: DateTime
-  expirationDate: DateTime
-  id: String
-  payload: String
-  properties: String
-  redemptionDate: DateTime
-  referenceId: String
-  status: String
-  subject: String
-  type: String
 }
 
 type OpticalData implements Data {
@@ -1325,6 +1259,11 @@ type Publication implements Reference {
 }
 
 type Query {
+  application(uuid: Uuid!): Application @cost(weight: "10")
+  applications: [Application!]! @cost(weight: "10")
+  authorization(uuid: Uuid!): Authorization @cost(weight: "10")
+  authorizations: [Authorization!]! @cost(weight: "10")
+  authorizationsByApplicationId(applicationId: Uuid!): [Authorization!]! @cost(weight: "10")
   component(uuid: Uuid!): Component @cost(weight: "10")
   components("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [ComponentSortInput!] @cost(weight: "10") where: ComponentFilterInput @cost(weight: "10")): ComponentsConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
   currentUser: User @cost(weight: "10")
@@ -1340,24 +1279,15 @@ type Query {
   node("ID of the object." id: ID!): Node @cost(weight: "10")
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]! @cost(weight: "10")
-  openIdConnectApplications: [OpenIdConnectApplication!]! @cost(weight: "10")
-  openIdConnectAuthorizations: [OpenIdConnectAuthorization!]! @cost(weight: "10")
-  openIdConnectScopes: [OpenIdConnectScope!]! @cost(weight: "10")
-  openIdConnectTokens: [OpenIdConnectToken!]! @cost(weight: "10")
   pendingDatabases("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [DatabaseSortInput!] @cost(weight: "10") where: DatabaseFilterInput @cost(weight: "10")): PendingDatabasesConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
   pendingInstitutions("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [InstitutionSortInput!] @cost(weight: "10") where: InstitutionFilterInput @cost(weight: "10")): PendingInstitutionsConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
+  scope(uuid: Uuid!): Scope @cost(weight: "10")
+  scopes: [Scope!]! @cost(weight: "10")
+  token(uuid: Uuid!): Token @cost(weight: "10")
+  tokens: [Token!]! @cost(weight: "10")
+  tokensByApplicationId(applicationId: Uuid!): [Token!]! @cost(weight: "10")
   user(uuid: Uuid!): User @cost(weight: "10")
   users("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [UserSortInput!] @cost(weight: "10") where: UserFilterInput @cost(weight: "10")): UsersConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
-  nodes("The list of node IDs." ids: [ID!]!): [Node]!
-  openIdConnectApplication(uuid: Uuid!): OpenIdConnectApplication
-  openIdConnectApplications: [OpenIdConnectApplication!]!
-  openIdConnectAuthorizations: [OpenIdConnectAuthorization!]!
-  openIdConnectScopes: [OpenIdConnectScope!]!
-  openIdConnectTokens: [OpenIdConnectToken!]!
-  pendingDatabases("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [DatabaseSortInput!] where: DatabaseFilterInput): PendingDatabasesConnection
-  pendingInstitutions("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [InstitutionSortInput!] where: InstitutionFilterInput): PendingInstitutionsConnection
-  user(uuid: Uuid!): User
-  users("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [UserSortInput!]): UsersConnection
 }
 
 type RegisterUserError {
@@ -1540,6 +1470,24 @@ type ResponseApproval {
   timestamp: DateTime!
 }
 
+type RevokeTokenError {
+  code: RevokeTokenErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type RevokeTokenPayload {
+  errors: [RevokeTokenError!]
+  query: Query!
+}
+
+type Scope {
+  description: String
+  displayName: String
+  id: String
+  name: String! @cost(weight: "10")
+}
+
 type SetUserPasswordError {
   code: SetUserPasswordErrorCode!
   message: String!
@@ -1596,11 +1544,33 @@ type ToTreeVertexAppliedConversionMethod {
   sourceName: String!
 }
 
+type Token {
+  creationDate: DateTime
+  expirationDate: DateTime
+  id: String
+  redemptionDate: DateTime
+  status: String
+  subject: String
+  type: String
+}
+
 type TwoFactorAuthentication {
   hasAuthenticator: Boolean!
   isEnabled: Boolean!
   isMachineRemembered: Boolean!
   recoveryCodesLeftCount: Int!
+}
+
+type UpdateApplicationError {
+  code: UpdateApplicationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type UpdateApplicationPayload {
+  application: Application
+  errors: [UpdateApplicationError!]
+  query: Query!
 }
 
 type UpdateComponentAssemblyError {
@@ -1677,7 +1647,11 @@ type UpdateMethodPayload {
 }
 
 type User implements Node & Stakeholder {
+  canCurrentUserDeleteAuthorizations: Boolean! @cost(weight: "10")
   canCurrentUserDeleteUser: Boolean! @cost(weight: "10")
+  canCurrentUserManageApplications: Boolean! @cost(weight: "10")
+  canCurrentUserRevokeTokens: Boolean! @cost(weight: "10")
+  canCurrentUserViewApplications: Boolean! @cost(weight: "10")
   developedMethods(pending: Boolean! = false): UserDevelopedMethodConnection! @cost(weight: "10")
   email: String @cost(weight: "10")
   hasPassword: Boolean @cost(weight: "10")
@@ -1805,14 +1779,6 @@ input AddUserMethodDeveloperInput {
 input AddUserRoleInput {
   role: UserRole!
   userId: Uuid!
-}
-
-input ApplicationDtoInput {
-  clientId: String!
-  clientSecret: String!
-  displayName: String!
-  id: String
-  permissions: String!
 }
 
 input BooleanOperationFilterInput {
@@ -1961,6 +1927,14 @@ input ConfirmUserMethodDeveloperInput {
   userId: Uuid!
 }
 
+input CreateApplicationInput {
+  clientId: String!
+  displayName: String!
+  permissions: String!
+  postLogoutRedirectUri: String!
+  redirectUri: String!
+}
+
 input CreateComponentInput {
   abbreviation: String
   availability: OpenEndedDateTimeRangeInput
@@ -2105,6 +2079,14 @@ input DatabaseSortInput {
   operator: InstitutionSortInput @cost(weight: "10")
   id: SortEnumType @cost(weight: "10")
   version: SortEnumType @cost(weight: "10")
+}
+
+input DeleteApplicationInput {
+  id: String!
+}
+
+input DeleteAuthorizationInput {
+  id: String!
 }
 
 input DeleteInstitutionInput {
@@ -2566,6 +2548,10 @@ input ResetUserPasswordInput {
   resetCode: String!
 }
 
+input RevokeTokenInput {
+  id: String!
+}
+
 input SetUserPasswordInput {
   password: String!
   passwordConfirmation: String!
@@ -2626,6 +2612,15 @@ input StringOperationFilterInput {
 
 input SwitchInstitutionOperatingStateInput {
   institutionId: Uuid!
+}
+
+input UpdateApplicationInput {
+  clientId: String!
+  displayName: String!
+  id: String!
+  permissions: String!
+  postLogoutRedirectUri: String!
+  redirectUri: String!
 }
 
 input UpdateComponentAssemblyInput {
@@ -2968,6 +2963,11 @@ enum ConfirmUserMethodDeveloperErrorCode {
   UNKNOWN_DEVELOPER
 }
 
+enum CreateApplicationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+}
+
 enum CreateComponentErrorCode {
   UNKNOWN
   UNKNOWN_MANUFACTURER
@@ -3015,6 +3015,18 @@ enum DataKind {
 enum DatabaseVerificationState {
   PENDING
   VERIFIED
+}
+
+enum DeleteApplicationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_APPLICATION
+}
+
+enum DeleteAuthorizationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_AUTHORIZATION
 }
 
 enum DeleteInstitutionErrorCode {
@@ -3230,6 +3242,12 @@ enum ResetUserTwoFactorAuthenticatorErrorCode {
   RESETTING_FAILED
 }
 
+enum RevokeTokenErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_TOKEN
+}
+
 enum SetUserPasswordErrorCode {
   UNKNOWN
   UNKNOWN_USER
@@ -3284,6 +3302,12 @@ enum SwitchInstitutionOperatingStateErrorCode {
   UNKNOWN
   UNKNOWN_INSTITUTION
   UNAUTHORIZED
+}
+
+enum UpdateApplicationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_APPLICATION
 }
 
 enum UpdateComponentAssemblyErrorCode {

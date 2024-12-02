@@ -1,0 +1,12 @@
+
+fragment ScopePartial on Scope {
+  displayName
+  id
+  name
+}
+
+query Scopes {
+  scopes {
+    ...ScopePartial
+  }
+}

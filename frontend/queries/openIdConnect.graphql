@@ -1,97 +1,48 @@
-fragment OpenIdConnectApplicationPartial on OpenIdConnectApplication {
+fragment ApplicationPartial on Application {
   clientId
   clientSecret
   displayName
   id
   permissions
-  # applicationType
-  # clientType
-  # concurrencyToken
-  # consentType
-  # displayNames
-  # jsonWebKeySet
-  # postLogoutRedirectUris
-  # properties
-  # redirectUris
-  # requirements
-  # settings
+  postLogoutRedirectUris
+  redirectUris
 }
 
-fragment OpenIdConnectAuthorizationPartial on OpenIdConnectAuthorization {
-  concurrencyToken
+fragment AuthorizationPartial on Authorization {
   creationDate
   id
-  properties
-  scopes
   status
   subject
   type
 }
 
-fragment OpenIdConnectTokenPartial on OpenIdConnectToken {
-  concurrencyToken
+fragment TokenPartial on Token {
   creationDate
   expirationDate
   id
-  payload
-  properties
   redemptionDate
-  referenceId
   status
   subject
   type
 }
 
-fragment OpenIdConnectScopePartial on OpenIdConnectScope {
-  concurrencyToken
-  description
-  descriptions
+fragment ScopePartial on Scope {
   displayName
-  displayNames
   id
   name
-  properties
-  resources
 }
 
 query OpenIdConnect {
-  openIdConnectApplications {
-    ...OpenIdConnectApplicationPartial
-    # tokens {
-    #   ...OpenIdConnectTokenPartial
-    #   application {
-    #     ...
-    #   }
-    #   authorization {
-    #     ...
-    #   }
-    # }
-    # authorizations {
-    #   ...OpenIdConnectAuthorizationPartial
-    #   tokens {
-    #     ...OpenIdConnectTokenPartial
-    #   }
-    # }
+  applications {
+    ...ApplicationPartial
   }
-  openIdConnectTokens {
-    ...OpenIdConnectTokenPartial
-    application {
-      id
-    }
-    authorization {
-      id
-    }
+  tokens {
+    ...TokenPartial
   }
-  openIdConnectAuthorizations {
-    ...OpenIdConnectAuthorizationPartial
-    application {
-      id
-    }
-    tokens {
-      ...OpenIdConnectTokenPartial
-    }
+  authorizations {
+    ...AuthorizationPartial
   }
-  openIdConnectScopes {
-    ...OpenIdConnectScopePartial
+  scopes {
+    ...ScopePartial
   }
 }

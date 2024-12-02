@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Layout from "../../components/Layout";
-import UpdateApplication from "../../components/applications/UpdateApplication";
+import Application from "../../components/applications/Application";
 
 function Page() {
   const router = useRouter();
@@ -14,7 +14,7 @@ function Page() {
 
   return (
     <Layout>
-      <UpdateApplication applicationId={uuid} />
+      <Application applicationId={uuid} />
     </Layout>
   );
 }

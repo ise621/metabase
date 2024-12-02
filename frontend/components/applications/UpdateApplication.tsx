@@ -1,37 +1,34 @@
 import { useEffect, useState } from "react";
-import { Scalars } from "../../__generated__/__types__";
-import { useApplicationQuery, useUpdateApplicationMutation, ApplicationsDocument } from "../../queries/application.graphql";
+import { useUpdateApplicationMutation, ApplicationsDocument, useApplicationQuery, ApplicationPartialFragment } from "../../queries/applications.graphql";
+import { Alert, Button, Flex, Form, Input, message, Select, Skeleton } from "antd";
 import { messageApolloError } from "../../lib/apollo";
-import { Alert, Button, Form, Input, Modal, Result, Skeleton } from "antd";
-
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-};
-
-const tailLayout = {
-  wrapperCol: { offset: 8, span: 16 },
-};
-
-export type ApplicationProps = {
-  applicationId: Scalars["Uuid"];
-};
+import { useRouter } from "next/router";
+import { handleFormErrors } from "../../lib/form";
+import { useScopesQuery } from "../../queries/scopes.graphql";
+import paths from "../../paths";
+import { ApplicationProps } from "./Application";
 
 type FormValues = {
   newClientId: string;
-  newClientSecret: string;
   newDisplayName: string;
+  newRedirectUri: string;
+  newPostLogoutRedirectUri: string;
   newPermissions: string;
 };
-  
+
 export default function UpdateApplication({ applicationId }: ApplicationProps) {
   const { loading, error, data } = useApplicationQuery({
     variables: {
       uuid: applicationId,
     },
   });
-  var application = data?.openIdConnectApplication
-  
+  const scopes = useScopesQuery()?.data?.scopes;
+  const application = data?.application as ApplicationPartialFragment;
+  const router = useRouter();
+  const [form] = Form.useForm<FormValues>();
+  const [updating, setUpdating] = useState(false);
+  const [globalErrorMessages, setGlobalErrorMessages] = useState(new Array<string>());
+
   const [updateApplicationMutation] = useUpdateApplicationMutation({
     // TODO Update the cache more efficiently as explained on https://www.apollographql.com/docs/react/caching/cache-interaction/ and https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
     // See https://www.apollographql.com/docs/react/data/mutations/#options
@@ -41,69 +38,43 @@ export default function UpdateApplication({ applicationId }: ApplicationProps) {
       },
     ],
   });
-  
-  useEffect(() => {
-    if (error) {
-      messageApolloError(error);
-    }
-  }, [error]);
-  
-  if (loading) {
-    return <Skeleton active avatar title />;
-  }
-
-  if (!application) {
-    return (
-      <Result
-        status="500"
-        title="500"
-        subTitle="Sorry, something went wrong."
-      />
-    );
-  }
-  
-  const [globalErrorMessages, setGlobalErrorMessages] = useState(
-    new Array<string>()
-  );
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm<FormValues>();
-  const [updating, setUpdating] = useState(false);
 
   const onFinish = ({
     newClientId,
-    newClientSecret,
     newDisplayName,
+    newRedirectUri,
+    newPostLogoutRedirectUri,
     newPermissions,
   }: FormValues) => {
     const update = async () => {
       try {
         setUpdating(true);
-        // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
-        const { data } = await updateApplicationMutation({
+        const { errors, data } = await updateApplicationMutation({
           variables: {
             id: applicationId,
             clientId: newClientId,
-            clientSecret: newClientSecret,
             displayName: newDisplayName,
-            permissions: newPermissions,
+            redirectUri: newRedirectUri,
+            postLogoutRedirectUri: newPostLogoutRedirectUri,
+            permissions: JSON.stringify(newPermissions),
           },
         });
-        // handleFormErrors(
-        //   errors,
-        //   data?.updateInstitution?.errors?.map((x) => {
-        //     return { code: x.code, message: x.message, path: x.path };
-        //   }),
-        //   setGlobalErrorMessages,
-        //   form
-        // );
-        if (
-          data?.updateApplication
-        ) {
-          setOpen(false);
+        handleFormErrors(
+          errors,
+          data?.updateApplication?.errors?.map((x) => {
+            return { code: x.code, message: x.message, path: x.path };
+          }),
+          setGlobalErrorMessages,
+          form
+        );
+        if (data) {
+          message.success('Successfully updated application ' + data.updateApplication.application?.displayName)
+          router.push(paths.openIdConnect)
         }
+
       } catch (error) {
         // TODO Handle properly.
-        console.log("Failed:", error);
+        message.error("Failed:" + error);
       } finally {
         setUpdating(false);
       }
@@ -115,79 +86,101 @@ export default function UpdateApplication({ applicationId }: ApplicationProps) {
     setGlobalErrorMessages(["Fix the errors below."]);
   };
 
+  useEffect(() => {
+    if (error) {
+      messageApolloError(error);
+    }
+  }, [error]);
+
+  if (loading) {
+    return <Skeleton active avatar title />;
+  }
+
   return (
     <>
-      {/* <Button onClick={() => setOpen(true)}>Edit</Button>
-      <Modal
-        open={open}
-        title="Edit Application"
-        // onOk={handleOk}
-        onCancel={() => setOpen(false)}
-        footer={false}
+      {globalErrorMessages.length > 0 ? (
+        <Alert className="error-message" type="error" message={globalErrorMessages.join(" ")} />
+      ) : (
+        <></>
+      )}
+      <Form
+        labelAlign="left"
+        labelCol={{ flex: "150px" }}
+        wrapperCol={{ flex: "auto" }}
+        form={form}
+        name="basic"
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
       >
-        {}
-        {globalErrorMessages.length > 0 ? (
-          <Alert type="error" message={globalErrorMessages.join(" ")} />
-        ) : (
-          <></>
-        )}
-        <Form
-          {...layout}
-          form={form}
-          name="basic"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+        <Form.Item
+          label="ClientId"
+          name="newClientId"
+          rules={[{ required: true }]}
+          initialValue={application ? application.clientId : ""}
         >
-          <Form.Item
-            label="ClientId"
-            name="newClientId"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            initialValue={application.clientId}
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Display Name"
+          name="newDisplayName"
+          rules={[{ required: true }]}
+          initialValue={application ? application.displayName : ""}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Login Redirect URL"
+          name="newRedirectUri"
+          rules={[{ required: true }, { type: 'url' }, { type: 'string', min: 6 }]}
+          initialValue={application ? application.redirectUris : ""}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Logout Redirect URL"
+          name="newPostLogoutRedirectUri"
+          rules={[{ required: true }, { type: 'url' }, { type: 'string', min: 6 }]}
+          initialValue={application ? application.postLogoutRedirectUris : ""}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Permissions"
+          name="newPermissions"
+          rules={[{ required: true }]}
+          initialValue={application?.permissions}
+        >
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: '100%' }}
+            placeholder="Please select"
           >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Client Secret"
-            name="newClientSecret"
-            initialValue={application.clientSecret}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Description"
-            name="newDescription"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            initialValue={application.displayName}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Permissions"
-            name="newPermissons"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            initialValue={application.permissions}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item {...tailLayout}>
-            <Button type="primary" htmlType="submit" loading={updating}>
-              Update
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal> */}
+            {scopes?.map((scope => {
+              return <Select.Option key={scope.id!} value={scope.name}>
+                {scope.displayName}
+              </Select.Option>
+            }))
+            }
+          </Select>
+        </Form.Item>
+        <Form.Item>
+          <Flex gap="small" justify="right">
+              <Button type="primary"
+                htmlType="button"
+                loading={updating}
+                href={paths.openIdConnect}>
+                Cancel
+              </Button>
+              <Button type="primary"
+                htmlType="submit"
+                loading={updating}
+                style={{ marginLeft: "5px" }}>
+                Update
+              </Button>
+            </Flex>          
+        </Form.Item>
+      </Form>
     </>
   );
 }
