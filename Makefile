@@ -8,6 +8,8 @@ docker_compose = \
 		--file docker-compose.yml \
 		--project-name ${NAME}
 
+database_name = xbase_development
+
 # Taken from https://www.client9.com/self-documenting-makefiles/
 help : ## Print this help
 	@awk -F ':|##' '/^[^\t].+?:.*?##/ {\
@@ -155,7 +157,7 @@ psql : ## Enter PostgreSQL interactive terminal in the running `database` contai
 		database \
 		psql \
 		--username postgres \
-		--dbname xbase_development
+		--dbname ${database_name}
 .PHONY : psql
 
 shelld : CONTAINER = database
@@ -169,7 +171,7 @@ list : ## List all containers with health status
 		--all
 .PHONY : list
 
-createdb : DBNAME = xbase_development
+createdb : DBNAME = ${database_name}
 createdb : ## Create database with name `${DBNAME}` defaulting to `xbase_development`
 	${docker_compose} exec \
 		database \
@@ -178,7 +180,7 @@ createdb : ## Create database with name `${DBNAME}` defaulting to `xbase_develop
 		"
 .PHONY : createdb
 
-dropdb : DBNAME = xbase_development
+dropdb : DBNAME = ${database_name}
 dropdb : ## Drop database with name `${DBNAME}` defaulting to `xbase_development`
 	${docker_compose} exec \
 		database \
@@ -186,6 +188,18 @@ dropdb : ## Drop database with name `${DBNAME}` defaulting to `xbase_development
 			dropdb --username postgres ${DBNAME} ; \
 		"
 .PHONY : dropdb
+
+sql : ## Run the SQL script in the file `${SQL}` in the running `database` service, for example, `make SQL=./my.sql sql`
+	cat ${SQL} \
+	| ${docker_compose} exec \
+		--no-TTY \
+		database \
+		psql \
+			--echo-all \
+			--file=- \
+			--username=postgres \
+			--dbname=${database_name}
+.PHONY : sql
 
 begin-maintenance : ## Begin maintenance
 	cp \
