@@ -20,11 +20,15 @@ export enum FloatPropositionComparator {
 export type FloatPropositionFormListProps = {
   name: string;
   label: string;
+  minimum: number;
+  maximum: number;
 };
 
 export function FloatPropositionFormList({
   name,
   label,
+  minimum,
+  maximum,
 }: FloatPropositionFormListProps) {
   return (
     <Form.List name={name}>
@@ -87,8 +91,8 @@ export function FloatPropositionFormList({
                   noStyle
                 >
                   <InputNumber
-                    min={0}
-                    max={1}
+                    min={minimum}
+                    max={maximum}
                     step="0.01"
                     style={{ width: "60%" }}
                   />
