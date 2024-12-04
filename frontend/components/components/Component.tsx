@@ -287,7 +287,9 @@ export default function Component({ componentId }: ComponentProps) {
                 description={component.description}
                 availability={component.availability}
                 categories={component.categories}
-                definitionOfSurfacesAndPrimeDirection={component.definitionOfSurfacesAndPrimeDirection}
+                primeSurface={component.prime?.surface}
+                primeDirection={component.prime?.direction}
+                switchableLayers={component.switchableLayers}
               />,
             ]
           : []
@@ -299,11 +301,17 @@ export default function Component({ componentId }: ComponentProps) {
         <Descriptions.Item label="Available">
           <OpenEndedDateTimeRangeX range={component.availability} />
         </Descriptions.Item>
-        <Descriptions.Item label="Definition of Surfaces and Prime Direction">
-          {component.definitionOfSurfacesAndPrimeDirection?.description}{" "}
-          {component.definitionOfSurfacesAndPrimeDirection?.reference?.title}{" "}
-          {component.definitionOfSurfacesAndPrimeDirection?.reference?.abstract}{" "}
-          {component.definitionOfSurfacesAndPrimeDirection?.reference?.section}{" "}
+        <Descriptions.Item label="Prime Surface">
+          {component.prime?.surface?.description}{" "}
+          {component.prime?.surface?.reference?.title}
+        </Descriptions.Item>
+        <Descriptions.Item label="Prime Direction">
+          {component.prime?.direction?.description}{" "}
+          {component.prime?.direction?.reference?.title}
+        </Descriptions.Item>
+        <Descriptions.Item label="Switchable Layers">
+          {component.switchableLayers?.description}{" "}
+          {component.switchableLayers?.reference?.title}
         </Descriptions.Item>
       </Descriptions>
     </PageHeader>

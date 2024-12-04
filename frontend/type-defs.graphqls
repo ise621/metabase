@@ -1255,8 +1255,8 @@ type PhotovoltaicDataEdge {
 }
 
 type PrimeSurfaceOrDirection {
-  primeDirection: DescriptionOrReference
-  primeSurface: DescriptionOrReference
+  direction: DescriptionOrReference
+  surface: DescriptionOrReference
 }
 
 type Publication implements Reference {

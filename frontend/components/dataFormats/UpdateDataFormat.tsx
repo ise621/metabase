@@ -213,7 +213,7 @@ export default function UpdateDataFormat({
             <Input />
           </Form.Item>
           <Divider />
-          <ReferenceForm form={form} initialValue={reference} />
+          <ReferenceForm form={form} namespace={["reference"]} initialValue={reference} />
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit" loading={updating}>
               Update

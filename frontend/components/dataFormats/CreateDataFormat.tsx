@@ -181,7 +181,7 @@ export default function CreateDataFormat({ managerId }: CreateDataFormatProps) {
           <Input />
         </Form.Item>
         <Divider />
-        <ReferenceForm form={form} />
+        <ReferenceForm form={form} namespace={["reference"]} />
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit" loading={creating}>
             Create

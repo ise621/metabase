@@ -11,6 +11,29 @@ fragment ComponentPartial on Component {
   }
 }
 
+fragment ReferencePartial on Reference {
+  abstract
+  section
+  title
+  ... on Standard {
+    locator
+    numeration {
+      mainNumber
+      prefix
+      suffix
+    }
+    standardizers
+    year
+  }
+  ... on Publication {
+    arXiv
+    authors
+    doi
+    urn
+    webAddress
+  }
+}
+
 query Components {
   components {
     edges {
@@ -33,29 +56,24 @@ query Component($uuid: Uuid!) {
       from
       to
     }
-    definitionOfSurfacesAndPrimeDirection {
+    prime {
+      surface {
+        description
+        reference {
+          ...ReferencePartial
+        }
+      }
+      direction {
+        description
+        reference {
+          ...ReferencePartial
+        }
+      }
+    }
+    switchableLayers {
       description
       reference {
-        abstract
-        section
-        title
-        ... on Standard {
-          locator
-          numeration {
-            mainNumber
-            prefix
-            suffix
-          }
-          standardizers
-          year
-        }
-        ... on Publication {
-          arXiv
-          authors
-          doi
-          urn
-          webAddress
-        }
+        ...ReferencePartial
       }
     }
     manufacturers(pending: false) {
@@ -156,7 +174,9 @@ mutation CreateComponent(
   $description: String!
   $categories: [ComponentCategory!]!
   $availability: OpenEndedDateTimeRangeInput
-  $definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
+  $primeSurface: DescriptionOrReferenceInput
+  $primeDirection: DescriptionOrReferenceInput
+  $switchableLayers: DescriptionOrReferenceInput
   $manufacturerId: Uuid!
 ) {
   createComponent(
@@ -166,7 +186,9 @@ mutation CreateComponent(
       description: $description
       categories: $categories
       availability: $availability
-      definitionOfSurfacesAndPrimeDirection: $definitionOfSurfacesAndPrimeDirection
+      primeSurface: $primeSurface
+      primeDirection: $primeDirection
+      switchableLayers: $switchableLayers
       manufacturerId: $manufacturerId
     }
   ) {
@@ -188,7 +210,9 @@ mutation UpdateComponent(
   $description: String!
   $categories: [ComponentCategory!]!
   $availability: OpenEndedDateTimeRangeInput
-  $definitionOfSurfacesAndPrimeDirection: DefinitionOfSurfacesAndPrimeDirectionInput
+  $primeSurface: DescriptionOrReferenceInput
+  $primeDirection: DescriptionOrReferenceInput
+  $switchableLayers: DescriptionOrReferenceInput
 ) {
   updateComponent(
     input: {
@@ -198,7 +222,9 @@ mutation UpdateComponent(
       description: $description
       categories: $categories
       availability: $availability
-      definitionOfSurfacesAndPrimeDirection: $definitionOfSurfacesAndPrimeDirection
+      primeSurface: $primeSurface
+      primeDirection: $primeDirection
+      switchableLayers: $switchableLayers
     }
   ) {
     component {

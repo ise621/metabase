@@ -208,7 +208,7 @@ export default function CreateMethod({ managerId }: CreateMethodProps) {
           <SelectUserId mode="multiple" />
         </Form.Item>
         <Divider />
-        <ReferenceForm form={form} />
+        <ReferenceForm form={form} namespace={["reference"]} />
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit" loading={creating}>
             Create
