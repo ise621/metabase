@@ -194,7 +194,7 @@ public sealed class Startup(
                 services
                     .GetRequiredService<IDbContextFactory<ApplicationDbContext>>()
                     .CreateDbContext(),
-            ServiceLifetime.Singleton
+            ServiceLifetime.Transient
         );
         services.ConfigureDbContext<ApplicationDbContext>(options =>
             ConfigureDatabaseContext(options, _environment, _appSettings),
