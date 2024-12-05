@@ -7,5 +7,6 @@ public enum CreateComponentErrorCode
 {
     UNKNOWN,
     UNKNOWN_MANUFACTURER,
-    UNAUTHORIZED
+    UNAUTHORIZED,
+    AMBIGUOUS_REFERENCE
 }

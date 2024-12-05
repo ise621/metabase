@@ -250,7 +250,7 @@ The file `Makefile.production` contains GNU Make targets to manage Docker
 containers like `up` and `down`, to follow Docker container logs with `logs`,
 to drop into shells inside running Docker containers like `shellb` for the
 backend service and `shellf` for the frontend service and `psql` for the
-databse service, and to list information about Docker like `list` and
+database service, and to list information about Docker like `list` and
 `list-services`.
 
 And the file contains GNU Make targets to deploy a new release or rollback it
