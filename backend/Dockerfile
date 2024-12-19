@@ -308,8 +308,8 @@ RUN \
     ./test/bin \
     ./test/obj && \
   mkdir --parents \
-    ${HOME}/.vscode-server/extensions \
-    ${HOME}/.vscode-server-insiders/extensions && \
+    ${HOME}/.vscode-server \
+    ${HOME}/.vscode-server-insiders && \
   mkdir --parents \
     ${HOME}/.nuget \
     ${HOME}/.dotnet
