@@ -182,7 +182,7 @@ public static class GraphQlConfiguration
             .ModifyPagingOptions(_ =>
                 {
                     _.MaxPageSize = 100;
-                    _.DefaultPageSize = 10;
+                    _.DefaultPageSize = 100;
                     _.IncludeTotalCount = true;
                     _.IncludeNodesField = false;
                 }
