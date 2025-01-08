@@ -1,11 +1,10 @@
-import { Authorization, UserRole } from "../../__generated__/__types__";
+import { Authorization } from "../../__generated__/__types__";
 import { message, Popconfirm, Skeleton, Space, Table, TableProps } from "antd";
 import Link from "next/link";
 import { ApplicationProps } from "../applications/Application";
-import { useCurrentUserQuery } from "../../queries/currentUser.graphql";
 import { useEffect } from "react";
 import { messageApolloError } from "../../lib/apollo";
-import { useAuthorizationsByApplicationIdQuery } from "../../queries/authorizations.graphql";
+import { AuthorizationsByApplicationIdDocument, useAuthorizationsByApplicationIdQuery, useDeleteAuthorizationMutation } from "../../queries/authorizations.graphql";
 
 export default function AutorizationsTable({ applicationId }: ApplicationProps) {
     const { loading, error, data } = useAuthorizationsByApplicationIdQuery({
@@ -14,11 +13,15 @@ export default function AutorizationsTable({ applicationId }: ApplicationProps) 
       },
     });
     const authorizations = data?.authorizationsByApplicationId;
-    const currentUser = useCurrentUserQuery()?.data?.currentUser;
-
-    function isAdmin() {
-      return currentUser?.roles?.includes(UserRole.Administrator)
-    }
+    const [deleteAuthorizationMutation] = useDeleteAuthorizationMutation({
+        // TODO Update the cache more efficiently as explained on https://www.apollographql.com/docs/react/caching/cache-interaction/ and https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
+        // See https://www.apollographql.com/docs/react/data/mutations/#options
+        refetchQueries: [
+            {
+                query: AuthorizationsByApplicationIdDocument,
+            },
+        ],
+    });
 
     useEffect(() => {
       if (error) {
@@ -51,13 +54,22 @@ export default function AutorizationsTable({ applicationId }: ApplicationProps) 
             key: 'action',
             render: (_, authentication) => (
                 <Space size="middle">
-                    {isAdmin() ? (
+                    {authentication.canCurrentUserDeleteAuthorization ? (
                         <>
-                            {/* <Link href={paths.application(application.id!)}>Edit</Link> */}
                             <Popconfirm
                                 title="Are you sure to delete this authorization?"
-                                onConfirm={() => {
-                                    message.success('Delete ' + authentication.id);
+                                onConfirm={async () => {
+                                    const { data } = await deleteAuthorizationMutation({
+                                        variables: {
+                                            authorizationId: authentication.id!
+                                        },
+                                    });
+                                    if (data?.deleteAuthorization.errors) {
+                                        message.error(data?.deleteAuthorization.errors.toString())
+                                    }
+                                    else {
+                                        message.success('Successfully deleted authorization ' + authentication.id)
+                                    }
                                 }}
                                 okText="Yes"
                                 cancelText="No"

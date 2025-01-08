@@ -1,5 +1,6 @@
 import { Application } from "../../__generated__/__types__";
-import { Button, Col, Flex, message, Popconfirm, Row, Skeleton, Space, Table, TableProps, Typography } from "antd";
+import { Button, Flex, message, Popconfirm, Skeleton, Space, Table, TableProps, Typography } from "antd";
+import { useCurrentUserQuery } from "../../queries/currentUser.graphql";
 import Link from "next/link";
 import paths from "../../paths";
 import { useRouter } from "next/router";
@@ -11,8 +12,9 @@ export type ApplicationsProps = {
     applications: Array<Application>;
 };
 
-export default function ApplicationTable({ editable, loading, applications }: ApplicationsProps) {
+export default function ApplicationTable({ loading, applications }: ApplicationsProps) {
     const router = useRouter();
+    const currentUser = useCurrentUserQuery()?.data?.currentUser;
     const [deleteApplicationMutation] = useDeleteApplicationMutation({
         // TODO Update the cache more efficiently as explained on https://www.apollographql.com/docs/react/caching/cache-interaction/ and https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
         // See https://www.apollographql.com/docs/react/data/mutations/#options
@@ -53,7 +55,7 @@ export default function ApplicationTable({ editable, loading, applications }: Ap
             key: 'action',
             render: (_, application) => (
                 <Space key={`space_${application.id}`} size="middle">
-                    {editable ? (
+                    {application.canCurrentUserManageApplication ? (
                         <>
                             <Link key={`edit_${application.id}`} href={paths.application(application.id!)}>Edit</Link>
                             <Popconfirm key={`popcon_${application.id}`}
@@ -61,7 +63,7 @@ export default function ApplicationTable({ editable, loading, applications }: Ap
                                 onConfirm={async () => {
                                     const { data } = await deleteApplicationMutation({
                                         variables: {
-                                            id: application.id!
+                                            applicationId: application.id!
                                         },
                                     });
                                     if (data?.deleteApplication.errors) {
@@ -69,7 +71,6 @@ export default function ApplicationTable({ editable, loading, applications }: Ap
                                     }
                                     else {
                                         message.success('Successfully deleted application ' + application.displayName)
-                                        // router.push(paths.openIdConnect)
                                     }
                                 }}
                                 okText="Yes"
@@ -89,7 +90,7 @@ export default function ApplicationTable({ editable, loading, applications }: Ap
 
     return <>
         <Typography.Title>Applications</Typography.Title>
-        {editable ? (
+        {currentUser?.canCurrentUserAddApplications ? (
             <>
                 <Flex justify="right" gap="small">
                     <Button type="primary" onClick={() => router.push(paths.applicationCreate)} style={{ marginBottom: "5px" }}>Add Application</Button>

@@ -108,6 +108,17 @@ public sealed class InstitutionType
             .Field(t => t.RepresentativeEdges)
             .Ignore();
         descriptor
+            .Field(t => t.Applications)
+            .Type<NonNullType<ObjectType<InstitutionApplicationConnection>>>()
+            .Resolve(context =>
+                new InstitutionApplicationConnection(
+                    context.Parent<Institution>()
+                )
+            );
+        descriptor
+            .Field(t => t.ApplicationEdges)
+            .Ignore();
+        descriptor
             .Field("canCurrentUserUpdateNode")
             .ResolveWith<InstitutionResolvers>(x =>
                 InstitutionResolvers.GetCanCurrentUserUpdateNodeAsync(default!, default!, default!, default!,

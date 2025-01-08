@@ -1,15 +1,15 @@
 import { messageApolloError } from "../../lib/apollo";
 import Layout from "../../components/Layout";
-import { useOpenIdConnectQuery } from "../../queries/openIdConnect.graphql";
 import { useEffect } from "react";
 import { Application } from "../../__generated__/__types__";
 import { useCurrentUserQuery } from "../../queries/currentUser.graphql";
 import ApplicationTable from "../../components/applications/ApplicationTable";
 import { useRouter } from "next/router";
 import paths, { redirectToLoginPage } from "../../paths";
+import { useApplicationsQuery } from "../../queries/applications.graphql";
 
 function Page() {
-  const { loading, error, data } = useOpenIdConnectQuery();
+  const { loading, error, data } = useApplicationsQuery();
   const currentUser = useCurrentUserQuery()?.data?.currentUser;
   const router = useRouter();
   const shouldRedirect = !(loading || error || currentUser);
@@ -28,7 +28,7 @@ function Page() {
 
   return (
     <Layout>
-      <ApplicationTable editable={currentUser?.canCurrentUserManageApplications} loading={loading} applications={data?.applications as Array<Application> || []}></ApplicationTable>
+      <ApplicationTable loading={loading} applications={data?.applications as Array<Application> || []}></ApplicationTable>
     </Layout>
   );
 }

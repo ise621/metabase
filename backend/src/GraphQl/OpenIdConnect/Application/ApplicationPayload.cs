@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OpenIddict.EntityFrameworkCore.Models;
+using Metabase.Data;
 
 namespace Metabase.GraphQl.OpenIdConnect.Application;
 
@@ -7,7 +7,7 @@ public class ApplicationPayload<TApplicationError> : Payload
     where TApplicationError : IUserError
 {
     protected ApplicationPayload(
-        OpenIddictEntityFrameworkCoreApplication application
+        OpenIdApplication application
     )
     {
         Application = application;
@@ -28,7 +28,7 @@ public class ApplicationPayload<TApplicationError> : Payload
     }
 
     protected ApplicationPayload(
-        OpenIddictEntityFrameworkCoreApplication application,
+        OpenIdApplication application,
         IReadOnlyCollection<TApplicationError> errors
     )
     {
@@ -37,7 +37,7 @@ public class ApplicationPayload<TApplicationError> : Payload
     }
 
     protected ApplicationPayload(
-        OpenIddictEntityFrameworkCoreApplication application,
+        OpenIdApplication application,
         TApplicationError error
     )
         : this(
@@ -47,6 +47,6 @@ public class ApplicationPayload<TApplicationError> : Payload
     {
     }
 
-    public OpenIddictEntityFrameworkCoreApplication? Application { get; }
+    public OpenIdApplication? Application { get; }
     public IReadOnlyCollection<TApplicationError>? Errors { get; }
 }

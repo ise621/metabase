@@ -59,6 +59,7 @@ public sealed class ApplicationDbContext
     public DbSet<Method> Methods { get; private set; } = default!;
     public DbSet<UserMethodDeveloper> UserMethodDevelopers { get; private set; } = default!;
     public DbSet<DataProtectionKey> DataProtectionKeys { get; private set; } = default!;
+    public DbSet<InstitutionApplication> ApplicationInstitutions { get; private set; } = default!;
 
     // Inspired by https://github.com/openiddict/openiddict-core/issues/1376#issuecomment-1151275376
     // It is needed to fix the following error that occurred when trying to redeem OpenId Connect tokens in production:
@@ -271,6 +272,28 @@ public sealed class ApplicationDbContext
             );
     }
 
+    private static void ConfigureInstitutionApplication(ModelBuilder builder)
+    {
+        builder.Entity<Institution>()
+            .HasMany(i => i.Applications)
+            .WithMany(a => a.Institutions)
+            .UsingEntity<InstitutionApplication>(
+                j => j
+                    .HasOne(e => e.Application)
+                    .WithMany(u => u.InstitutionEdges)
+                    .HasForeignKey(e => e.ApplicationId)
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne(e => e.Institution)
+                    .WithMany(i => i.ApplicationEdges)
+                    .HasForeignKey(e => e.InstitutionId)
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .ToTable("institution_application")
+                    .HasKey(a => new { a.InstitutionId, a.ApplicationId })
+            );
+    }
+
     private static void ConfigureDatabaseOperator(ModelBuilder builder)
     {
         builder.Entity<Institution>()
@@ -359,6 +382,7 @@ public sealed class ApplicationDbContext
             .ToTable("institution");
         ConfigureInstitutionMethodDeveloper(builder);
         ConfigureInstitutionRepresentative(builder);
+        ConfigureInstitutionApplication(builder);
         ConfigureDatabaseOperator(builder);
         ConfigureEntity(
                 builder.Entity<Method>()

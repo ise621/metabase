@@ -1,4 +1,4 @@
-﻿using OpenIddict.EntityFrameworkCore.Models;
+﻿using Metabase.Data;
 
 namespace Metabase.GraphQl.OpenIdConnect.Application;
 
@@ -6,7 +6,7 @@ public sealed class CreateApplicationPayload
     : ApplicationPayload<CreateApplicationError>
 {
     public CreateApplicationPayload(
-        OpenIddictEntityFrameworkCoreApplication application
+        OpenIdApplication application
     )
         : base(application)
     {

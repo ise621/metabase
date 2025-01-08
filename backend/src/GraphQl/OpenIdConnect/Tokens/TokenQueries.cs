@@ -4,13 +4,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
+using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Core;
-using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Metabase.GraphQl.OpenIdConnect.Tokens;
 
@@ -18,8 +19,9 @@ namespace Metabase.GraphQl.OpenIdConnect.Tokens;
 public sealed class TokenQueries
 {
     [UseUserManager]
-    public async Task<IList<OpenIddictEntityFrameworkCoreToken>> GetTokens(
-        OpenIddictTokenManager<OpenIddictEntityFrameworkCoreToken> tokenManager,
+    [Authorize(Policy = AuthConfiguration.ReadPolicy)]
+    public async Task<IList<OpenIdToken>> GetTokens(
+        OpenIddictTokenManager<OpenIdToken> tokenManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context, // TODO Make the application manager use the scoped database context.
@@ -28,19 +30,20 @@ public sealed class TokenQueries
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToViewApplications(claimsPrincipal, userManager, context, cancellationToken)
                 .ConfigureAwait(false))
-            return Array.Empty<OpenIddictEntityFrameworkCoreToken>();
+            return Array.Empty<OpenIdToken>();
 
         return await tokenManager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
             .ConfigureAwait(false);
     }
 
     [UseUserManager]
-    public async Task<OpenIddictEntityFrameworkCoreToken?> GetToken(
-        Guid uuid,
-        OpenIddictTokenManager<OpenIddictEntityFrameworkCoreToken> tokenManager,
+    [Authorize(Policy = AuthConfiguration.ReadPolicy)]
+    public async Task<OpenIdToken?> GetToken(
+        Guid tokenId,
+        OpenIddictTokenManager<OpenIdToken> tokenManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
-        ApplicationDbContext context, // TODO Make the application manager use the scoped database context.
+        ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
@@ -48,24 +51,26 @@ public sealed class TokenQueries
                 .ConfigureAwait(false))
             return null;
 
-        return await tokenManager.FindByIdAsync(uuid.ToString(), cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await tokenManager.FindByIdAsync(tokenId.ToString(), cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     [UseUserManager]
-    public async Task<IList<OpenIddictEntityFrameworkCoreToken>> GetTokensByApplicationId(
+    [Authorize(Policy = AuthConfiguration.ReadPolicy)]
+    public async Task<IList<OpenIdToken>> GetTokensByApplicationId(
         Guid applicationId,
-        OpenIddictTokenManager<OpenIddictEntityFrameworkCoreToken> tokenManager,
+        OpenIddictTokenManager<OpenIdToken> tokenManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
-        ApplicationDbContext context, // TODO Make the application manager use the scoped database context.
+        ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
         if (!await OpenIdConnectAuthorization.IsAuthorizedToViewApplications(claimsPrincipal, userManager, context, cancellationToken)
                 .ConfigureAwait(false))
-            return Array.Empty<OpenIddictEntityFrameworkCoreToken>();
+            return Array.Empty<OpenIdToken>();
 
-        return await tokenManager.FindByApplicationIdAsync(applicationId.ToString(), cancellationToken: cancellationToken).ToListAsync(cancellationToken)
+        return await tokenManager.FindByApplicationIdAsync(applicationId.ToString(), cancellationToken: cancellationToken)
+            .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
     }
 }

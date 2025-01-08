@@ -7,10 +7,17 @@ fragment CurrentUserPartial on User {
   isEmailConfirmed
   phoneNumber
   roles
-  canCurrentUserDeleteAuthorizations
-  canCurrentUserManageApplications
-  canCurrentUserRevokeTokens
-  canCurrentUserViewApplications
+  canCurrentUserAddApplications
+  canCurrentUserViewApplications  
+  representedInstitutions {
+    edges {
+      node {
+        id
+        uuid
+        name
+      }
+    }
+  }
 }
 
 query CurrentUser {

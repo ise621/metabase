@@ -7,12 +7,13 @@ query Applications {
 }
 
 query Application($uuid: Uuid!) {
-  application(uuid: $uuid) {    
+  application(applicationId: $uuid) {    
     ...ApplicationPartial
   }
 }
 
 mutation CreateApplication(
+  $associatedInstitutionId: Uuid!
   $clientId: String!
   $displayName: String!
   $permissions: String!
@@ -21,6 +22,7 @@ mutation CreateApplication(
 ) {
   createApplication(
     input: {
+      associatedInstitutionId: $associatedInstitutionId
       clientId: $clientId
       displayName: $displayName
       permissions: $permissions
@@ -40,7 +42,7 @@ mutation CreateApplication(
 }
 
 mutation UpdateApplication(
-  $id: String!
+  $applicationId: Uuid!
   $clientId: String!
   $displayName: String!
   $permissions: String!
@@ -49,7 +51,7 @@ mutation UpdateApplication(
 ) {
   updateApplication(
     input: {
-      id: $id
+      applicationId: $applicationId
       clientId: $clientId
       displayName: $displayName
       permissions: $permissions
@@ -68,8 +70,8 @@ mutation UpdateApplication(
   }
 }
 
-mutation DeleteApplication($id: String!) {
-  deleteApplication(input: { id: $id }) {
+mutation DeleteApplication($applicationId: Uuid!) {
+  deleteApplication(input: { applicationId: $applicationId }) {
     errors {
       code
       message

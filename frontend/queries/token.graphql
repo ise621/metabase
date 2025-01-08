@@ -6,8 +6,8 @@ query TokensByApplicationId($applicationId: Uuid!) {
   }
 }
 
-mutation RevokeToken($id: String!) {
-  revokeToken(input: { id: $id }) {
+mutation RevokeToken($tokenId: Uuid!) {
+  revokeToken(input: { tokenId: $tokenId }) {
     errors {
       code
       message

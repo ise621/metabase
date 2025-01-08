@@ -1,12 +1,10 @@
 import { message, Popconfirm, Skeleton, Space, Table, TableProps } from "antd";
-import { Token } from "graphql";
-import { useCurrentUserQuery } from "../../queries/currentUser.graphql";
-import { UserRole } from "../../__generated__/__types__";
+import { Token } from "../../__generated__/__types__";
 import { useEffect } from "react";
 import { messageApolloError } from "../../lib/apollo";
 import Link from "next/link";
 import { ApplicationProps } from "../applications/Application";
-import { useTokensByApplicationIdQuery } from "../../queries/token.graphql";
+import { TokensByApplicationIdDocument, useRevokeTokenMutation, useTokensByApplicationIdQuery } from "../../queries/token.graphql";
 
 export default function TokenTable({ applicationId }: ApplicationProps) {
     const { loading, error, data } = useTokensByApplicationIdQuery({
@@ -15,11 +13,15 @@ export default function TokenTable({ applicationId }: ApplicationProps) {
       },
     });
     const tokens = data?.tokensByApplicationId;
-    const currentUser = useCurrentUserQuery()?.data?.currentUser;
-
-    function isAdmin() {
-      return currentUser?.roles?.includes(UserRole.Administrator)
-    }
+    const [revokeTokenMutation] = useRevokeTokenMutation({
+        // TODO Update the cache more efficiently as explained on https://www.apollographql.com/docs/react/caching/cache-interaction/ and https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
+        // See https://www.apollographql.com/docs/react/data/mutations/#options
+        refetchQueries: [
+            {
+                query: TokensByApplicationIdDocument,
+            },
+        ],
+    });
 
     useEffect(() => {
       if (error) {
@@ -57,13 +59,22 @@ export default function TokenTable({ applicationId }: ApplicationProps) {
             key: 'action',
             render: (_, token) => (
                 <Space size="middle">
-                    {isAdmin() ? (
+                    {token.canCurrentUserRevokeToken ? (
                         <>
-                            {/* <Link href={paths.application(application.id!)}>Edit</Link> */}
                             <Popconfirm
                                 title="Are you sure to revoke this token?"
-                                onConfirm={() => {
-                                    message.success('Revoke Token with id ' + token.id);
+                                onConfirm={async () => {
+                                    const { data } = await revokeTokenMutation({
+                                        variables: {
+                                            tokenId: token.id!
+                                        },
+                                    });
+                                    if (data?.revokeToken.errors) {
+                                        message.error(data?.revokeToken.errors.toString())
+                                    }
+                                    else {
+                                        message.success('Successfully revoked token ' + token.id)
+                                    }
                                 }}
                                 okText="Yes"
                                 cancelText="No"

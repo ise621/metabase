@@ -1,5 +1,7 @@
-﻿namespace Metabase.GraphQl.OpenIdConnect.Authorizations;
+﻿using System;
+
+namespace Metabase.GraphQl.OpenIdConnect.Authorizations;
 
 public sealed record DeleteAuthorizationInput(
-    string Id
+    Guid AuthorizationId
 );

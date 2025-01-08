@@ -27,9 +27,10 @@ public abstract class AuthConfiguration
     public const string ReadPolicy = "Read";
     public const string WritePolicy = "Write";
     public const string ManageUserPolicy = "ManageUser";
-    public const string ReadApiScope = "api:read";
-    public const string WriteApiScope = "api:write";
-    public const string ManageUserApiScope = "api:user:manage";
+    public const string ScopePrefixApi = "api";
+    public const string ReadApiScope = ScopePrefixApi + ":read";
+    public const string WriteApiScope = ScopePrefixApi + ":write";
+    public const string ManageUserApiScope = ScopePrefixApi + ":user:manage";
 
     // Keep in sync with the scopes set in `OpenIddictClientRegistration`.
     private static readonly HashSet<string> _clientScopes = new()
@@ -97,7 +98,7 @@ public abstract class AuthConfiguration
                 options.Password.RequiredLength = 8;
                 options.Password.RequiredUniqueChars = 1;
                 // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(600);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
                 // User settings.
@@ -153,8 +154,8 @@ public abstract class AuthConfiguration
                 options.LoginPath = "/connect/client/login";
                 options.LogoutPath = "/connect/client/logout";
                 options.ReturnUrlParameter = "returnTo";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(50);
-                options.SlidingExpiration = false;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(600);
+                options.SlidingExpiration = true;
                 options.Events.OnValidatePrincipal = context =>
                 {
                     if (context?.Principal is not null)
@@ -257,7 +258,8 @@ public abstract class AuthConfiguration
                     // Configure OpenIddict to use the Entity Framework Core stores and models.
                     // Note: call ReplaceDefaultEntities() to replace the default OpenIddict entities.
                     options.UseEntityFrameworkCore()
-                        .UseDbContext<ApplicationDbContext>();
+                        .UseDbContext<ApplicationDbContext>()
+                        .ReplaceDefaultEntities<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
                     // Enable Quartz.NET integration.
                     options.UseQuartz();
                 }

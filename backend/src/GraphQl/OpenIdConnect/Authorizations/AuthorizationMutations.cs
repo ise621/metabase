@@ -11,7 +11,6 @@ using Metabase.Extensions;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Core;
-using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Metabase.GraphQl.OpenIdConnect.Authorizations;
 
@@ -24,32 +23,36 @@ public class AuthorizationMutations
         DeleteAuthorizationInput input,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
-        OpenIddictAuthorizationManager<OpenIddictEntityFrameworkCoreAuthorization> manager,
+        OpenIddictAuthorizationManager<OpenIdAuthorization> authorizationManager,
+        ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
-        if (input.Id == null)
-        {
-            return new DeleteAuthorizationPayload(
-                new DeleteAuthorizationError(DeleteAuthorizationErrorCode.UNKNOWN,
-                "Empty Id",
-                Array.Empty<string>()));
-        }
         if (!await OpenIdConnectAuthorization.IsAuthorizedToDeleteAuthorization(
+                input.AuthorizationId,
+                authorizationManager,
                 claimsPrincipal,
-                userManager
-            ).ConfigureAwait(false))
+                userManager,
+                context,
+                cancellationToken).ConfigureAwait(false))
         {
             return new DeleteAuthorizationPayload(
                 new DeleteAuthorizationError(
                     DeleteAuthorizationErrorCode.UNAUTHORIZED,
                     "You are not authorized to delete the authorization.",
-                    Array.Empty<string>()
+                    new[] { nameof(input), nameof(input.AuthorizationId).FirstCharToLower() }
                 )
             );
         }
+        if (input.AuthorizationId != Guid.Empty)
+        {
+            return new DeleteAuthorizationPayload(
+                new DeleteAuthorizationError(DeleteAuthorizationErrorCode.UNKNOWN,
+                "Empty Authorization Id",
+                Array.Empty<string>()));
+        }
 
-        var authorization = await manager.FindByIdAsync(input.Id, cancellationToken).AsTask().ConfigureAwait(false);
+        var authorization = await authorizationManager.FindByIdAsync(input.AuthorizationId.ToString(), cancellationToken).ConfigureAwait(false);
 
         if (authorization is null)
         {
@@ -57,12 +60,12 @@ public class AuthorizationMutations
                 new DeleteAuthorizationError(
                     DeleteAuthorizationErrorCode.UNKNOWN_AUTHORIZATION,
                     "Unknown authorization.",
-                    new[] { nameof(input), nameof(input.Id).FirstCharToLower() }
+                    new[] { nameof(input), nameof(input.AuthorizationId).FirstCharToLower() }
                 )
             );
         }
 
-        await manager.DeleteAsync(authorization, cancellationToken).ConfigureAwait(false);
+        await authorizationManager.DeleteAsync(authorization, cancellationToken).ConfigureAwait(false);
 
         return new DeleteAuthorizationPayload();
     }

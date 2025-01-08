@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Text.Json;
-using HotChocolate.Types;
+﻿using HotChocolate.Types;
+using Metabase.Data;
 using OpenIddict.Abstractions;
-using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Metabase.GraphQl.OpenIdConnect.Scopes;
 
 public sealed class ScopeType
-    : ObjectType<OpenIddictEntityFrameworkCoreScope>
+    : ObjectType<OpenIdScope>
 {
     protected override void Configure(
-        IObjectTypeDescriptor<OpenIddictEntityFrameworkCoreScope> descriptor
+        IObjectTypeDescriptor<OpenIdScope> descriptor
     )
     {
         const string suffixedName = nameof(ScopeType);
@@ -18,7 +16,7 @@ public sealed class ScopeType
 
         descriptor.Field(t => t.Name).Type<NonNullType<StringType>>().Resolve(context =>
         {
-            var scope = context.Parent<OpenIddictEntityFrameworkCoreScope>();
+            var scope = context.Parent<OpenIdScope>();
             return OpenIddictConstants.Permissions.Prefixes.Scope + scope.Name;
         });
 

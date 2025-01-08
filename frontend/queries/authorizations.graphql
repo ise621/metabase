@@ -6,8 +6,8 @@ query AuthorizationsByApplicationId($applicationId: Uuid!) {
   }
 }
 
-mutation DeleteAuthorization($id: String!) {
-  deleteAuthorization(input: { id: $id }) {
+mutation DeleteAuthorization($authorizationId: Uuid!) {
+  deleteAuthorization(input: { authorizationId: $authorizationId }) {
     errors {
       code
       message

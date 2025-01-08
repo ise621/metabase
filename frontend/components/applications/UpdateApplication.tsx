@@ -51,7 +51,7 @@ export default function UpdateApplication({ applicationId }: ApplicationProps) {
         setUpdating(true);
         const { errors, data } = await updateApplicationMutation({
           variables: {
-            id: applicationId,
+            applicationId: applicationId,
             clientId: newClientId,
             displayName: newDisplayName,
             redirectUri: newRedirectUri,

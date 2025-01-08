@@ -1,7 +1,9 @@
-﻿namespace Metabase.GraphQl.OpenIdConnect.Application;
+﻿using System;
+
+namespace Metabase.GraphQl.OpenIdConnect.Application;
 
 public sealed record UpdateApplicationInput(
-    string Id,
+    Guid ApplicationId,
     string ClientId,
     string DisplayName,
     string RedirectUri,

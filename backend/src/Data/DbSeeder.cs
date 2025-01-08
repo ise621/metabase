@@ -143,10 +143,6 @@ public sealed class DbSeeder
                 {
                     await CreateUserAsync(manager, userInfo, appSettings.BootstrapUserPassword, logger).ConfigureAwait(false);
                 }
-            if (await manager.FindByEmailAsync("admin@admin.de").ConfigureAwait(false) is null)
-            {
-                await CreateUserAsync(manager, ("admin", "admin@admin.de", Enumerations.UserRole.ADMINISTRATOR), "Admin2005!", logger).ConfigureAwait(false);
-            }
         }
     }
 
@@ -378,6 +374,7 @@ public sealed class DbSeeder
         IWebHostEnvironment environment
     )
     {
+        var manager = services.GetRequiredService<IOpenIddictApplicationManager>();
         var context = services.GetRequiredService<ApplicationDbContext>();
         if (environment.IsDevelopment())
         {
@@ -401,6 +398,15 @@ public sealed class DbSeeder
                         Pending = false
                     }
                 );
+                var application = await manager.FindByClientIdAsync(MetabaseClientId).AsTask().ConfigureAwait(false) as OpenIdApplication;
+                if (application != null)
+                {
+                    iseInstitution.ApplicationEdges.Add(
+                        new InstitutionApplication
+                        {
+                            ApplicationId = application.Id
+                        });
+                }
                 context.Institutions.Add(iseInstitution);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -418,6 +424,16 @@ public sealed class DbSeeder
                 {
                     ManagerId = iseInstitution.Id
                 };
+
+                var application = await manager.FindByClientIdAsync(TestlabSolarFacadesClientId).AsTask().ConfigureAwait(false) as OpenIdApplication;
+                if (application != null)
+                {
+                    institution.ApplicationEdges.Add(
+                        new InstitutionApplication
+                        {
+                            ApplicationId = application.Id
+                        });
+                }
                 context.Institutions.Add(institution);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }

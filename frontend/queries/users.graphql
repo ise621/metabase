@@ -27,9 +27,7 @@ query User($uuid: Uuid!) {
     rolesCurrentUserCanAdd
     rolesCurrentUserCanRemove
     canCurrentUserDeleteUser
-    canCurrentUserDeleteAuthorizations
-    canCurrentUserManageApplications
-    canCurrentUserRevokeTokens
+    canCurrentUserAddApplications
     canCurrentUserViewApplications
     developedMethods {
       edges {

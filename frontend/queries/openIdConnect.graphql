@@ -6,6 +6,7 @@ fragment ApplicationPartial on Application {
   permissions
   postLogoutRedirectUris
   redirectUris
+  canCurrentUserManageApplication
 }
 
 fragment AuthorizationPartial on Authorization {
@@ -14,6 +15,7 @@ fragment AuthorizationPartial on Authorization {
   status
   subject
   type
+  canCurrentUserDeleteAuthorization
 }
 
 fragment TokenPartial on Token {
@@ -24,25 +26,11 @@ fragment TokenPartial on Token {
   status
   subject
   type
+  canCurrentUserRevokeToken
 }
 
 fragment ScopePartial on Scope {
   displayName
   id
   name
-}
-
-query OpenIdConnect {
-  applications {
-    ...ApplicationPartial
-  }
-  tokens {
-    ...TokenPartial
-  }
-  authorizations {
-    ...AuthorizationPartial
-  }
-  scopes {
-    ...ScopePartial
-  }
 }

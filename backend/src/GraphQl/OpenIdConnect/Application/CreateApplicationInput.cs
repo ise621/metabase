@@ -1,6 +1,9 @@
-﻿namespace Metabase.GraphQl.OpenIdConnect.Application;
+﻿using System;
+
+namespace Metabase.GraphQl.OpenIdConnect.Application;
 
 public sealed record CreateApplicationInput(
+    Guid AssociatedInstitutionId,
     string ClientId,
     string DisplayName,
     string RedirectUri,

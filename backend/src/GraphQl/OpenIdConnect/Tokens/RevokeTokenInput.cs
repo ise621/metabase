@@ -1,6 +1,7 @@
-﻿namespace Metabase.GraphQl.OpenIdConnect.Tokens;
+﻿using System;
+
+namespace Metabase.GraphQl.OpenIdConnect.Tokens;
 
 public sealed record RevokeTokenInput(
-    string Id)
-{
-}
+    Guid TokenId
+);

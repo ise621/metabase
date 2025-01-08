@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
@@ -10,13 +11,13 @@ using Metabase.Authorization;
 using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.Extensions;
+using Metabase.GraphQl.Institutions;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
 using OpenIddict.Core;
-using OpenIddict.EntityFrameworkCore.Models;
 
 namespace Metabase.GraphQl.OpenIdConnect.Application;
 
@@ -27,7 +28,8 @@ public sealed class ApplicationMutations
     [Authorize(Policy = AuthConfiguration.WritePolicy)]
     public async Task<CreateApplicationPayload> CreateApplicationAsync(
         CreateApplicationInput input,
-        OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication> applicationManager,
+        OpenIddictApplicationManager<OpenIdApplication> applicationManager,
+        InstitutionByIdDataLoader institutionById,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
@@ -100,28 +102,36 @@ public sealed class ApplicationMutations
         var permissions = JsonSerializer.Deserialize<List<string>>(input.Permissions);
         permissions?.ForEach(permission => descriptor.Permissions.Add(permission));
 
-        return new CreateApplicationPayload(await applicationManager.CreateAsync(descriptor, cancellationToken).AsTask().ConfigureAwait(false));
+        var application = await applicationManager.CreateAsync(descriptor, cancellationToken).ConfigureAwait(false);
+        var institution = await institutionById.LoadAsync(input.AssociatedInstitutionId, cancellationToken).ConfigureAwait(false);
+        if (institution != null && application != null)
+        {
+            context.ApplicationInstitutions.Add(new InstitutionApplication
+            {
+                ApplicationId = application.Id,
+                InstitutionId = institution.Id
+            });
+        }
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        //AddApplicationInstitutionConnection(application, await institutionById.LoadAsync(input.AssociatedInstitutionId, cancellationToken).ConfigureAwait(false), context, cancellationToken);
+
+        return new CreateApplicationPayload(application);
     }
 
     [UseUserManager]
     [Authorize(Policy = AuthConfiguration.WritePolicy)]
     public async Task<UpdateApplicationPayload> UpdateApplicationAsync(
         UpdateApplicationInput input,
-        OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication> applicationManager,
+        OpenIddictApplicationManager<OpenIdApplication> applicationManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
-        if (input.Id == null)
-        {
-            return new UpdateApplicationPayload(
-                new UpdateApplicationError(UpdateApplicationErrorCode.UNKNOWN,
-                "Empty Id",
-                Array.Empty<string>()));
-        }
-        if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplications(
+        if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplication(
+                input.ApplicationId,
+                applicationManager,
                 claimsPrincipal,
                 userManager,
                 context,
@@ -132,12 +142,19 @@ public sealed class ApplicationMutations
                 new UpdateApplicationError(
                     UpdateApplicationErrorCode.UNAUTHORIZED,
                     "You are not authorized to update the application.",
-                    Array.Empty<string>()
+                    new[] { nameof(input), nameof(input.ApplicationId).FirstCharToLower() }
                 )
             );
         }
+        if (input.ApplicationId == Guid.Empty)
+        {
+            return new UpdateApplicationPayload(
+                new UpdateApplicationError(UpdateApplicationErrorCode.UNKNOWN,
+                "Empty Application Id",
+                new[] { nameof(input), nameof(input.ApplicationId).FirstCharToLower() }));
+        }
 
-        var application = await applicationManager.FindByIdAsync(input.Id, cancellationToken).AsTask().ConfigureAwait(false);
+        var application = await applicationManager.FindByIdAsync(input.ApplicationId.ToString(), cancellationToken).ConfigureAwait(false);
 
         if (application is null)
         {
@@ -145,25 +162,14 @@ public sealed class ApplicationMutations
                 new UpdateApplicationError(
                     UpdateApplicationErrorCode.UNKNOWN_APPLICATION,
                     "Unknown application.",
-                    new[] { nameof(input), nameof(input.Id).FirstCharToLower() }
+                    new[] { nameof(input), nameof(input.ApplicationId).FirstCharToLower() }
                 )
             );
         }
 
         var descriptor = new OpenIddictApplicationDescriptor();
-
         await applicationManager.PopulateAsync(descriptor, application, cancellationToken).ConfigureAwait(false);
-
-        descriptor.ClientId = input.ClientId;
-        descriptor.DisplayName = input.DisplayName;
-        descriptor.RedirectUris.Clear();
-        descriptor.PostLogoutRedirectUris.Clear();
-        descriptor.RedirectUris.Add(new Uri(input.RedirectUri, UriKind.Absolute));
-        descriptor.PostLogoutRedirectUris.Add(new Uri(input.PostLogoutRedirectUri, UriKind.Absolute));
-        descriptor.Permissions.RemoveWhere(permission => permission.Contains("api"));
-        var permissions = JsonSerializer.Deserialize<List<string>>(input.Permissions);
-        permissions?.ForEach(permission => descriptor.Permissions.Add(permission));
-
+        UpdateApplicationDescriptor(input, descriptor);
         await applicationManager.UpdateAsync(application, descriptor, cancellationToken).ConfigureAwait(false);
 
         return new UpdateApplicationPayload(application);
@@ -173,21 +179,16 @@ public sealed class ApplicationMutations
     [Authorize(Policy = AuthConfiguration.WritePolicy)]
     public async Task<DeleteApplicationPayload> DeleteApplicationAsync(
         DeleteApplicationInput input,
-        OpenIddictApplicationManager<OpenIddictEntityFrameworkCoreApplication> applicationManager,
+        OpenIddictApplicationManager<OpenIdApplication> applicationManager,
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
         CancellationToken cancellationToken
     )
     {
-        if (input.Id == null)
-        {
-            return new DeleteApplicationPayload(
-                new DeleteApplicationError(DeleteApplicationErrorCode.UNKNOWN,
-                "Empty Id",
-                Array.Empty<string>()));
-        }
-        if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplications(
+        if (!await OpenIdConnectAuthorization.IsAuthorizedToManageApplication(
+                input.ApplicationId,
+                applicationManager,
                 claimsPrincipal,
                 userManager,
                 context,
@@ -198,12 +199,19 @@ public sealed class ApplicationMutations
                 new DeleteApplicationError(
                     DeleteApplicationErrorCode.UNAUTHORIZED,
                     "You are not authorized to delete the application.",
-                    Array.Empty<string>()
+                    new[] { nameof(input), nameof(input.ApplicationId).FirstCharToLower() }
                 )
             );
         }
+        if (input.ApplicationId == Guid.Empty)
+        {
+            return new DeleteApplicationPayload(
+                new DeleteApplicationError(DeleteApplicationErrorCode.UNKNOWN,
+                "Empty Application Id",
+                Array.Empty<string>()));
+        }
 
-        var application = await applicationManager.FindByIdAsync(input.Id, cancellationToken).AsTask().ConfigureAwait(false);
+        var application = await applicationManager.FindByIdAsync(input.ApplicationId.ToString(), cancellationToken).ConfigureAwait(false);
 
         if (application is null)
         {
@@ -211,13 +219,53 @@ public sealed class ApplicationMutations
                 new DeleteApplicationError(
                     DeleteApplicationErrorCode.UNKNOWN_APPLICATION,
                     "Unknown application.",
-                    new[] { nameof(input), nameof(input.Id).FirstCharToLower() }
+                    new[] { nameof(input), nameof(input.ApplicationId).FirstCharToLower() }
                 )
             );
         }
 
         await applicationManager.DeleteAsync(application, cancellationToken).ConfigureAwait(false);
 
+        DeleteApplicationInstitutionConnection(application, context, cancellationToken);
+
         return new DeleteApplicationPayload();
+    }
+
+    private static void UpdateApplicationDescriptor(UpdateApplicationInput input, OpenIddictApplicationDescriptor descriptor)
+    {
+        descriptor.ClientId = input.ClientId;
+        descriptor.DisplayName = input.DisplayName;
+        descriptor.RedirectUris.Clear();
+        descriptor.PostLogoutRedirectUris.Clear();
+        descriptor.RedirectUris.Add(new Uri(input.RedirectUri, UriKind.Absolute));
+        descriptor.PostLogoutRedirectUris.Add(new Uri(input.PostLogoutRedirectUri, UriKind.Absolute));
+        descriptor.Permissions.RemoveWhere(permission => permission.Contains(AuthConfiguration.ScopePrefixApi));
+        foreach (var permission in JsonSerializer.Deserialize<List<string>>(input.Permissions) ?? new List<string>())
+        {
+            descriptor.Permissions.Add(permission);
+        }
+    }
+
+    private static async void AddApplicationInstitutionConnection(OpenIdApplication application, Institution? institution, ApplicationDbContext context, CancellationToken cancellationToken)
+    {
+        if (institution != null && application != null)
+        {
+            context.ApplicationInstitutions.Add(new InstitutionApplication
+            {
+                Application = application,
+                Institution = institution
+            });
+        }
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async void DeleteApplicationInstitutionConnection(OpenIdApplication application, ApplicationDbContext context, CancellationToken cancellationToken)
+    {
+        var reelations = context.ApplicationInstitutions.Where(x => x.ApplicationId == application.Id);
+        foreach (var reelation in reelations)
+        {
+            context.ApplicationInstitutions.Remove(reelation);
+        }
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

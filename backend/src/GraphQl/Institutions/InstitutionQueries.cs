@@ -1,14 +1,16 @@
-using System;
+﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
-using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.Enumerations;
 using Metabase.GraphQl.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Institutions;
 
@@ -16,22 +18,28 @@ namespace Metabase.GraphQl.Institutions;
 public sealed class InstitutionQueries
 {
     [UsePaging]
-    // [UseProjection] // We disabled projections because when requesting `id` all results had the same `id` and when also requesting `uuid`, the latter was always the empty UUID `000...`.
+    // [UseProjection] // We disabled projections because when requesting `id` all results had the
+    // same `id` and when also requesting `uuid`, the latter was always the empty UUID `000...`.
     [UseFiltering]
     [UseSorting]
-    public IQueryable<Institution> GetInstitutions(
+    public async Task<IQueryable<Institution>> GetInstitutions(
+        ClaimsPrincipal claimsPrincipal,
+        UserManager<User> userManager,
         ApplicationDbContext context,
         ISortingContext sorting
     )
     {
+        var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         sorting.StabilizeOrder<Institution>();
-        return
-            context.Institutions.AsNoTracking()
+        var institutions = context.Institutions.AsNoTracking()
                 .Where(d => d.State == InstitutionState.VERIFIED);
+
+        return institutions;
     }
 
     [UsePaging]
-    // [UseProjection] // We disabled projections because when requesting `id` all results had the same `id` and when also requesting `uuid`, the latter was always the empty UUID `000...`.
+    // [UseProjection] // We disabled projections because when requesting `id` all results had the
+    // same `id` and when also requesting `uuid`, the latter was always the empty UUID `000...`.
     [UseFiltering]
     [UseSorting]
     public IQueryable<Institution> GetPendingInstitutions(

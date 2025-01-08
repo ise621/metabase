@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { ApplicationsDocument, useCreateApplicationMutation } from "../../queries/applications.graphql";
-import { Alert, Button, Col, Flex, Form, Input, message, Row, Select } from "antd";
+import { Alert, Button, Flex, Form, Input, message, Modal, Select, Typography } from "antd";
 import { useCurrentUserQuery } from "../../queries/currentUser.graphql";
 import { useRouter } from "next/router";
 import { handleFormErrors } from "../../lib/form";
 import paths, { redirectToLoginPage } from "../../paths";
+import { ExclamationCircleTwoTone } from '@ant-design/icons';
 import { useScopesQuery } from "../../queries/scopes.graphql";
 
 type FormValues = {
+    associatedInstitutionId: string;
     clientId: string;
     displayName: string;
     redirectUri: string;
@@ -17,7 +19,6 @@ type FormValues = {
 
 export default function CreateApplication() {
     const scopes = useScopesQuery()?.data?.scopes;
-    // const institutions = useIn
     const currentUser = useCurrentUserQuery()?.data?.currentUser;
     const router = useRouter();
     const shouldRedirect = !(currentUser);
@@ -36,6 +37,7 @@ export default function CreateApplication() {
     });
 
     const onFinish = ({
+        associatedInstitutionId,
         clientId,
         displayName,
         redirectUri,
@@ -49,6 +51,7 @@ export default function CreateApplication() {
 
                 const { errors, data } = await createApplicationMutation({
                     variables: {
+                        associatedInstitutionId: associatedInstitutionId,
                         clientId: clientId,
                         displayName: displayName,
                         redirectUri: redirectUri,
@@ -65,9 +68,23 @@ export default function CreateApplication() {
                     form
                 );
                 if (data) {
-                    message.success('Successfully created application ' + data.createApplication.application?.displayName)
-                    console.log('Client Secret: ' + data.createApplication.application?.clientSecret)
-                    router.push(paths.openIdConnect)
+                    message.success('Successfully created application ' + data.createApplication.application?.displayName);                    
+                    Modal.info({
+                        title: "Application Client Secret",
+                        centered: true,
+                        width: 500,
+                        content: (
+                          <Typography.Paragraph>
+                            <span><ExclamationCircleTwoTone twoToneColor="#f9b02e" /> </span>
+                            Please copy an save the client secret now, you will not be able to access it later.
+                            <p/>
+                          <Typography.Paragraph copyable>{data.createApplication.application?.clientSecret}</Typography.Paragraph>
+                          </Typography.Paragraph>
+                        ),
+                        onOk: () => {
+                            router.push(paths.openIdConnect)
+                        },
+                      });
                 }
             } catch (error) {
                 // TODO Handle properly.
@@ -106,21 +123,21 @@ export default function CreateApplication() {
                 onFinishFailed={onFinishFailed}
             >
                 <Form.Item
-                    label="Assosiated Institution"
-                    name="assosiatedInstitution"
-                    // rules={[{ required: true }]}
+                    label="Associated Institution"
+                    name="associatedInstitutionId"
+                    rules={[{ required: true }]}
                 >
                     <Select
                         allowClear
                         style={{ width: '100%' }}
                         placeholder="Please select"
                     >
-                        {/* {scopes?.map((scope => {
-                            return <Select.Option key={scope.id!} value={scope.name}>
-                                {scope.displayName}
+                        {currentUser?.representedInstitutions?.edges.map((node => {
+                            return <Select.Option key={node.node.id!} value={node.node.uuid}>
+                                {node.node.name}
                             </Select.Option>
                         }))
-                        } */}
+                        }
                     </Select>
                 </Form.Item>
                 <Form.Item

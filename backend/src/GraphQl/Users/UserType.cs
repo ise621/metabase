@@ -237,16 +237,8 @@ public sealed class UserType
             .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserViewApplications(default!, default!, default!))
             .UseUserManager();
         descriptor
-            .Field("canCurrentUserManageApplications")
-            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserManageApplications(default!, default!, default!))
-            .UseUserManager();
-        descriptor
-            .Field("canCurrentUserDeleteAuthorizations")
-            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserDeleteAuthorizations(default!, default!))
-            .UseUserManager();
-        descriptor
-            .Field("canCurrentUserRevokeTokens")
-            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserRevokeTokens(default!, default!))
+            .Field("canCurrentUserAddApplications")
+            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserAddApplications(default!, default!, default!))
             .UseUserManager();
         descriptor
             .Field(t => t.DevelopedMethods)
@@ -308,26 +300,12 @@ public sealed class UserType
             return OpenIdConnectAuthorization.IsAuthorizedToViewApplications(claimsPrincipal, userManager, context);
         }
 
-        public static Task<bool> GetCanCurrentUserManageApplications(
+        public static Task<bool> GetCanCurrentUserAddApplications(
             ClaimsPrincipal claimsPrincipal,
             UserManager<User> userManager,
             ApplicationDbContext context)
         {
             return OpenIdConnectAuthorization.IsAuthorizedToManageApplications(claimsPrincipal, userManager, context);
-        }
-
-        public static Task<bool> GetCanCurrentUserDeleteAuthorizations(
-            ClaimsPrincipal claimsPrincipal,
-            UserManager<User> userManager)
-        {
-            return OpenIdConnectAuthorization.IsAuthorizedToDeleteAuthorization(claimsPrincipal, userManager);
-        }
-
-        public static Task<bool> GetCanCurrentUserRevokeTokens(
-            ClaimsPrincipal claimsPrincipal,
-            UserManager<User> userManager)
-        {
-            return OpenIdConnectAuthorization.IsAuthorizedToRevokeToken(claimsPrincipal, userManager);
         }
 
         public static Task<bool> GetCanCurrentUserDeleteUserAsync(
