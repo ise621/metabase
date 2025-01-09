@@ -99,12 +99,14 @@ public sealed class ApplicationMutations
             }
         };
 
-        var permissions = JsonSerializer.Deserialize<List<string>>(input.Permissions);
-        permissions?.ForEach(permission => descriptor.Permissions.Add(permission));
+        foreach (var permission in JsonSerializer.Deserialize<List<string>>(input.Permissions) ?? new List<string>())
+        {
+            descriptor.Permissions.Add(permission);
+        }
 
         var application = await applicationManager.CreateAsync(descriptor, cancellationToken).ConfigureAwait(false);
         var institution = await institutionById.LoadAsync(input.AssociatedInstitutionId, cancellationToken).ConfigureAwait(false);
-        if (institution != null && application != null)
+        if (institution != null)
         {
             context.ApplicationInstitutions.Add(new InstitutionApplication
             {
@@ -113,7 +115,6 @@ public sealed class ApplicationMutations
             });
         }
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        //AddApplicationInstitutionConnection(application, await institutionById.LoadAsync(input.AssociatedInstitutionId, cancellationToken).ConfigureAwait(false), context, cancellationToken);
 
         return new CreateApplicationPayload(application);
     }
@@ -244,19 +245,6 @@ public sealed class ApplicationMutations
         {
             descriptor.Permissions.Add(permission);
         }
-    }
-
-    private static async void AddApplicationInstitutionConnection(OpenIdApplication application, Institution? institution, ApplicationDbContext context, CancellationToken cancellationToken)
-    {
-        if (institution != null && application != null)
-        {
-            context.ApplicationInstitutions.Add(new InstitutionApplication
-            {
-                Application = application,
-                Institution = institution
-            });
-        }
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private static async void DeleteApplicationInstitutionConnection(OpenIdApplication application, ApplicationDbContext context, CancellationToken cancellationToken)
