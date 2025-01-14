@@ -24,9 +24,9 @@ query AllData(
       }
     }
     totalCount
-    # pageInfo {
-    #   ...PageInfoFields
-    # }
+    pageInfo {
+      ...PageInfoFields
+    }
     # TODO timestamp
   }
 }

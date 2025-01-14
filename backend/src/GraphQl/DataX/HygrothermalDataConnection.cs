@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
+using HotChocolate.Types.Pagination;
 
 namespace Metabase.GraphQl.DataX;
 
 public sealed class HygrothermalDataConnection(
     IReadOnlyList<HygrothermalDataEdge> edges,
     uint totalCount,
-    DateTime timestamp
+    DateTime timestamp,
+    ConnectionPageInfo pageInfo
     )
         : DataConnectionBase<HygrothermalDataEdge>(
         edges,
         totalCount,
-        timestamp
+        timestamp,
+        pageInfo
         )
 {
 }

@@ -23,9 +23,9 @@ query AllOpticalData(
       }
     }
     totalCount
-    # pageInfo {
-    #   ...PageInfoFields
-    # }
+    pageInfo {
+      ...PageInfoFields
+    }
     # TODO timestamp
   }
 }

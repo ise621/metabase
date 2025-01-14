@@ -1,11 +1,22 @@
 query AllData(
   $where: WhereInput!
   # $timestamp: DateTime
-  # $locale: Locale
+  $locale: Locale
+  $first: Int
+  $after: String
+  $last: Int
+  $before: String
 ) {
-  allData(where: $where) { # , timestamp: $timestamp, locale: $locale
+  allData(
+    where: $where
+    locale: $locale
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+  ) { # timestamp: $timestamp
     edges {
-      # cursor
+      cursor
       node {
         __typename
         uuid
@@ -13,91 +24,94 @@ query AllData(
         componentId
         name
         description
-        # warnings
-        # creatorId
-        # createdAt
-        # appliedMethod {
-        #   methodId
-        #   arguments {
-        #     name
-        #     value
-        #   }
-        #   sources {
-        #     name
-        #     value {
-        #       dataId
-        #       dataTimestamp
-        #       dataKind
-        #       databaseId
-        #     }
-        #   }
-        # }
-        # approvals {
-        #   timestamp
-        #   signature
-        #   keyFingerprint
-        #   query
-        #   response
-        #   approverId
-        # }
-        # resources {
-        #   description
-        #   hashValue
-        #   locator
-        #   dataFormatId
-        #   archivedFilesMetaInformation {
-        #     path
-        #     dataFormatId
-        #   }
-        # }
-        resourceTree {
-          root {
-            # vertexId
+        warnings
+        creatorId
+        createdAt
+        appliedMethod {
+          methodId
+          arguments {
+            name
+            value
+          }
+          sources {
+            name
             value {
-              # description
-              # hashValue
-              locator
-              # dataFormatId
-              # archivedFilesMetaInformation {
-              #   path
-              #   dataFormatId
-              # }
+              dataId
+              dataTimestamp
+              dataKind
+              databaseId
             }
           }
-          # nonRootVertices {
-          #   vertexId
-          #   parentId
-          #   value {
-          #     description
-          #     hashValue
-          #     locator
-          #     dataFormatId
-          #     archivedFilesMetaInformation {
-          #       path
-          #       dataFormatId
-          #     }
-          #   }
-          #   appliedConversionMethod {
-          #     methodId
-          #     arguments {
-          #       name
-          #       value
-          #     }
-          #     sourceName
-          #   }
-          # }
+        }
+        approvals {
+          timestamp
+          signature
+          keyFingerprint
+          query
+          response
+          approverId
+        }
+        resources {
+          description
+          hashValue
+          locator
+          dataFormatId
+          archivedFilesMetaInformation {
+            path
+            dataFormatId
+          }
+        }
+        resourceTree {
+          root {
+            vertexId
+            value {
+              description
+              hashValue
+              locator
+              dataFormatId
+              archivedFilesMetaInformation {
+                path
+                dataFormatId
+              }
+            }
+          }
+          nonRootVertices {
+            vertexId
+            parentId
+            value {
+              description
+              hashValue
+              locator
+              dataFormatId
+              archivedFilesMetaInformation {
+                path
+                dataFormatId
+              }
+            }
+            appliedConversionMethod {
+              methodId
+              arguments {
+                name
+                value
+              }
+              sourceName
+            }
+          }
         }
         # approval {
         #   signature
         #   keyFingerprint
         # }
-        # locale
+        locale
       }
     }
-    # totalCount
-    # pageInfo {
-    #   ...PageInfoFields
-    # }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
     # timestamp
   }
 }

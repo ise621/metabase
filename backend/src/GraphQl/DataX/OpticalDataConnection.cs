@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotChocolate.Types.Pagination;
 
 namespace Metabase.GraphQl.DataX;
 
 public sealed class OpticalDataConnection(
     IReadOnlyList<OpticalDataEdge> edges,
     uint totalCount,
-    DateTime timestamp
+    DateTime timestamp,
+    ConnectionPageInfo pageInfo
     )
         : DataConnectionBase<OpticalDataEdge>(
         edges,
         totalCount,
-        timestamp
+        timestamp,
+        pageInfo
         )
 {
     internal static OpticalDataConnection? From(OpticalDataConnectionIgsdb? allOpticalData)
@@ -24,7 +27,8 @@ public sealed class OpticalDataConnection(
         return new OpticalDataConnection(
             allOpticalData.Edges.Select(OpticalDataEdge.From).ToList().AsReadOnly(),
             Convert.ToUInt32(allOpticalData.Edges.Count),
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            allOpticalData.PageInfo
         );
     }
 }
