@@ -233,6 +233,8 @@ type Component implements Node {
   manufacturers(pending: Boolean! = false): ComponentManufacturerConnection! @cost(weight: "10")
   name: String!
   partOf: ComponentPartOfConnection! @cost(weight: "10")
+  prime: PrimeSurfaceOrDirection @cost(weight: "10")
+  switchableLayers: DescriptionOrReference
   uuid: Uuid! @cost(weight: "10")
   variantOf: ComponentVariantOfConnection! @cost(weight: "10")
 }
@@ -608,6 +610,11 @@ type DeleteUserPayload {
   errors: [DeleteUserError!]
   query: Query!
   user: User
+}
+
+type DescriptionOrReference {
+  description: String
+  reference: Reference @cost(weight: "10")
 }
 
 type DisableUserTwoFactorAuthenticationError {
@@ -1247,6 +1254,11 @@ type PhotovoltaicDataEdge {
   node: PhotovoltaicData!
 }
 
+type PrimeSurfaceOrDirection {
+  direction: DescriptionOrReference
+  surface: DescriptionOrReference
+}
+
 type Publication implements Reference {
   abstract: String
   "The website arXiv.org is a free and open-access archive for publications. The arXiv identifier can be used to define a publication."
@@ -1843,12 +1855,10 @@ input ComponentManufacturerFilterInput {
 }
 
 input ComponentSortInput {
+  id: SortEnumType @cost(weight: "10")
   name: SortEnumType @cost(weight: "10")
   abbreviation: SortEnumType @cost(weight: "10")
   description: SortEnumType @cost(weight: "10")
-  availability: SortEnumType @cost(weight: "10")
-  id: SortEnumType @cost(weight: "10")
-  version: SortEnumType @cost(weight: "10")
 }
 
 input ConfirmComponentManufacturerInput {
@@ -1889,6 +1899,9 @@ input CreateComponentInput {
   description: String!
   manufacturerId: Uuid!
   name: String!
+  primeDirection: DescriptionOrReferenceInput
+  primeSurface: DescriptionOrReferenceInput
+  switchableLayers: DescriptionOrReferenceInput
 }
 
 input CreateDataFormatInput {
@@ -1897,9 +1910,8 @@ input CreateDataFormatInput {
   managerId: Uuid!
   mediaType: String!
   name: String!
-  publication: CreatePublicationInput
+  reference: ReferenceInput
   schemaLocator: Url
-  standard: CreateStandardInput
 }
 
 input CreateDatabaseInput {
@@ -1927,8 +1939,7 @@ input CreateMethodInput {
   institutionDeveloperIds: [Uuid!]!
   managerId: Uuid!
   name: String!
-  publication: CreatePublicationInput
-  standard: CreateStandardInput
+  reference: ReferenceInput
   userDeveloperIds: [Uuid!]!
   validity: OpenEndedDateTimeRangeInput
 }
@@ -1937,27 +1948,6 @@ input CreateNumerationInput {
   mainNumber: String!
   prefix: String
   suffix: String
-}
-
-input CreatePublicationInput {
-  abstract: String
-  arXiv: String
-  authors: [String!]
-  doi: String
-  section: String
-  title: String
-  urn: String
-  webAddress: Url
-}
-
-input CreateStandardInput {
-  abstract: String
-  locator: Url
-  numeration: CreateNumerationInput!
-  section: String
-  standardizers: [Standardizer!]!
-  title: String
-  year: Int
 }
 
 input DataFormatFilterInput {
@@ -1969,24 +1959,17 @@ input DataFormatFilterInput {
   description: StringOperationFilterInput
   mediaType: StringOperationFilterInput
   schemaLocator: UrlOperationFilterInput
-  standard: StandardFilterInput
-  publication: PublicationFilterInput
   manager: InstitutionFilterInput
 }
 
 input DataFormatSortInput {
+  id: SortEnumType @cost(weight: "10")
   name: SortEnumType @cost(weight: "10")
   extension: SortEnumType @cost(weight: "10")
   description: SortEnumType @cost(weight: "10")
   mediaType: SortEnumType @cost(weight: "10")
   schemaLocator: UriSortInput @cost(weight: "10")
-  standard: StandardSortInput @cost(weight: "10")
-  publication: PublicationSortInput @cost(weight: "10")
-  reference: IReferenceSortInput @cost(weight: "10")
-  managerId: SortEnumType @cost(weight: "10")
   manager: InstitutionSortInput @cost(weight: "10")
-  id: SortEnumType @cost(weight: "10")
-  version: SortEnumType @cost(weight: "10")
 }
 
 input DataPropositionInput {
@@ -2017,15 +2000,11 @@ input DatabaseFilterInput {
 }
 
 input DatabaseSortInput {
+  id: SortEnumType @cost(weight: "10")
   name: SortEnumType @cost(weight: "10")
   description: SortEnumType @cost(weight: "10")
   locator: UriSortInput @cost(weight: "10")
-  verificationState: SortEnumType @cost(weight: "10")
-  verificationCode: SortEnumType @cost(weight: "10")
-  operatorId: SortEnumType @cost(weight: "10")
   operator: InstitutionSortInput @cost(weight: "10")
-  id: SortEnumType @cost(weight: "10")
-  version: SortEnumType @cost(weight: "10")
 }
 
 input DeleteInstitutionInput {
@@ -2038,6 +2017,11 @@ input DeletePersonalUserDataInput {
 
 input DeleteUserInput {
   userId: Uuid!
+}
+
+input DescriptionOrReferenceInput {
+  description: String
+  reference: ReferenceInput
 }
 
 input EnableUserTwoFactorAuthenticatorInput {
@@ -2095,12 +2079,6 @@ input HygrothermalDataPropositionInput {
   resources: GetHttpsResourcesPropositionInput
 }
 
-input IReferenceSortInput {
-  title: SortEnumType @cost(weight: "10")
-  abstract: SortEnumType @cost(weight: "10")
-  section: SortEnumType @cost(weight: "10")
-}
-
 input InstitutionFilterInput {
   and: [InstitutionFilterInput!]
   or: [InstitutionFilterInput!]
@@ -2148,17 +2126,13 @@ input InstitutionRepresentativeRoleOperationFilterInput {
 }
 
 input InstitutionSortInput {
+  id: SortEnumType @cost(weight: "10")
+  name: SortEnumType @cost(weight: "10")
   abbreviation: SortEnumType @cost(weight: "10")
   description: SortEnumType @cost(weight: "10")
   websiteLocator: UriSortInput @cost(weight: "10")
-  publicKey: SortEnumType @cost(weight: "10")
   state: SortEnumType @cost(weight: "10")
-  operatingState: SortEnumType @cost(weight: "10")
-  managerId: SortEnumType @cost(weight: "10")
   manager: InstitutionSortInput @cost(weight: "10")
-  name: SortEnumType @cost(weight: "10")
-  id: SortEnumType @cost(weight: "10")
-  version: SortEnumType @cost(weight: "10")
 }
 
 input InstitutionStateOperationFilterInput {
@@ -2166,21 +2140,6 @@ input InstitutionStateOperationFilterInput {
   neq: InstitutionState @cost(weight: "10")
   in: [InstitutionState!] @cost(weight: "10")
   nin: [InstitutionState!] @cost(weight: "10")
-}
-
-input IntOperationFilterInput {
-  eq: Int @cost(weight: "10")
-  neq: Int @cost(weight: "10")
-  in: [Int] @cost(weight: "10")
-  nin: [Int] @cost(weight: "10")
-  gt: Int @cost(weight: "10")
-  ngt: Int @cost(weight: "10")
-  gte: Int @cost(weight: "10")
-  ngte: Int @cost(weight: "10")
-  lt: Int @cost(weight: "10")
-  nlt: Int @cost(weight: "10")
-  lte: Int @cost(weight: "10")
-  nlte: Int @cost(weight: "10")
 }
 
 input ListComponentAssemblyFilterTypeFilterInput {
@@ -2260,20 +2219,6 @@ input ListMethodFilterTypeFilterInput {
   any: Boolean @cost(weight: "10")
 }
 
-input ListStandardizerOperationFilterInput {
-  all: StandardizerOperationFilterInput @cost(weight: "10")
-  none: StandardizerOperationFilterInput @cost(weight: "10")
-  some: StandardizerOperationFilterInput @cost(weight: "10")
-  any: Boolean @cost(weight: "10")
-}
-
-input ListStringOperationFilterInput {
-  all: StringOperationFilterInput @cost(weight: "10")
-  none: StringOperationFilterInput @cost(weight: "10")
-  some: StringOperationFilterInput @cost(weight: "10")
-  any: Boolean @cost(weight: "10")
-}
-
 input ListUserFilterTypeFilterInput {
   all: UserFilterInput @cost(weight: "10")
   none: UserFilterInput @cost(weight: "10")
@@ -2315,8 +2260,6 @@ input MethodFilterInput {
   id: UuidOperationFilterInput
   name: StringOperationFilterInput
   description: StringOperationFilterInput
-  standard: StandardFilterInput
-  publication: PublicationFilterInput
   calculationLocator: UrlOperationFilterInput
   categories: ListMethodCategoryOperationFilterInput
   institutionDevelopers: ListInstitutionFilterTypeFilterInput
@@ -2327,18 +2270,11 @@ input MethodFilterInput {
 }
 
 input MethodSortInput {
+  id: SortEnumType @cost(weight: "10")
   name: SortEnumType @cost(weight: "10")
   description: SortEnumType @cost(weight: "10")
-  standard: StandardSortInput @cost(weight: "10")
-  publication: PublicationSortInput @cost(weight: "10")
-  reference: IReferenceSortInput @cost(weight: "10")
-  validity: SortEnumType @cost(weight: "10")
-  availability: SortEnumType @cost(weight: "10")
   calculationLocator: UriSortInput @cost(weight: "10")
-  managerId: SortEnumType @cost(weight: "10")
   manager: InstitutionSortInput @cost(weight: "10")
-  id: SortEnumType @cost(weight: "10")
-  version: SortEnumType @cost(weight: "10")
 }
 
 input NullableOfPrimeSurfaceOperationFilterInput {
@@ -2346,20 +2282,6 @@ input NullableOfPrimeSurfaceOperationFilterInput {
   neq: PrimeSurface @cost(weight: "10")
   in: [PrimeSurface] @cost(weight: "10")
   nin: [PrimeSurface] @cost(weight: "10")
-}
-
-input NumerationFilterInput {
-  and: [NumerationFilterInput!]
-  or: [NumerationFilterInput!]
-  prefix: StringOperationFilterInput
-  mainNumber: StringOperationFilterInput
-  suffix: StringOperationFilterInput
-}
-
-input NumerationSortInput {
-  prefix: SortEnumType @cost(weight: "10")
-  mainNumber: SortEnumType @cost(weight: "10")
-  suffix: SortEnumType @cost(weight: "10")
 }
 
 input OpenEndedDateTimeRangeInput {
@@ -2390,37 +2312,20 @@ input PhotovoltaicDataPropositionInput {
   resources: GetHttpsResourcesPropositionInput
 }
 
-input PublicationFilterInput {
-  and: [PublicationFilterInput!]
-  or: [PublicationFilterInput!]
-  authors: ListStringOperationFilterInput
-  "The Digital Object Identifier (DOI) is a very important persistent identifier for publications. It MUST be defined here if it is available for a publication."
-  doi: StringOperationFilterInput
-  "The website arXiv.org is a free and open-access archive for publications. The arXiv identifier can be used to define a publication."
-  arXiv: StringOperationFilterInput
-  "A Uniform Resource Name (URN) can be used to define a publication. TODO: Improve the regex pattern to further restrict the string."
-  urn: StringOperationFilterInput
-  "If a persistent identifiert like DOI is defined above, this webAdress can define a convenient web address to access the publication. However, if no persistent identifier exist, this web address is the only identifier of this publication. In this case, it is important to choose a web address with a high probability to persist long."
-  webAddress: UrlOperationFilterInput
-  title: StringOperationFilterInput
-  abstract: StringOperationFilterInput
-  "Referenced section"
-  section: StringOperationFilterInput
+input PublicationInput {
+  abstract: String
+  arXiv: String
+  authors: [String!]
+  doi: String
+  section: String
+  title: String
+  urn: String
+  webAddress: Url
 }
 
-input PublicationSortInput {
-  "The Digital Object Identifier (DOI) is a very important persistent identifier for publications. It MUST be defined here if it is available for a publication."
-  doi: SortEnumType @cost(weight: "10")
-  "The website arXiv.org is a free and open-access archive for publications. The arXiv identifier can be used to define a publication."
-  arXiv: SortEnumType @cost(weight: "10")
-  "A Uniform Resource Name (URN) can be used to define a publication. TODO: Improve the regex pattern to further restrict the string."
-  urn: SortEnumType @cost(weight: "10")
-  "If a persistent identifiert like DOI is defined above, this webAdress can define a convenient web address to access the publication. However, if no persistent identifier exist, this web address is the only identifier of this publication. In this case, it is important to choose a web address with a high probability to persist long."
-  webAddress: UriSortInput @cost(weight: "10")
-  title: SortEnumType @cost(weight: "10")
-  abstract: SortEnumType @cost(weight: "10")
-  "Referenced section"
-  section: SortEnumType @cost(weight: "10")
+input ReferenceInput {
+  publication: PublicationInput
+  standard: StandardInput
 }
 
 input RegisterUserInput {
@@ -2496,38 +2401,14 @@ input SetUserPhoneNumberInput {
   phoneNumber: String!
 }
 
-"`ISO 52022` is an example of the abbreviation of a standardizer and the main number of the identifier."
-input StandardFilterInput {
-  and: [StandardFilterInput!]
-  or: [StandardFilterInput!]
-  "It is important to define the year in which the standard was issued because there can be relevant updates of one standard."
-  year: IntOperationFilterInput
-  numeration: NumerationFilterInput
-  standardizers: ListStandardizerOperationFilterInput
-  locator: UrlOperationFilterInput
-  title: StringOperationFilterInput
-  abstract: StringOperationFilterInput
-  "The section of the standard to which the reference refers to."
-  section: StringOperationFilterInput
-}
-
-"`ISO 52022` is an example of the abbreviation of a standardizer and the main number of the identifier."
-input StandardSortInput {
-  "It is important to define the year in which the standard was issued because there can be relevant updates of one standard."
-  year: SortEnumType @cost(weight: "10")
-  numeration: NumerationSortInput @cost(weight: "10")
-  locator: UriSortInput @cost(weight: "10")
-  title: SortEnumType @cost(weight: "10")
-  abstract: SortEnumType @cost(weight: "10")
-  "The section of the standard to which the reference refers to."
-  section: SortEnumType @cost(weight: "10")
-}
-
-input StandardizerOperationFilterInput {
-  eq: Standardizer @cost(weight: "10")
-  neq: Standardizer @cost(weight: "10")
-  in: [Standardizer!] @cost(weight: "10")
-  nin: [Standardizer!] @cost(weight: "10")
+input StandardInput {
+  abstract: String
+  locator: Url
+  numeration: CreateNumerationInput!
+  section: String
+  standardizers: [Standardizer!]!
+  title: String
+  year: Int
 }
 
 input StringOperationFilterInput {
@@ -2563,6 +2444,9 @@ input UpdateComponentInput {
   componentId: Uuid!
   description: String!
   name: String!
+  primeDirection: DescriptionOrReferenceInput
+  primeSurface: DescriptionOrReferenceInput
+  switchableLayers: DescriptionOrReferenceInput
 }
 
 input UpdateDataFormatInput {
@@ -2571,9 +2455,8 @@ input UpdateDataFormatInput {
   extension: String
   mediaType: String!
   name: String!
-  publication: UpdatePublicationInput
+  reference: ReferenceInput
   schemaLocator: Url
-  standard: UpdateStandardInput
 }
 
 input UpdateDatabaseInput {
@@ -2599,36 +2482,8 @@ input UpdateMethodInput {
   description: String!
   methodId: Uuid!
   name: String!
-  publication: UpdatePublicationInput
-  standard: UpdateStandardInput
+  reference: ReferenceInput
   validity: OpenEndedDateTimeRangeInput
-}
-
-input UpdateNumerationInput {
-  mainNumber: String!
-  prefix: String
-  suffix: String
-}
-
-input UpdatePublicationInput {
-  abstract: String
-  arXiv: String
-  authors: [String!]
-  doi: String
-  section: String
-  title: String
-  urn: String
-  webAddress: Url
-}
-
-input UpdateStandardInput {
-  abstract: String
-  locator: Url
-  numeration: UpdateNumerationInput!
-  section: String
-  standardizers: [Standardizer!]!
-  title: String
-  year: Int
 }
 
 input UriSortInput {
@@ -2689,26 +2544,7 @@ input UserMethodDeveloperFilterInput {
 }
 
 input UserSortInput {
-  postalAddress: SortEnumType @cost(weight: "10")
-  websiteLocator: UriSortInput @cost(weight: "10")
-  version: SortEnumType @cost(weight: "10")
-  "Full name"
-  name: SortEnumType @cost(weight: "10")
   id: SortEnumType @cost(weight: "10")
-  userName: SortEnumType @cost(weight: "10")
-  normalizedUserName: SortEnumType @cost(weight: "10")
-  email: SortEnumType @cost(weight: "10")
-  normalizedEmail: SortEnumType @cost(weight: "10")
-  emailConfirmed: SortEnumType @cost(weight: "10")
-  passwordHash: SortEnumType @cost(weight: "10")
-  securityStamp: SortEnumType @cost(weight: "10")
-  concurrencyStamp: SortEnumType @cost(weight: "10")
-  phoneNumber: SortEnumType @cost(weight: "10")
-  phoneNumberConfirmed: SortEnumType @cost(weight: "10")
-  twoFactorEnabled: SortEnumType @cost(weight: "10")
-  lockoutEnd: SortEnumType @cost(weight: "10")
-  lockoutEnabled: SortEnumType @cost(weight: "10")
-  accessFailedCount: SortEnumType @cost(weight: "10")
 }
 
 input UuidOperationFilterInput {
@@ -2893,6 +2729,7 @@ enum CreateComponentErrorCode {
   UNKNOWN
   UNKNOWN_MANUFACTURER
   UNAUTHORIZED
+  AMBIGUOUS_REFERENCE
 }
 
 enum CreateDataFormatErrorCode {

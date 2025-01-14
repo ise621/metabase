@@ -60,8 +60,7 @@ mutation CreateDataFormat(
   $description: String!
   $mediaType: String!
   $schemaLocator: Url
-  $standard: CreateStandardInput
-  $publication: CreatePublicationInput
+  $reference: ReferenceInput
   $managerId: Uuid!
 ) {
   createDataFormat(
@@ -71,8 +70,7 @@ mutation CreateDataFormat(
       description: $description
       mediaType: $mediaType
       schemaLocator: $schemaLocator
-      standard: $standard
-      publication: $publication
+      reference: $reference
       managerId: $managerId
     }
   ) {
@@ -94,8 +92,7 @@ mutation UpdateDataFormat(
   $description: String!
   $mediaType: String!
   $schemaLocator: Url
-  $standard: UpdateStandardInput
-  $publication: UpdatePublicationInput
+  $reference: ReferenceInput
 ) {
   updateDataFormat(
     input: {
@@ -105,8 +102,7 @@ mutation UpdateDataFormat(
       description: $description
       mediaType: $mediaType
       schemaLocator: $schemaLocator
-      standard: $standard
-      publication: $publication
+      reference: $reference
     }
   ) {
     dataFormat {

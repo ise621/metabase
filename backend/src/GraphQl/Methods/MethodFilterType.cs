@@ -14,8 +14,6 @@ public sealed class MethodFilterType
         descriptor.Field(x => x.Id);
         descriptor.Field(x => x.Name);
         descriptor.Field(x => x.Description);
-        descriptor.Field(x => x.Standard);
-        descriptor.Field(x => x.Publication);
         descriptor.Field(x => x.CalculationLocator);
         descriptor.Field(x => x.Categories);
         descriptor.Field(x => x.InstitutionDevelopers);

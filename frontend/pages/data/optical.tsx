@@ -372,22 +372,32 @@ function Page() {
         <FloatPropositionFormList
           name="infraredEmittances"
           label="Infrared emittance"
+          minimum={0}
+          maximum={1}
         />
         <FloatPropositionFormList
           name="nearnormalHemisphericalSolarReflectances"
           label="Nearnormal hemispherical solar reflectance"
+          minimum={0}
+          maximum={1}
         />
         <FloatPropositionFormList
           name="nearnormalHemisphericalSolarTransmittances"
           label="Nearnormal hemispherical solar transmittance"
+          minimum={0}
+          maximum={1}
         />
         <FloatPropositionFormList
           name="nearnormalHemisphericalVisibleReflectances"
           label="Nearnormal hemispherical visible reflectance"
+          minimum={0}
+          maximum={1}
         />
         <FloatPropositionFormList
           name="nearnormalHemisphericalVisibleTransmittances"
           label="Nearnormal hemispherical visible transmittance"
+          minimum={0}
+          maximum={1}
         />
 
         <Form.Item {...tailLayout}>

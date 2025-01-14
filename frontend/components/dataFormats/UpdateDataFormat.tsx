@@ -5,8 +5,7 @@ import {
   DataFormatsDocument,
 } from "../../queries/dataFormats.graphql";
 import {
-  UpdatePublicationInput,
-  UpdateStandardInput,
+  ReferenceInput,
   Scalars,
   Publication,
   Standard,
@@ -30,8 +29,7 @@ type FormValues = {
   newDescription: string;
   newMediaType: string;
   newSchemaLocator: Scalars["Url"] | null | undefined;
-  standard: UpdateStandardInput | null | undefined;
-  publication: UpdatePublicationInput | null | undefined;
+  reference: ReferenceInput | null | undefined;
 };
 
 export type UpdateDataFormatProps = {
@@ -83,12 +81,15 @@ export default function UpdateDataFormat({
     newDescription,
     newMediaType,
     newSchemaLocator,
-    standard: newStandard,
-    publication: newPublication,
+    reference: newReference,
   }: FormValues) => {
     const update = async () => {
       try {
         setUpdating(true);
+        // TODO Why does `initialValue` not set standardizers to `[]`?
+        if (newReference?.standard != null && newReference?.standard.standardizers == undefined) {
+          newReference.standard.standardizers = [];
+        }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await updateDataFormatMutation({
           variables: {
@@ -98,8 +99,7 @@ export default function UpdateDataFormat({
             description: newDescription,
             mediaType: newMediaType,
             schemaLocator: newSchemaLocator,
-            standard: newStandard,
-            publication: newPublication,
+            reference: newReference,
           },
         });
         handleFormErrors(
@@ -213,7 +213,7 @@ export default function UpdateDataFormat({
             <Input />
           </Form.Item>
           <Divider />
-          <ReferenceForm form={form} initialValue={reference} />
+          <ReferenceForm form={form} namespace={["reference"]} initialValue={reference} />
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit" loading={updating}>
               Update

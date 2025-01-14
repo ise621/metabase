@@ -20,6 +20,25 @@ public sealed class ComponentType
     {
         base.Configure(descriptor);
         descriptor
+            .Field(t => t.PrimeSurface)
+            .Ignore();
+        descriptor
+            .Field(t => t.PrimeDirection)
+            .Ignore();
+        descriptor
+            .Field("prime")
+            .Type<ObjectType<PrimeSurfaceOrDirection>>()
+            .Resolve(context =>
+            {
+                var component = context.Parent<Component>();
+                return component.PrimeSurface is null && component.PrimeDirection is null
+                    ? null
+                    : new PrimeSurfaceOrDirection(
+                        component.PrimeSurface,
+                        component.PrimeDirection
+                      );
+            });
+        descriptor
             .Field(t => t.Manufacturers)
             .Argument(nameof(ComponentManufacturer.Pending).FirstCharToLower(),
                 _ => _.Type<NonNullType<BooleanType>>().DefaultValue(false))

@@ -227,7 +227,7 @@ function Page() {
             >
                 <UuidPropositionFormList name="componentIds" label="Component Id" />
                 <UuidPropositionFormList name="dataFormatIds" label="Data Format Id" />
-                <FloatPropositionFormList name="thicknesses" label="Thicknesses" />
+                <FloatPropositionFormList name="thicknesses" label="Thickness" minimum={0} maximum={Infinity} />
 
                 <Form.Item {...tailLayout}>
                     <Button type="primary" htmlType="submit" loading={filtering}>

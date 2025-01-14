@@ -1,6 +1,5 @@
 using System;
-using Metabase.GraphQl.Publications;
-using Metabase.GraphQl.Standards;
+using Metabase.GraphQl.References;
 
 namespace Metabase.GraphQl.DataFormats;
 
@@ -10,7 +9,6 @@ public sealed record CreateDataFormatInput(
     string Description,
     string MediaType,
     Uri? SchemaLocator,
-    CreateStandardInput? Standard,
-    CreatePublicationInput? Publication,
+    ReferenceInput? Reference,
     Guid ManagerId
 );
