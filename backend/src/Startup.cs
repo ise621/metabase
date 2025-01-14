@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using HotChocolate.AspNetCore;
 using Metabase.Configuration;
 using Metabase.Data;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -185,8 +187,9 @@ public sealed class Startup(
 
     private void ConfigureDatabaseServices(IServiceCollection services)
     {
+        var optionsLifetime = ServiceLifetime.Singleton;
         services.AddPooledDbContextFactory<ApplicationDbContext>(options => { });
-        // Database context as services are used by `Identity` and
+        // Database context as service are used by `Identity` and
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
         services.AddDbContext<ApplicationDbContext>(
@@ -194,12 +197,18 @@ public sealed class Startup(
                 services
                     .GetRequiredService<IDbContextFactory<ApplicationDbContext>>()
                     .CreateDbContext(),
-            ServiceLifetime.Transient
+            contextLifetime: ServiceLifetime.Transient,
+            optionsLifetime: optionsLifetime
         );
         services.ConfigureDbContext<ApplicationDbContext>(options =>
             ConfigureDatabaseContext(options, _environment, _appSettings),
-            ServiceLifetime.Singleton
+            optionsLifetime: optionsLifetime
         );
+        // services.AddSingleton(services =>
+        // {
+        //     // new DbContextOptionsBuilder<TContext>(new DbContextOptions<TContext>(new Dictionary<Type, IDbContextOptionsExtension>()));
+        //     return services.GetRequiredService<IEnumerable<IDbContextOptionsConfiguration<ApplicationDbContext>>>();
+        // });
     }
 
     private static void ConfigureHttpClientServices(IServiceCollection services)
