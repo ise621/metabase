@@ -366,7 +366,7 @@ namespace Metabase.Migrations
                     b.ToTable("method", "metabase");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Application", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdApplication", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -431,7 +431,7 @@ namespace Metabase.Migrations
                     b.ToTable("OpenIddictApplications", "metabase");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Authorization", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdAuthorization", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -473,7 +473,7 @@ namespace Metabase.Migrations
                     b.ToTable("OpenIddictAuthorizations", "metabase");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.MetabaseScope", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdScope", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -514,7 +514,7 @@ namespace Metabase.Migrations
                     b.ToTable("OpenIddictScopes", "metabase");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Token", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1031,8 +1031,8 @@ namespace Metabase.Migrations
 
             modelBuilder.Entity("Metabase.Data.InstitutionApplication", b =>
                 {
-                    b.HasOne("Metabase.Data.OpenIdConnect.Application", "Application")
-                        .WithMany("InstututionEdges")
+                    b.HasOne("Metabase.Data.OpenIdApplication", "Application")
+                        .WithMany("InstitutionEdges")
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1196,22 +1196,22 @@ namespace Metabase.Migrations
                     b.Navigation("Standard");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Authorization", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdAuthorization", b =>
                 {
-                    b.HasOne("Metabase.Data.OpenIdConnect.Application", "Application")
+                    b.HasOne("Metabase.Data.OpenIdApplication", "Application")
                         .WithMany("Authorizations")
                         .HasForeignKey("ApplicationId");
 
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Token", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdToken", b =>
                 {
-                    b.HasOne("Metabase.Data.OpenIdConnect.Application", "Application")
+                    b.HasOne("Metabase.Data.OpenIdApplication", "Application")
                         .WithMany("Tokens")
                         .HasForeignKey("ApplicationId");
 
-                    b.HasOne("Metabase.Data.OpenIdConnect.Authorization", "Authorization")
+                    b.HasOne("Metabase.Data.OpenIdAuthorization", "Authorization")
                         .WithMany("Tokens")
                         .HasForeignKey("AuthorizationId");
 
@@ -1333,16 +1333,16 @@ namespace Metabase.Migrations
                     b.Navigation("UserDeveloperEdges");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Application", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdApplication", b =>
                 {
                     b.Navigation("Authorizations");
 
-                    b.Navigation("InstututionEdges");
+                    b.Navigation("InstitutionEdges");
 
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("Metabase.Data.OpenIdConnect.Authorization", b =>
+            modelBuilder.Entity("Metabase.Data.OpenIdAuthorization", b =>
                 {
                     b.Navigation("Tokens");
                 });
