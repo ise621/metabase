@@ -1,18 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HotChocolate.Types.Pagination;
 
 namespace Metabase.GraphQl.DataX;
 
 public sealed class GeometricDataConnection(
     IReadOnlyList<GeometricDataEdge> edges,
     uint totalCount,
-    DateTime timestamp
+    DateTime timestamp,
+    ConnectionPageInfo pageInfo
     )
         : DataConnectionBase<GeometricDataEdge>(
         edges,
         totalCount,
-        timestamp
+        timestamp,
+        pageInfo
         )
 {
     internal static GeometricDataConnection? From(GeometricDataConnectionIgsdb? allGeometricData)
@@ -24,7 +27,8 @@ public sealed class GeometricDataConnection(
         return new GeometricDataConnection(
             allGeometricData.Edges.Select(GeometricDataEdge.From).ToList().AsReadOnly(),
             Convert.ToUInt32(allGeometricData.Edges.Count),
-            DateTime.UtcNow
+            DateTime.UtcNow,
+            allGeometricData.PageInfo
         );
     }
 }
