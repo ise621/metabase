@@ -13,9 +13,10 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Metabase.Controllers;
 
-// Inspired by https://github.com/openiddict/openiddict-samples/blob/dev/samples/Velusia/Velusia.Server/Controllers/UserinfoController.cs
+// Inspired by https://github.com/openiddict/openiddict-core/blob/rel/6.0.0/sandbox/OpenIddict.Sandbox.AspNetCore.Server/Controllers/UserinfoController.cs
+//
 // Keep in sync with `PersonalUserDataController`.
-public sealed class UserinfoController(UserManager<User> userManager) : Controller
+public sealed class UserInfoController(UserManager<User> userManager) : Controller
 {
     private readonly UserManager<User> _userManager = userManager;
     private bool _disposed;
@@ -32,7 +33,7 @@ public sealed class UserinfoController(UserManager<User> userManager) : Controll
     }
 
     // Disposable types implement a finalizer.
-    ~UserinfoController()
+    ~UserInfoController()
     {
         Dispose(false);
     }
@@ -43,7 +44,7 @@ public sealed class UserinfoController(UserManager<User> userManager) : Controll
     [HttpPost("~/connect/userinfo")]
     [IgnoreAntiforgeryToken]
     [Produces("application/json")]
-    public async Task<IActionResult> Userinfo()
+    public async Task<IActionResult> UserInfo()
     {
         var subject = User.GetClaim(Claims.Subject);
         if (subject is null)
