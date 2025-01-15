@@ -1,4 +1,4 @@
-// Inspired by https://github.com/openiddict/openiddict-core/blob/b898e2d21f30c75d04206870e27bde31c500491f/samples/Mvc.Server/Controllers/AuthorizationController.cs
+// Inspired by https://github.com/openiddict/openiddict-core/blob/rel/6.0.0/sandbox/OpenIddict.Sandbox.AspNetCore.Server/Controllers/AuthorizationController.cs
 
 using System;
 using System.Collections.Generic;
@@ -332,7 +332,7 @@ public sealed class AuthorizationController(
         {
             // If the client application requested promptless authentication,
             // return an error indicating that the user is not logged in.
-            if (request.HasPrompt(Prompts.None))
+            if (request.HasPromptValue(PromptValues.None))
             {
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
@@ -357,11 +357,11 @@ public sealed class AuthorizationController(
 
         // If prompt=login was specified by the client application,
         // immediately return the user agent to the login page.
-        if (request.HasPrompt(Prompts.Login))
+        if (request.HasPromptValue(PromptValues.Login))
         {
             // To avoid endless login -> authorization redirects, the prompt=login flag
             // is removed from the authorization request payload before redirecting the user.
-            var prompt = string.Join(" ", request.GetPrompts().Remove(Prompts.Login));
+            var prompt = string.Join(" ", request.GetPromptValues().Remove(PromptValues.Login));
 
             var parameters = Request.HasFormContentType
                 ? Request.Form.Where(parameter => parameter.Key != Parameters.Prompt).ToList()
@@ -428,7 +428,7 @@ public sealed class AuthorizationController(
             // return an authorization response without displaying the consent form.
             case ConsentTypes.Implicit:
             case ConsentTypes.External when authorizations.Count > 0:
-            case ConsentTypes.Explicit when authorizations.Count > 0 && !request.HasPrompt(Prompts.Consent):
+            case ConsentTypes.Explicit when authorizations.Count > 0 && !request.HasPromptValue(PromptValues.Consent):
                 // Note: The granted scopes match the requested scope
                 // but we may want to allow the user to uncheck specific scopes.
                 // For that, simply restrict the list of scopes.
@@ -450,8 +450,8 @@ public sealed class AuthorizationController(
 
             // At this point, no authorization was found in the database and an error must be returned
             // if the client application specified prompt=none in the authorization request.
-            case ConsentTypes.Explicit when request.HasPrompt(Prompts.None):
-            case ConsentTypes.Systematic when request.HasPrompt(Prompts.None):
+            case ConsentTypes.Explicit when request.HasPromptValue(PromptValues.None):
+            case ConsentTypes.Systematic when request.HasPromptValue(PromptValues.None):
                 return Forbid(
                     new AuthenticationProperties(new Dictionary<string, string?>
                     {

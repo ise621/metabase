@@ -215,7 +215,7 @@ public sealed class DbSeeder
                         OpenIddictConstants.Permissions.Endpoints.Authorization,
                         // OpenIddictConstants.Permissions.Endpoints.Device,
                         OpenIddictConstants.Permissions.Endpoints.Introspection,
-                        OpenIddictConstants.Permissions.Endpoints.Logout,
+                        OpenIddictConstants.Permissions.Endpoints.EndSession,
                         OpenIddictConstants.Permissions.Endpoints.Revocation,
                         OpenIddictConstants.Permissions.Endpoints.Token,
                         environment.IsEnvironment(Program.TestEnvironment)
@@ -276,7 +276,7 @@ public sealed class DbSeeder
                         OpenIddictConstants.Permissions.Endpoints.Authorization,
                         // OpenIddictConstants.Permissions.Endpoints.Device,
                         OpenIddictConstants.Permissions.Endpoints.Introspection,
-                        OpenIddictConstants.Permissions.Endpoints.Logout,
+                        OpenIddictConstants.Permissions.Endpoints.EndSession,
                         OpenIddictConstants.Permissions.Endpoints.Revocation,
                         OpenIddictConstants.Permissions.Endpoints.Token,
                         OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,

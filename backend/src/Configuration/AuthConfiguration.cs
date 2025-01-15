@@ -274,13 +274,15 @@ public abstract class AuthConfiguration
                 {
                     options.SetIssuer(new Uri(appSettings.Host, UriKind.Absolute));
                     options.SetAuthorizationEndpointUris("connect/authorize")
-                        .SetDeviceEndpointUris("connect/device")
-                        .SetLogoutEndpointUris("connect/logout")
+                        .SetDeviceAuthorizationEndpointUris("connect/device")
+                        .SetEndSessionEndpointUris("connect/logout")
                         .SetIntrospectionEndpointUris("connect/introspect")
-                        // .SetRevocationEndpointUris("") .SetCryptographyEndpointUris("") .SetConfigurationEndpointUris("")
+                        // .SetRevocationEndpointUris("")
+                        // .SetJSONWebKeySetEndpointUris("")
+                        // .SetConfigurationEndpointUris("")
                         .SetTokenEndpointUris("connect/token")
-                        .SetUserinfoEndpointUris("connect/userinfo")
-                        .SetVerificationEndpointUris("connect/verify");
+                        .SetUserInfoEndpointUris("connect/userinfo")
+                        .SetEndUserVerificationEndpointUris("connect/verify");
                     options.RegisterScopes(
                         OpenIddictConstants.Scopes.Address,
                         OpenIddictConstants.Scopes.Email,
@@ -292,7 +294,7 @@ public abstract class AuthConfiguration
                         ManageUserApiScope
                     );
                     options.AllowAuthorizationCodeFlow()
-                        .AllowDeviceCodeFlow()
+                        .AllowDeviceAuthorizationFlow()
                         .AllowRefreshTokenFlow();
                     // .AllowHybridFlow()
                     if (environment.IsEnvironment(Program.TestEnvironment))
@@ -310,10 +312,10 @@ public abstract class AuthConfiguration
                     var builder = options.UseAspNetCore()
                         .EnableStatusCodePagesIntegration()
                         .EnableAuthorizationEndpointPassthrough()
-                        .EnableLogoutEndpointPassthrough()
+                        .EnableEndSessionEndpointPassthrough()
                         .EnableTokenEndpointPassthrough()
-                        .EnableUserinfoEndpointPassthrough()
-                        .EnableVerificationEndpointPassthrough();
+                        .EnableUserInfoEndpointPassthrough()
+                        .EnableEndUserVerificationEndpointPassthrough();
                     // .EnableStatusCodePagesIntegration();
                     if (environment.IsEnvironment(Program.TestEnvironment))
                     {

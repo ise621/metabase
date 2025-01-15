@@ -24,7 +24,7 @@
       "rollForward": false
     },
     "dotnet-ef": {
-      "version": "9.0.0",
+      "version": "9.0.1",
       "commands": [
         "dotnet-ef"
       ],
@@ -66,7 +66,7 @@
       "rollForward": false
     },
     "jetbrains.resharper.globaltools": {
-      "version": "2024.3.0",
+      "version": "2024.3.3",
       "commands": [
         "jb"
       ],
