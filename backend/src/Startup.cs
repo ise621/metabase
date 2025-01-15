@@ -160,28 +160,21 @@ public sealed class Startup(
 
     private void ConfigureDatabaseServices(IServiceCollection services)
     {
-        var optionsLifetime = ServiceLifetime.Singleton;
-        services.AddPooledDbContextFactory<ApplicationDbContext>(options => { });
+        services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
+            ConfigureDatabaseContext(options, _environment, _appSettings)
+        );
         // Database context as service are used by `Identity` and
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
-        services.AddDbContext<ApplicationDbContext>(
-            (services, options) =>
-                services
-                    .GetRequiredService<IDbContextFactory<ApplicationDbContext>>()
-                    .CreateDbContext(),
-            contextLifetime: ServiceLifetime.Transient,
-            optionsLifetime: optionsLifetime
-        );
-        services.ConfigureDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(options =>
             ConfigureDatabaseContext(options, _environment, _appSettings),
-            optionsLifetime: optionsLifetime
+            contextLifetime: ServiceLifetime.Transient,
+            optionsLifetime: ServiceLifetime.Singleton
         );
-        // services.AddSingleton(services =>
-        // {
-        //     // new DbContextOptionsBuilder<TContext>(new DbContextOptions<TContext>(new Dictionary<Type, IDbContextOptionsExtension>()));
-        //     return services.GetRequiredService<IEnumerable<IDbContextOptionsConfiguration<ApplicationDbContext>>>();
-        // });
+        // services.ConfigureDbContext<ApplicationDbContext>(options =>
+        //     ConfigureDatabaseContext(options, _environment, _appSettings),
+        //     optionsLifetime: ServiceLifetime.Singleton
+        // );
     }
 
     private static void ConfigureHttpClientServices(IServiceCollection services)
