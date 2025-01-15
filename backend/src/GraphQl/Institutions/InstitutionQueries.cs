@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
@@ -9,7 +8,6 @@ using HotChocolate.Types;
 using Metabase.Data;
 using Metabase.Enumerations;
 using Metabase.GraphQl.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Institutions;
@@ -22,14 +20,11 @@ public sealed class InstitutionQueries
     // same `id` and when also requesting `uuid`, the latter was always the empty UUID `000...`.
     [UseFiltering]
     [UseSorting]
-    public async Task<IQueryable<Institution>> GetInstitutions(
-        ClaimsPrincipal claimsPrincipal,
-        UserManager<User> userManager,
+    public IQueryable<Institution> GetInstitutions(
         ApplicationDbContext context,
         ISortingContext sorting
     )
     {
-        var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         sorting.StabilizeOrder<Institution>();
         var institutions = context.Institutions.AsNoTracking()
                 .Where(d => d.State == InstitutionState.VERIFIED);

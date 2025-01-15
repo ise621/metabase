@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Authorization;
@@ -50,6 +47,19 @@ public sealed class ApplicationMutations
                 )
             );
         }
+
+        var institution = await institutionById.LoadAsync(input.AssociatedInstitutionId, cancellationToken).ConfigureAwait(false);
+        if (institution == null)
+        {
+            return new CreateApplicationPayload(
+                new CreateApplicationError(
+                    CreateApplicationErrorCode.UNKNOWN_INSTITUTION,
+                    "No institution with this id found.",
+                    new[] { nameof(input), nameof(input.AssociatedInstitutionId).FirstCharToLower() }
+                )
+            );
+        }
+
         var descriptor = new OpenIddictApplicationDescriptor
         {
             ClientId = input.ClientId,
@@ -99,21 +109,16 @@ public sealed class ApplicationMutations
             }
         };
 
-        foreach (var permission in JsonSerializer.Deserialize<List<string>>(input.Permissions) ?? new List<string>())
+        foreach (var permission in input.Permissions)
         {
             descriptor.Permissions.Add(permission);
         }
-
         var application = await applicationManager.CreateAsync(descriptor, cancellationToken).ConfigureAwait(false);
-        var institution = await institutionById.LoadAsync(input.AssociatedInstitutionId, cancellationToken).ConfigureAwait(false);
-        if (institution != null)
+        context.ApplicationInstitutions.Add(new InstitutionApplication
         {
-            context.ApplicationInstitutions.Add(new InstitutionApplication
-            {
-                ApplicationId = application.Id,
-                InstitutionId = institution.Id
-            });
-        }
+            ApplicationId = application.Id,
+            InstitutionId = institution.Id
+        });
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return new CreateApplicationPayload(application);
@@ -208,8 +213,8 @@ public sealed class ApplicationMutations
         {
             return new DeleteApplicationPayload(
                 new DeleteApplicationError(DeleteApplicationErrorCode.UNKNOWN,
-                "Empty Application Id",
-                Array.Empty<string>()));
+                    "Empty Application Id",
+                    new[] { nameof(input), nameof(input.ApplicationId).FirstCharToLower() }));
         }
 
         var application = await applicationManager.FindByIdAsync(input.ApplicationId.ToString(), cancellationToken).ConfigureAwait(false);
@@ -227,8 +232,6 @@ public sealed class ApplicationMutations
 
         await applicationManager.DeleteAsync(application, cancellationToken).ConfigureAwait(false);
 
-        DeleteApplicationInstitutionConnection(application, context, cancellationToken);
-
         return new DeleteApplicationPayload();
     }
 
@@ -240,20 +243,10 @@ public sealed class ApplicationMutations
         descriptor.PostLogoutRedirectUris.Clear();
         descriptor.RedirectUris.Add(new Uri(input.RedirectUri, UriKind.Absolute));
         descriptor.PostLogoutRedirectUris.Add(new Uri(input.PostLogoutRedirectUri, UriKind.Absolute));
-        descriptor.Permissions.RemoveWhere(permission => permission.Contains(AuthConfiguration.ScopePrefixApi));
-        foreach (var permission in JsonSerializer.Deserialize<List<string>>(input.Permissions) ?? new List<string>())
+        descriptor.Permissions.RemoveWhere(permission => permission.Contains(AuthConfiguration.ScopePrefixApi + ":"));
+        foreach (var permission in input.Permissions)
         {
             descriptor.Permissions.Add(permission);
         }
-    }
-
-    private static async void DeleteApplicationInstitutionConnection(OpenIdApplication application, ApplicationDbContext context, CancellationToken cancellationToken)
-    {
-        var reelations = context.ApplicationInstitutions.Where(x => x.ApplicationId == application.Id);
-        foreach (var reelation in reelations)
-        {
-            context.ApplicationInstitutions.Remove(reelation);
-        }
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

@@ -56,7 +56,7 @@ export default function UpdateApplication({ applicationId }: ApplicationProps) {
             displayName: newDisplayName,
             redirectUri: newRedirectUri,
             postLogoutRedirectUri: newPostLogoutRedirectUri,
-            permissions: JSON.stringify(newPermissions),
+            permissions: newPermissions,
           },
         });
         handleFormErrors(
@@ -132,7 +132,7 @@ export default function UpdateApplication({ applicationId }: ApplicationProps) {
           label="Login Redirect URL"
           name="newRedirectUri"
           rules={[{ required: true }, { type: 'url' }, { type: 'string', min: 6 }]}
-          initialValue={application ? application.redirectUris : ""}
+          initialValue={application ? application.redirectUri : ""}
         >
           <Input />
         </Form.Item>
@@ -140,7 +140,7 @@ export default function UpdateApplication({ applicationId }: ApplicationProps) {
           label="Logout Redirect URL"
           name="newPostLogoutRedirectUri"
           rules={[{ required: true }, { type: 'url' }, { type: 'string', min: 6 }]}
-          initialValue={application ? application.postLogoutRedirectUris : ""}
+          initialValue={application ? application.postLogoutRedirectUri : ""}
         >
           <Input />
         </Form.Item>

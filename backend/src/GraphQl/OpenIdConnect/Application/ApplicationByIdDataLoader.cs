@@ -26,11 +26,7 @@ namespace Metabase.GraphQl.OpenIdConnect.Application
             var ret = new Dictionary<Guid, OpenIdApplication?>();
             foreach (var key in keys)
             {
-                var application = await _applicationManager.FindByIdAsync(key.ToString(), cancellationToken: cancellationToken).ConfigureAwait(false);
-                if (application != null)
-                {
-                    ret.Add(key, application);
-                }
+                ret.Add(key, await _applicationManager.FindByIdAsync(key.ToString(), cancellationToken: cancellationToken).ConfigureAwait(false));
             }
             return ret;
         }

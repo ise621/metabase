@@ -4,8 +4,8 @@ fragment ApplicationPartial on Application {
   displayName
   id
   permissions
-  postLogoutRedirectUris
-  redirectUris
+  postLogoutRedirectUri
+  redirectUri
   canCurrentUserManageApplication
 }
 

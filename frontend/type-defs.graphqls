@@ -145,8 +145,8 @@ type Application {
   id: Uuid!
   institutions: ApplicationInstitutionConnection! @cost(weight: "10")
   permissions: [String]! @cost(weight: "10")
-  postLogoutRedirectUris: String! @cost(weight: "10")
-  redirectUris: String! @cost(weight: "10")
+  postLogoutRedirectUri: String @cost(weight: "10")
+  redirectUri: String @cost(weight: "10")
 }
 
 type ApplicationInstitutionConnection {
@@ -1946,7 +1946,7 @@ input CreateApplicationInput {
   associatedInstitutionId: Uuid!
   clientId: String!
   displayName: String!
-  permissions: String!
+  permissions: [String!]!
   postLogoutRedirectUri: String!
   redirectUri: String!
 }
@@ -2634,7 +2634,7 @@ input UpdateApplicationInput {
   applicationId: Uuid!
   clientId: String!
   displayName: String!
-  permissions: String!
+  permissions: [String!]!
   postLogoutRedirectUri: String!
   redirectUri: String!
 }
@@ -2982,6 +2982,7 @@ enum ConfirmUserMethodDeveloperErrorCode {
 enum CreateApplicationErrorCode {
   UNKNOWN
   UNAUTHORIZED
+  UNKNOWN_INSTITUTION
 }
 
 enum CreateComponentErrorCode {

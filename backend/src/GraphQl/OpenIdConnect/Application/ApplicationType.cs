@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.Types;
 using Metabase.Authorization;
+using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.GraphQl.Users;
 using Microsoft.AspNetCore.Identity;
@@ -24,19 +25,26 @@ public sealed class ApplicationType
         const string suffixedName = nameof(ApplicationType);
         descriptor.Name(suffixedName.Remove(suffixedName.Length - "Type".Length));
 
-        descriptor.Field(t => t.Permissions).Type<NonNullType<ListType<StringType>>>().Resolve(context =>
+        descriptor
+            .Field(application => application.Permissions)
+            .Type<NonNullType<ListType<StringType>>>()
+            .Resolve(context =>
         {
             var application = context.Parent<OpenIdApplication>();
             var permissions = JsonSerializer.Deserialize<List<string>>(application.Permissions!);
-            return permissions?.FindAll(permission => permission.Contains("api")).ToList();
+            return permissions?.FindAll(permission => permission.Contains(AuthConfiguration.ScopePrefixApi)).ToList();
         });
 
-        descriptor.Field(t => t.RedirectUris).Type<NonNullType<StringType>>().Resolve(context =>
+        descriptor
+            .Field(application => application.RedirectUris)
+            .Name("redirectUri")
+            .Type<StringType>()
+            .Resolve(context =>
         {
             var application = context.Parent<OpenIdApplication>();
             if (string.IsNullOrEmpty(application.RedirectUris))
             {
-                return string.Empty;
+                throw new GraphQLException("Redirect URI is null or empty");
             }
             else
             {
@@ -44,12 +52,16 @@ public sealed class ApplicationType
             }
         });
 
-        descriptor.Field(t => t.PostLogoutRedirectUris).Type<NonNullType<StringType>>().Resolve(context =>
+        descriptor
+            .Field(application => application.PostLogoutRedirectUris)
+            .Name("postLogoutRedirectUri")
+            .Type<StringType>()
+            .Resolve(context =>
         {
             var application = context.Parent<OpenIdApplication>();
             if (string.IsNullOrEmpty(application.PostLogoutRedirectUris))
             {
-                return string.Empty;
+                throw new GraphQLException("Post Logout Redirect URI is null or empty");
             }
             else
             {
@@ -57,17 +69,15 @@ public sealed class ApplicationType
             }
         });
         descriptor
-            .Field(t => t.Institutions)
+            .Field(application => application.Institutions)
             .Type<NonNullType<ObjectType<ApplicationInstitutionConnection>>>()
             .Resolve(context =>
                 new ApplicationInstitutionConnection(
                     context.Parent<OpenIdApplication>()
                 )
             );
-        descriptor
-            .Field(t => t.InstitutionEdges)
-            .Ignore();
 
+        descriptor.Field(application => application.InstitutionEdges).Ignore();
         descriptor.Field(application => application.DisplayNames).Ignore();
         descriptor.Field(application => application.JsonWebKeySet).Ignore();
         descriptor.Field(application => application.Tokens).Ignore();
@@ -82,7 +92,7 @@ public sealed class ApplicationType
 
         descriptor
             .Field("canCurrentUserManageApplication")
-            .ResolveWith<ApplicationResolvers>(x =>
+            .ResolveWith<ApplicationResolvers>(_ =>
                 ApplicationResolvers.GetCanCurrentUserManageApplicationAsync(default!, default!, default!, default!, default!,
                     default!))
             .UseUserManager();

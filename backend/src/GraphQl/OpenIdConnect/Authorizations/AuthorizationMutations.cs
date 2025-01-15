@@ -48,8 +48,8 @@ public class AuthorizationMutations
         {
             return new DeleteAuthorizationPayload(
                 new DeleteAuthorizationError(DeleteAuthorizationErrorCode.UNKNOWN,
-                "Empty Authorization Id",
-                Array.Empty<string>()));
+                    "Empty Authorization Id",
+                    new[] { nameof(input), nameof(input.AuthorizationId).FirstCharToLower() }));
         }
 
         var authorization = await authorizationManager.FindByIdAsync(input.AuthorizationId.ToString(), cancellationToken).ConfigureAwait(false);

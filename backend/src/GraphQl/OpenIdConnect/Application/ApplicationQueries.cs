@@ -34,9 +34,8 @@ public sealed class ApplicationQueries
             return Array.Empty<OpenIdApplication>();
         }
 
-        var t = await applicationManager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
+        return await applicationManager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
             .ConfigureAwait(false);
-        return t;
     }
 
     [UseUserManager]

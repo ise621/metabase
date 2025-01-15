@@ -19,8 +19,6 @@ public static class CommonAuthorization
         Guid userId
     )
     {
-        if (user is null) return false;
-
         return user.Id == userId;
     }
 
@@ -79,8 +77,6 @@ public static class CommonAuthorization
         UserManager<User> userManager
     )
     {
-        if (user is null) return false;
-
         return await userManager.IsInRoleAsync(
             user,
             Role.EnumToName(role)
@@ -105,7 +101,7 @@ public static class CommonAuthorization
         User user,
         Guid institutionId,
         ApplicationDbContext context,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         return await FetchRole(
@@ -124,9 +120,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        return
-            user is not null &&
-            await IsVerified(
+        return await IsVerified(
                 institutionId,
                 context,
                 cancellationToken
@@ -146,8 +140,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        var role =
-            await FetchRole(
+        var role = await FetchRole(
                 user,
                 institutionId,
                 context,
@@ -165,9 +158,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        return
-            user is not null &&
-            await IsVerified(
+        return await IsVerified(
                 institutionId,
                 context,
                 cancellationToken
@@ -187,10 +178,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        if (user is null) return null;
-
-        var wrappedRole =
-            await context.InstitutionRepresentatives.AsNoTracking()
+        var wrappedRole = await context.InstitutionRepresentatives.AsNoTracking()
                 .Where(x =>
                     x.InstitutionId == institutionId &&
                     x.UserId == user.Id &&
@@ -233,8 +221,6 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        if (user is null) return null;
-
         return await context.InstitutionRepresentatives.AsNoTracking()
                 .Where(x => x.UserId == user.Id && !x.Pending)
                 .Select(x => x.Role)

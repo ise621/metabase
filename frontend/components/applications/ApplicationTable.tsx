@@ -42,13 +42,13 @@ export default function ApplicationTable({ loading, applications }: Applications
         },
         {
             title: "Redirect URL",
-            dataIndex: "redirectUris",
-            key: "redirectUris",
+            dataIndex: "redirectUri",
+            key: "redirectUri",
         },
         {
             title: "Logout Redirect",
-            dataIndex: "postLogoutRedirectUris",
-            key: "postLogoutRedirectUris",
+            dataIndex: "postLogoutRedirectUri",
+            key: "postLogoutRedirectUri",
         },
         {
             title: 'Action',

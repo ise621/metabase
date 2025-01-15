@@ -15,7 +15,7 @@ public static class OpenIdConnectAuthorization
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken
     )
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
@@ -28,7 +28,7 @@ public static class OpenIdConnectAuthorization
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         return user is not null
@@ -42,14 +42,13 @@ public static class OpenIdConnectAuthorization
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         var institution = GetInstitutionByApplicationId(applicationId, context);
-        var ret = user is not null
+        return user is not null
                && (await CommonAuthorization.IsAdministrator(user, userManager)
                || institution is not null && await CommonAuthorization.IsOwnerOfInstitution(user, institution.Id, context, cancellationToken));
-        return ret;
     }
 
     public static async Task<bool> IsAuthorizedToDeleteAuthorization(
@@ -58,7 +57,7 @@ public static class OpenIdConnectAuthorization
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         var authorization = await authorizationManager.FindByIdAsync(authorizationId.ToString(), cancellationToken).ConfigureAwait(false);
@@ -74,7 +73,7 @@ public static class OpenIdConnectAuthorization
         ClaimsPrincipal claimsPrincipal,
         UserManager<User> userManager,
         ApplicationDbContext context,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         var token = await tokenManager.FindByIdAsync(tokenId.ToString(), cancellationToken).ConfigureAwait(false);
@@ -86,7 +85,7 @@ public static class OpenIdConnectAuthorization
 
     private static Institution? GetInstitutionByApplicationId(Guid applicationId, ApplicationDbContext context)
     {
-        var applicationInstitution = context.ApplicationInstitutions.Where(x => x.ApplicationId == applicationId).FirstOrDefault();
+        var applicationInstitution = context.ApplicationInstitutions.Where(x => x.ApplicationId == applicationId).SingleOrDefault();
         return applicationInstitution?.Institution;
     }
 }

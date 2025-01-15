@@ -6,5 +6,6 @@ namespace Metabase.GraphQl.OpenIdConnect.Application;
 public enum CreateApplicationErrorCode
 {
     UNKNOWN,
-    UNAUTHORIZED
+    UNAUTHORIZED,
+    UNKNOWN_INSTITUTION
 }

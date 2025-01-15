@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -67,12 +68,7 @@ public abstract class AuthConfiguration
     )
     {
         if (string.IsNullOrEmpty(password)) throw new ArgumentException($"Empty password for certificate {fileName}.");
-        //var stream =
-        //    Assembly.GetExecutingAssembly().GetManifestResourceStream($"Metabase.{fileName}")
-        //    ?? throw new ArgumentException($"Missing certificate {fileName}.");
-        var file = Path.Combine(Directory.GetCurrentDirectory(), fileName);
-        var stream = new FileStream(file,
-            FileMode.Open, FileAccess.Read)
+        var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Metabase.{fileName}")
             ?? throw new ArgumentException($"Missing certificate {fileName}.");
         using var buffer = new MemoryStream();
         stream.CopyTo(buffer);

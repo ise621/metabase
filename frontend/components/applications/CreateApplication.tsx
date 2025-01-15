@@ -56,7 +56,7 @@ export default function CreateApplication() {
                         displayName: displayName,
                         redirectUri: redirectUri,
                         postLogoutRedirectUri: postLogoutRedirectUri,
-                        permissions: JSON.stringify(permissions),
+                        permissions: permissions,
                     },
                 });
                 handleFormErrors(

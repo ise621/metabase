@@ -234,11 +234,11 @@ public sealed class UserType
             .UseUserManager();
         descriptor
             .Field("canCurrentUserViewApplications")
-            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserViewApplications(default!, default!, default!))
+            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserViewApplications(default!, default!, default!, default!))
             .UseUserManager();
         descriptor
             .Field("canCurrentUserAddApplications")
-            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserAddApplications(default!, default!, default!))
+            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserAddApplications(default!, default!, default!, default!))
             .UseUserManager();
         descriptor
             .Field(t => t.DevelopedMethods)
@@ -295,17 +295,19 @@ public sealed class UserType
         public static Task<bool> GetCanCurrentUserViewApplications(
             ClaimsPrincipal claimsPrincipal,
             UserManager<User> userManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            CancellationToken cancellationToken)
         {
-            return OpenIdConnectAuthorization.IsAuthorizedToViewApplications(claimsPrincipal, userManager, context);
+            return OpenIdConnectAuthorization.IsAuthorizedToViewApplications(claimsPrincipal, userManager, context, cancellationToken);
         }
 
         public static Task<bool> GetCanCurrentUserAddApplications(
             ClaimsPrincipal claimsPrincipal,
             UserManager<User> userManager,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            CancellationToken cancellationToken)
         {
-            return OpenIdConnectAuthorization.IsAuthorizedToManageApplications(claimsPrincipal, userManager, context);
+            return OpenIdConnectAuthorization.IsAuthorizedToManageApplications(claimsPrincipal, userManager, context, cancellationToken);
         }
 
         public static Task<bool> GetCanCurrentUserDeleteUserAsync(

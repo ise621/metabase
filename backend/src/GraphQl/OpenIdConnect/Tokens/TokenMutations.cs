@@ -49,13 +49,13 @@ public sealed class TokenMutations
         {
             return new RevokeTokenPayload(
                 new RevokeTokenError(RevokeTokenErrorCode.UNKNOWN,
-                "Empty Token Id",
-                Array.Empty<string>()));
+                    "Empty Token Id",
+                    new[] { nameof(input), nameof(input.TokenId).FirstCharToLower() }));
         }
 
-        var Token = await tokenManager.FindByIdAsync(input.TokenId.ToString(), cancellationToken).ConfigureAwait(false);
+        var token = await tokenManager.FindByIdAsync(input.TokenId.ToString(), cancellationToken).ConfigureAwait(false);
 
-        if (Token is null)
+        if (token is null)
         {
             return new RevokeTokenPayload(
                 new RevokeTokenError(
@@ -66,7 +66,7 @@ public sealed class TokenMutations
             );
         }
 
-        await tokenManager.TryRevokeAsync(Token, cancellationToken).ConfigureAwait(false);
+        await tokenManager.TryRevokeAsync(token, cancellationToken).ConfigureAwait(false);
 
         return new RevokeTokenPayload();
     }

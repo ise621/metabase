@@ -16,7 +16,7 @@ mutation CreateApplication(
   $associatedInstitutionId: Uuid!
   $clientId: String!
   $displayName: String!
-  $permissions: String!
+  $permissions: [String!]!
   $redirectUri: String!
   $postLogoutRedirectUri: String!
 ) {
@@ -45,7 +45,7 @@ mutation UpdateApplication(
   $applicationId: Uuid!
   $clientId: String!
   $displayName: String!
-  $permissions: String!
+  $permissions: [String!]!
   $redirectUri: String!
   $postLogoutRedirectUri: String!
 ) {

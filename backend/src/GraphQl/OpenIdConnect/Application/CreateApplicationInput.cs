@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Metabase.GraphQl.OpenIdConnect.Application;
 
@@ -8,5 +9,5 @@ public sealed record CreateApplicationInput(
     string DisplayName,
     string RedirectUri,
     string PostLogoutRedirectUri,
-    string Permissions
+    IReadOnlyList<string> Permissions
 );
