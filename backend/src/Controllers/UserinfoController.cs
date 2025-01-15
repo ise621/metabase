@@ -41,6 +41,7 @@ public sealed class UserinfoController(UserManager<User> userManager) : Controll
     [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
     [HttpGet("~/connect/userinfo")]
     [HttpPost("~/connect/userinfo")]
+    [IgnoreAntiforgeryToken]
     [Produces("application/json")]
     public async Task<IActionResult> Userinfo()
     {
