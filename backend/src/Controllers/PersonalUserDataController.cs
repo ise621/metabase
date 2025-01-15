@@ -11,6 +11,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 namespace Metabase.Controllers;
 
 // Inspired by https://github.com/dotnet/Scaffolding/blob/main/src/Scaffolding/VS.Web.CG.Mvc/Templates/Identity/Bootstrap4/Pages/Account/Manage/Account.Manage.DownloadPersonalData.cs.cshtml
+//
 // Keep in sync with `UserinfoController`.
 public sealed class PersonalUserDataController(
     UserManager<User> userManager
