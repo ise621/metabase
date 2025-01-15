@@ -54,6 +54,7 @@ public static class GraphQlConfiguration
         // GraphQL Server
         services
             .AddGraphQLServer()
+            .AllowIntrospection(true) // this can be fine tuned if needed: https://chillicream.com/docs/hotchocolate/v14/server/introspection/#allowlisting-requests
             // Services https://chillicream.com/docs/hotchocolate/v13/integrations/entity-framework#registerdbcontext
             .RegisterDbContextFactory<ApplicationDbContext>()
             .AddMutationConventions(new MutationConventionOptions { ApplyToAllMutations = false })
