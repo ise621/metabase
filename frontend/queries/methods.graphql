@@ -104,8 +104,7 @@ mutation CreateMethod(
   $description: String!
   $validity: OpenEndedDateTimeRangeInput
   $availability: OpenEndedDateTimeRangeInput
-  $standard: CreateStandardInput
-  $publication: CreatePublicationInput
+  $reference: ReferenceInput
   $calculationLocator: Url
   $categories: [MethodCategory!]!
   $managerId: Uuid!
@@ -118,8 +117,7 @@ mutation CreateMethod(
       description: $description
       validity: $validity
       availability: $availability
-      standard: $standard
-      publication: $publication
+      reference: $reference
       calculationLocator: $calculationLocator
       categories: $categories
       managerId: $managerId
@@ -144,8 +142,7 @@ mutation UpdateMethod(
   $description: String!
   $validity: OpenEndedDateTimeRangeInput
   $availability: OpenEndedDateTimeRangeInput
-  $standard: UpdateStandardInput
-  $publication: UpdatePublicationInput
+  $reference: ReferenceInput
   $calculationLocator: Url
   $categories: [MethodCategory!]!
 ) {
@@ -156,8 +153,7 @@ mutation UpdateMethod(
       description: $description
       validity: $validity
       availability: $availability
-      standard: $standard
-      publication: $publication
+      reference: $reference
       calculationLocator: $calculationLocator
       categories: $categories
     }

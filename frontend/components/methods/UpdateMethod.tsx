@@ -14,13 +14,12 @@ import {
   MethodsDocument,
 } from "../../queries/methods.graphql";
 import {
-  UpdatePublicationInput,
-  UpdateStandardInput,
   MethodCategory,
   Scalars,
   OpenEndedDateTimeRange,
   Publication,
   Standard,
+  ReferenceInput,
 } from "../../__generated__/__types__";
 import { useState } from "react";
 import { handleFormErrors } from "../../lib/form";
@@ -47,8 +46,7 @@ type FormValues = {
     | [dayjs.Dayjs | null | undefined, dayjs.Dayjs | null | undefined]
     | null
     | undefined;
-  standard: UpdateStandardInput | null | undefined;
-  publication: UpdatePublicationInput | null | undefined;
+  reference: ReferenceInput | null | undefined;
   newCalculationLocator: Scalars["Url"] | null | undefined;
   newCategories: MethodCategory[] | null | undefined;
 };
@@ -103,8 +101,7 @@ export default function UpdateMethod({
     newDescription,
     newValidity,
     newAvailability,
-    standard: newStandard,
-    publication: newPublication,
+    reference: newReference,
     newCalculationLocator,
     newCategories,
   }: FormValues) => {
@@ -112,8 +109,8 @@ export default function UpdateMethod({
       try {
         setUpdating(true);
         // TODO Why does `initialValue` not set standardizers to `[]`?
-        if (newStandard != null && newStandard.standardizers == undefined) {
-          newStandard.standardizers = [];
+        if (newReference?.standard != null && newReference?.standard.standardizers == undefined) {
+          newReference.standard.standardizers = [];
         }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await updateMethodMutation({
@@ -126,8 +123,7 @@ export default function UpdateMethod({
               from: newAvailability?.[0],
               to: newAvailability?.[1],
             },
-            standard: newStandard,
-            publication: newPublication,
+            reference: newReference,
             calculationLocator: newCalculationLocator,
             categories: newCategories || [],
           },

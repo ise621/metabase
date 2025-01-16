@@ -1,14 +1,15 @@
 import * as React from "react";
-import { DatePicker, Alert, Select, Form, Input, Button } from "antd";
+import { DatePicker, Alert, Select, Form, Input, Button, Divider } from "antd";
 import {
   useCreateComponentMutation,
   ComponentsDocument,
 } from "../../queries/components.graphql";
-import { ComponentCategory, Scalars } from "../../__generated__/__types__";
+import { ComponentCategory, DescriptionOrReferenceInput, Scalars } from "../../__generated__/__types__";
 import { useState } from "react";
 import { handleFormErrors } from "../../lib/form";
 import dayjs from "dayjs";
 import { InstitutionDocument } from "../../queries/institutions.graphql";
+import { ReferenceForm } from "../ReferenceForm";
 
 const layout = {
   labelCol: { span: 8 },
@@ -27,6 +28,9 @@ type FormValues = {
     | null
     | undefined;
   categories: ComponentCategory[] | null | undefined;
+  primeSurface: DescriptionOrReferenceInput | null | undefined;
+  primeDirection: DescriptionOrReferenceInput | null | undefined;
+  switchableLayers: DescriptionOrReferenceInput | null | undefined;
 };
 
 export type CreateComponentProps = {
@@ -63,10 +67,23 @@ export default function CreateComponent({
     description,
     availability,
     categories,
+    primeSurface,
+    primeDirection,
+    switchableLayers,
   }: FormValues) => {
     const create = async () => {
       try {
         setCreating(true);
+        // TODO Why does `initialValue` not set standardizers to `[]`?
+        if (primeSurface?.reference?.standard != null && primeSurface.reference.standard.standardizers == undefined) {
+          primeSurface.reference.standard.standardizers = [];
+        }
+        if (primeDirection?.reference?.standard != null && primeDirection.reference.standard.standardizers == undefined) {
+          primeDirection.reference.standard.standardizers = [];
+        }
+        if (switchableLayers?.reference?.standard != null && switchableLayers.reference.standard.standardizers == undefined) {
+          switchableLayers.reference.standard.standardizers = [];
+        }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await createComponentMutation({
           variables: {
@@ -75,6 +92,9 @@ export default function CreateComponent({
             description: description,
             availability: { from: availability?.[0], to: availability?.[1] },
             categories: categories || [],
+            primeSurface: primeSurface,
+            primeDirection: primeDirection,
+            switchableLayers: switchableLayers,
             manufacturerId: manufacturerId,
           },
         });
@@ -154,6 +174,34 @@ export default function CreateComponent({
               value: value,
             }))}
           />
+        </Form.Item>
+        <Divider />
+        <Form.Item label="Prime Surface" name="primeSurface">
+          <Form.Item
+            label="Description"
+            name={["primeSurface", "description"]}
+          >
+            <Input />
+          </Form.Item>
+          <ReferenceForm form={form} namespace={["primeSurface", "reference"]} />
+        </Form.Item>
+        <Form.Item label="Prime Direction" name="primeDirection">
+          <Form.Item
+            label="Description"
+            name={["primeDirection", "description"]}
+          >
+            <Input />
+          </Form.Item>
+          <ReferenceForm form={form} namespace={["primeDirection", "reference"]} />
+        </Form.Item>
+        <Form.Item label="Switchable Layers" name="switchableLayers">
+          <Form.Item
+            label="Description"
+            name={["switchableLayers", "description"]}
+          >
+            <Input />
+          </Form.Item>
+          <ReferenceForm form={form} namespace={["switchableLayers", "reference"]} />
         </Form.Item>
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit" loading={creating}>

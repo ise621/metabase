@@ -1,16 +1,20 @@
 import {
   ComponentsDocument,
+  ComponentDocument,
   useUpdateComponentMutation,
 } from "../../queries/components.graphql";
 import dayjs from "dayjs";
-import { Alert, Form, Input, Button, Modal, DatePicker, Select } from "antd";
+import { Alert, Form, Input, Button, Modal, DatePicker, Select, Divider } from "antd";
 import { useState } from "react";
 import { handleFormErrors } from "../../lib/form";
 import {
   ComponentCategory,
+  DescriptionOrReference,
+  DescriptionOrReferenceInput,
   OpenEndedDateTimeRange,
   Scalars,
 } from "../../__generated__/__types__";
+import { ReferenceForm } from "../ReferenceForm";
 
 const layout = {
   labelCol: { span: 8 },
@@ -29,6 +33,9 @@ type FormValues = {
     | null
     | undefined;
   newCategories: ComponentCategory[] | null | undefined;
+  newPrimeSurface: DescriptionOrReferenceInput | null | undefined;
+  newPrimeDirection: DescriptionOrReferenceInput | null | undefined;
+  newSwitchableLayers: DescriptionOrReferenceInput | null | undefined;
 };
 
 export type UpdateComponentProps = {
@@ -38,6 +45,9 @@ export type UpdateComponentProps = {
   description: string;
   availability: OpenEndedDateTimeRange | null | undefined;
   categories: ComponentCategory[] | null | undefined;
+  primeSurface: DescriptionOrReference | null | undefined;
+  primeDirection: DescriptionOrReference | null | undefined;
+  switchableLayers: DescriptionOrReference | null | undefined;
 };
 
 export default function UpdateComponent({
@@ -47,6 +57,9 @@ export default function UpdateComponent({
   description,
   availability,
   categories,
+  primeSurface,
+  primeDirection,
+  switchableLayers,
 }: UpdateComponentProps) {
   const [open, setOpen] = useState(false);
   const [updateComponentMutation] = useUpdateComponentMutation({
@@ -55,6 +68,12 @@ export default function UpdateComponent({
     refetchQueries: [
       {
         query: ComponentsDocument,
+      },
+      {
+        query: ComponentDocument,
+        variables: {
+          uuid: componentId,
+        },
       },
     ],
   });
@@ -70,10 +89,23 @@ export default function UpdateComponent({
     newDescription,
     newAvailability,
     newCategories,
+    newPrimeSurface,
+    newPrimeDirection,
+    newSwitchableLayers,
   }: FormValues) => {
     const update = async () => {
       try {
         setUpdating(true);
+        // TODO Why does `initialValue` not set standardizers to `[]`?
+        if (newPrimeSurface?.reference?.standard != null && newPrimeSurface.reference.standard.standardizers == undefined) {
+          newPrimeSurface.reference.standard.standardizers = [];
+        }
+        if (newPrimeDirection?.reference?.standard != null && newPrimeDirection.reference.standard.standardizers == undefined) {
+          newPrimeDirection.reference.standard.standardizers = [];
+        }
+        if (newSwitchableLayers?.reference?.standard != null && newSwitchableLayers.reference.standard.standardizers == undefined) {
+          newSwitchableLayers.reference.standard.standardizers = [];
+        }
         // https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
         const { errors, data } = await updateComponentMutation({
           variables: {
@@ -86,6 +118,9 @@ export default function UpdateComponent({
               to: newAvailability?.[1],
             },
             categories: newCategories || [],
+            primeSurface: newPrimeSurface,
+            primeDirection: newPrimeDirection,
+            switchableLayers: newSwitchableLayers,
           },
         });
         handleFormErrors(
@@ -196,6 +231,37 @@ export default function UpdateComponent({
                 })
               )}
             />
+          </Form.Item>
+          <Divider />
+          <Form.Item label="Prime Surface" name="newPrimeSurface">
+            <Form.Item
+              label="Description"
+              name={["newPrimeSurface", "description"]}
+              initialValue={primeSurface?.description}
+            >
+              <Input />
+            </Form.Item>
+            <ReferenceForm form={form} namespace={["newPrimeSurface", "reference"]} initialValue={primeSurface?.reference} />
+          </Form.Item>
+          <Form.Item label="Prime Direction" name="newPrimeDirection">
+            <Form.Item
+              label="Description"
+              name={["newPrimeDirection", "description"]}
+              initialValue={primeDirection?.description}
+            >
+              <Input />
+            </Form.Item>
+            <ReferenceForm form={form} namespace={["newPrimeDirection", "reference"]} initialValue={primeDirection?.reference} />
+          </Form.Item>
+          <Form.Item label="Switchable Layers" name="newSwitchableLayers">
+            <Form.Item
+              label="Description"
+              name={["newSwitchableLayers", "description"]}
+              initialValue={switchableLayers?.description}
+            >
+              <Input />
+            </Form.Item>
+            <ReferenceForm form={form} namespace={["newSwitchableLayers", "reference"]} initialValue={switchableLayers?.reference} />
           </Form.Item>
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit" loading={updating}>

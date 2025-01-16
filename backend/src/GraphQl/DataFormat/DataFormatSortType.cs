@@ -1,13 +1,13 @@
-using HotChocolate.Data.Filters;
+using HotChocolate.Data.Sorting;
 using Metabase.Data;
 
 namespace Metabase.GraphQl.DataFormats;
 
-public sealed class DataFormatFilterType
-    : FilterInputType<DataFormat>
+public sealed class DataFormatSortType
+    : SortInputType<DataFormat>
 {
     protected override void Configure(
-        IFilterInputTypeDescriptor<DataFormat> descriptor
+        ISortInputTypeDescriptor<DataFormat> descriptor
     )
     {
         descriptor.BindFieldsExplicitly();

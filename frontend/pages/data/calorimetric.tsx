@@ -276,8 +276,8 @@ function Page() {
       >
         <UuidPropositionFormList name="componentIds" label="Component Id" />
         <UuidPropositionFormList name="dataFormatIds" label="Data Format Id" />
-        <FloatPropositionFormList name="gValues" label="g Values" />
-        <FloatPropositionFormList name="uValues" label="u Values" />
+        <FloatPropositionFormList name="gValues" label="g Value" minimum={0} maximum={1} />
+        <FloatPropositionFormList name="uValues" label="u Value" minimum={0} maximum={1} />
 
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit" loading={filtering}>
