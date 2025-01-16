@@ -79,7 +79,13 @@ public sealed class Institution
         new List<InstitutionRepresentative>();
 
     public ICollection<User> Representatives { get; } = new List<User>();
-    [Required] [MinLength(1)] public string Name { get; private set; }
+
+    public ICollection<InstitutionApplication> ApplicationEdges { get; } =
+        new List<InstitutionApplication>();
+
+    public ICollection<OpenIdApplication> Applications { get; } = new List<OpenIdApplication>();
+
+    [Required][MinLength(1)] public string Name { get; private set; }
 
     public void Update(
         string name,

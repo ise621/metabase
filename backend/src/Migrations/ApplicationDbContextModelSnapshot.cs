@@ -268,6 +268,21 @@ namespace Metabase.Migrations
                     b.ToTable("institution", "metabase");
                 });
 
+            modelBuilder.Entity("Metabase.Data.InstitutionApplication", b =>
+                {
+                    b.Property<Guid>("InstitutionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("InstitutionId", "ApplicationId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.ToTable("institution_application", "metabase");
+                });
+
             modelBuilder.Entity("Metabase.Data.InstitutionMethodDeveloper", b =>
                 {
                     b.Property<Guid>("InstitutionId")
@@ -349,6 +364,214 @@ namespace Metabase.Migrations
                     b.HasIndex("ManagerId");
 
                     b.ToTable("method", "metabase");
+                });
+
+            modelBuilder.Entity("Metabase.Data.OpenIdApplication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ApplicationType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClientType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ConsentType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayNames")
+                        .HasColumnType("text");
+
+                    b.Property<string>("JsonWebKeySet")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Permissions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PostLogoutRedirectUris")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RedirectUris")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Requirements")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Settings")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
+                    b.ToTable("OpenIddictApplications", "metabase");
+                });
+
+            modelBuilder.Entity("Metabase.Data.OpenIdAuthorization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Scopes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
+
+                    b.ToTable("OpenIddictAuthorizations", "metabase");
+                });
+
+            modelBuilder.Entity("Metabase.Data.OpenIdScope", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Descriptions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayNames")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Resources")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("OpenIddictScopes", "metabase");
+                });
+
+            modelBuilder.Entity("Metabase.Data.OpenIdToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AuthorizationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RedemptionDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorizationId");
+
+                    b.HasIndex("ReferenceId")
+                        .IsUnique();
+
+                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
+
+                    b.ToTable("OpenIddictTokens", "metabase");
                 });
 
             modelBuilder.Entity("Metabase.Data.Role", b =>
@@ -599,631 +822,6 @@ namespace Metabase.Migrations
                     b.ToTable("DataProtectionKeys", "metabase");
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ApplicationType")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("ClientId")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("ClientSecret")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClientType")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("ConcurrencyToken")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("ConsentType")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DisplayNames")
-                        .HasColumnType("text");
-
-                    b.Property<string>("JsonWebKeySet")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Permissions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PostLogoutRedirectUris")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Properties")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RedirectUris")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Requirements")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Settings")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId")
-                        .IsUnique();
-
-                    b.ToTable("OpenIddictApplications", "metabase");
-                });
-
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ApplicationId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyToken")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Properties")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Scopes")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Subject")
-                        .HasMaxLength(400)
-                        .HasColumnType("character varying(400)");
-
-                    b.Property<string>("Type")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
-
-                    b.ToTable("OpenIddictAuthorizations", "metabase");
-                });
-
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreScope", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyToken")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Descriptions")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DisplayNames")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("Properties")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Resources")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("OpenIddictScopes", "metabase");
-                });
-
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ApplicationId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("AuthorizationId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyToken")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Payload")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Properties")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("RedemptionDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ReferenceId")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Status")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Subject")
-                        .HasMaxLength(400)
-                        .HasColumnType("character varying(400)");
-
-                    b.Property<string>("Type")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorizationId");
-
-                    b.HasIndex("ReferenceId")
-                        .IsUnique();
-
-                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
-
-                    b.ToTable("OpenIddictTokens", "metabase");
-                });
-
-            modelBuilder.Entity("Metabase.Data.Component", b =>
-                {
-                    b.OwnsOne("Metabase.Data.DescriptionOrReference", "PrimeDirection", b1 =>
-                        {
-                            b1.Property<Guid>("ComponentId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Description")
-                                .HasColumnType("text");
-
-                            b1.Property<bool>("Exists")
-                                .HasColumnType("boolean");
-
-                            b1.HasKey("ComponentId");
-
-                            b1.ToTable("component", "metabase");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ComponentId");
-
-                            b1.OwnsOne("Metabase.Data.Reference", "Reference", b2 =>
-                                {
-                                    b2.Property<Guid>("DescriptionOrReferenceComponentId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<bool>("Exists")
-                                        .HasColumnType("boolean");
-
-                                    b2.HasKey("DescriptionOrReferenceComponentId");
-
-                                    b2.ToTable("component", "metabase");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("DescriptionOrReferenceComponentId");
-
-                                    b2.OwnsOne("Metabase.Data.Publication", "Publication", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Abstract")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("ArXiv")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string[]>("Authors")
-                                                .HasColumnType("text[]");
-
-                                            b3.Property<string>("Doi")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Section")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Title")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Urn")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("WebAddress")
-                                                .HasColumnType("text");
-
-                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.ToTable("component", "metabase");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
-                                        });
-
-                                    b2.OwnsOne("Metabase.Data.Standard", "Standard", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Abstract")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Locator")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Section")
-                                                .HasColumnType("text");
-
-                                            b3.Property<Standardizer[]>("Standardizers")
-                                                .IsRequired()
-                                                .HasColumnType("metabase.standardizer[]");
-
-                                            b3.Property<string>("Title")
-                                                .HasColumnType("text");
-
-                                            b3.Property<int?>("Year")
-                                                .HasColumnType("integer");
-
-                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.ToTable("component", "metabase");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.OwnsOne("Metabase.Data.Numeration", "Numeration", b4 =>
-                                                {
-                                                    b4.Property<Guid>("StandardReferenceDescriptionOrReferenceComponentId")
-                                                        .HasColumnType("uuid");
-
-                                                    b4.Property<string>("MainNumber")
-                                                        .IsRequired()
-                                                        .HasColumnType("text");
-
-                                                    b4.Property<string>("Prefix")
-                                                        .HasColumnType("text");
-
-                                                    b4.Property<string>("Suffix")
-                                                        .HasColumnType("text");
-
-                                                    b4.HasKey("StandardReferenceDescriptionOrReferenceComponentId");
-
-                                                    b4.ToTable("component", "metabase");
-
-                                                    b4.WithOwner()
-                                                        .HasForeignKey("StandardReferenceDescriptionOrReferenceComponentId");
-                                                });
-
-                                            b3.Navigation("Numeration")
-                                                .IsRequired();
-                                        });
-
-                                    b2.Navigation("Publication");
-
-                                    b2.Navigation("Standard");
-                                });
-
-                            b1.Navigation("Reference");
-                        });
-
-                    b.OwnsOne("Metabase.Data.DescriptionOrReference", "PrimeSurface", b1 =>
-                        {
-                            b1.Property<Guid>("ComponentId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Description")
-                                .HasColumnType("text");
-
-                            b1.Property<bool>("Exists")
-                                .HasColumnType("boolean");
-
-                            b1.HasKey("ComponentId");
-
-                            b1.ToTable("component", "metabase");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ComponentId");
-
-                            b1.OwnsOne("Metabase.Data.Reference", "Reference", b2 =>
-                                {
-                                    b2.Property<Guid>("DescriptionOrReferenceComponentId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<bool>("Exists")
-                                        .HasColumnType("boolean");
-
-                                    b2.HasKey("DescriptionOrReferenceComponentId");
-
-                                    b2.ToTable("component", "metabase");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("DescriptionOrReferenceComponentId");
-
-                                    b2.OwnsOne("Metabase.Data.Publication", "Publication", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Abstract")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("ArXiv")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string[]>("Authors")
-                                                .HasColumnType("text[]");
-
-                                            b3.Property<string>("Doi")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Section")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Title")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Urn")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("WebAddress")
-                                                .HasColumnType("text");
-
-                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.ToTable("component", "metabase");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
-                                        });
-
-                                    b2.OwnsOne("Metabase.Data.Standard", "Standard", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Abstract")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Locator")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Section")
-                                                .HasColumnType("text");
-
-                                            b3.Property<Standardizer[]>("Standardizers")
-                                                .IsRequired()
-                                                .HasColumnType("metabase.standardizer[]");
-
-                                            b3.Property<string>("Title")
-                                                .HasColumnType("text");
-
-                                            b3.Property<int?>("Year")
-                                                .HasColumnType("integer");
-
-                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.ToTable("component", "metabase");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.OwnsOne("Metabase.Data.Numeration", "Numeration", b4 =>
-                                                {
-                                                    b4.Property<Guid>("StandardReferenceDescriptionOrReferenceComponentId")
-                                                        .HasColumnType("uuid");
-
-                                                    b4.Property<string>("MainNumber")
-                                                        .IsRequired()
-                                                        .HasColumnType("text");
-
-                                                    b4.Property<string>("Prefix")
-                                                        .HasColumnType("text");
-
-                                                    b4.Property<string>("Suffix")
-                                                        .HasColumnType("text");
-
-                                                    b4.HasKey("StandardReferenceDescriptionOrReferenceComponentId");
-
-                                                    b4.ToTable("component", "metabase");
-
-                                                    b4.WithOwner()
-                                                        .HasForeignKey("StandardReferenceDescriptionOrReferenceComponentId");
-                                                });
-
-                                            b3.Navigation("Numeration")
-                                                .IsRequired();
-                                        });
-
-                                    b2.Navigation("Publication");
-
-                                    b2.Navigation("Standard");
-                                });
-
-                            b1.Navigation("Reference");
-                        });
-
-                    b.OwnsOne("Metabase.Data.DescriptionOrReference", "SwitchableLayers", b1 =>
-                        {
-                            b1.Property<Guid>("ComponentId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Description")
-                                .HasColumnType("text");
-
-                            b1.Property<bool>("Exists")
-                                .HasColumnType("boolean");
-
-                            b1.HasKey("ComponentId");
-
-                            b1.ToTable("component", "metabase");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ComponentId");
-
-                            b1.OwnsOne("Metabase.Data.Reference", "Reference", b2 =>
-                                {
-                                    b2.Property<Guid>("DescriptionOrReferenceComponentId")
-                                        .HasColumnType("uuid");
-
-                                    b2.Property<bool>("Exists")
-                                        .HasColumnType("boolean");
-
-                                    b2.HasKey("DescriptionOrReferenceComponentId");
-
-                                    b2.ToTable("component", "metabase");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("DescriptionOrReferenceComponentId");
-
-                                    b2.OwnsOne("Metabase.Data.Publication", "Publication", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Abstract")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("ArXiv")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string[]>("Authors")
-                                                .HasColumnType("text[]");
-
-                                            b3.Property<string>("Doi")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Section")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Title")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Urn")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("WebAddress")
-                                                .HasColumnType("text");
-
-                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.ToTable("component", "metabase");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
-                                        });
-
-                                    b2.OwnsOne("Metabase.Data.Standard", "Standard", b3 =>
-                                        {
-                                            b3.Property<Guid>("ReferenceDescriptionOrReferenceComponentId")
-                                                .HasColumnType("uuid");
-
-                                            b3.Property<string>("Abstract")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Locator")
-                                                .HasColumnType("text");
-
-                                            b3.Property<string>("Section")
-                                                .HasColumnType("text");
-
-                                            b3.Property<Standardizer[]>("Standardizers")
-                                                .IsRequired()
-                                                .HasColumnType("metabase.standardizer[]");
-
-                                            b3.Property<string>("Title")
-                                                .HasColumnType("text");
-
-                                            b3.Property<int?>("Year")
-                                                .HasColumnType("integer");
-
-                                            b3.HasKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.ToTable("component", "metabase");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("ReferenceDescriptionOrReferenceComponentId");
-
-                                            b3.OwnsOne("Metabase.Data.Numeration", "Numeration", b4 =>
-                                                {
-                                                    b4.Property<Guid>("StandardReferenceDescriptionOrReferenceComponentId")
-                                                        .HasColumnType("uuid");
-
-                                                    b4.Property<string>("MainNumber")
-                                                        .IsRequired()
-                                                        .HasColumnType("text");
-
-                                                    b4.Property<string>("Prefix")
-                                                        .HasColumnType("text");
-
-                                                    b4.Property<string>("Suffix")
-                                                        .HasColumnType("text");
-
-                                                    b4.HasKey("StandardReferenceDescriptionOrReferenceComponentId");
-
-                                                    b4.ToTable("component", "metabase");
-
-                                                    b4.WithOwner()
-                                                        .HasForeignKey("StandardReferenceDescriptionOrReferenceComponentId");
-                                                });
-
-                                            b3.Navigation("Numeration")
-                                                .IsRequired();
-                                        });
-
-                                    b2.Navigation("Publication");
-
-                                    b2.Navigation("Standard");
-                                });
-
-                            b1.Navigation("Reference");
-                        });
-
-                    b.Navigation("PrimeDirection");
-
-                    b.Navigation("PrimeSurface");
-
-                    b.Navigation("SwitchableLayers");
-                });
-
             modelBuilder.Entity("Metabase.Data.ComponentAssembly", b =>
                 {
                     b.HasOne("Metabase.Data.Component", "AssembledComponent")
@@ -1431,6 +1029,25 @@ namespace Metabase.Migrations
                     b.Navigation("Manager");
                 });
 
+            modelBuilder.Entity("Metabase.Data.InstitutionApplication", b =>
+                {
+                    b.HasOne("Metabase.Data.OpenIdApplication", "Application")
+                        .WithMany("InstitutionEdges")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Metabase.Data.Institution", "Institution")
+                        .WithMany("ApplicationEdges")
+                        .HasForeignKey("InstitutionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Institution");
+                });
+
             modelBuilder.Entity("Metabase.Data.InstitutionMethodDeveloper", b =>
                 {
                     b.HasOne("Metabase.Data.Institution", "Institution")
@@ -1579,6 +1196,30 @@ namespace Metabase.Migrations
                     b.Navigation("Standard");
                 });
 
+            modelBuilder.Entity("Metabase.Data.OpenIdAuthorization", b =>
+                {
+                    b.HasOne("Metabase.Data.OpenIdApplication", "Application")
+                        .WithMany("Authorizations")
+                        .HasForeignKey("ApplicationId");
+
+                    b.Navigation("Application");
+                });
+
+            modelBuilder.Entity("Metabase.Data.OpenIdToken", b =>
+                {
+                    b.HasOne("Metabase.Data.OpenIdApplication", "Application")
+                        .WithMany("Tokens")
+                        .HasForeignKey("ApplicationId");
+
+                    b.HasOne("Metabase.Data.OpenIdAuthorization", "Authorization")
+                        .WithMany("Tokens")
+                        .HasForeignKey("AuthorizationId");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Authorization");
+                });
+
             modelBuilder.Entity("Metabase.Data.RoleClaim", b =>
                 {
                     b.HasOne("Metabase.Data.Role", null)
@@ -1649,30 +1290,6 @@ namespace Metabase.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
-                {
-                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", "Application")
-                        .WithMany("Authorizations")
-                        .HasForeignKey("ApplicationId");
-
-                    b.Navigation("Application");
-                });
-
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
-                {
-                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", "Application")
-                        .WithMany("Tokens")
-                        .HasForeignKey("ApplicationId");
-
-                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", "Authorization")
-                        .WithMany("Tokens")
-                        .HasForeignKey("AuthorizationId");
-
-                    b.Navigation("Application");
-
-                    b.Navigation("Authorization");
-                });
-
             modelBuilder.Entity("Metabase.Data.Component", b =>
                 {
                     b.Navigation("ConcretizationEdges");
@@ -1692,6 +1309,8 @@ namespace Metabase.Migrations
 
             modelBuilder.Entity("Metabase.Data.Institution", b =>
                 {
+                    b.Navigation("ApplicationEdges");
+
                     b.Navigation("DevelopedMethodEdges");
 
                     b.Navigation("ManagedDataFormats");
@@ -1714,23 +1333,25 @@ namespace Metabase.Migrations
                     b.Navigation("UserDeveloperEdges");
                 });
 
+            modelBuilder.Entity("Metabase.Data.OpenIdApplication", b =>
+                {
+                    b.Navigation("Authorizations");
+
+                    b.Navigation("InstitutionEdges");
+
+                    b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("Metabase.Data.OpenIdAuthorization", b =>
+                {
+                    b.Navigation("Tokens");
+                });
+
             modelBuilder.Entity("Metabase.Data.User", b =>
                 {
                     b.Navigation("DevelopedMethodEdges");
 
                     b.Navigation("RepresentedInstitutionEdges");
-                });
-
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
-                {
-                    b.Navigation("Authorizations");
-
-                    b.Navigation("Tokens");
-                });
-
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
-                {
-                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

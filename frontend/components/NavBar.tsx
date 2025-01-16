@@ -1,19 +1,20 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Menu, Button } from "antd";
+import { Menu, Button, Row, Flex } from "antd";
 import { useCurrentUserQuery } from "../queries/currentUser.graphql";
 import paths from "../paths";
 import { getXsrfToken } from "../lib/apollo";
 import { UserRole } from "../__generated__/__types__";
 import { UserOutlined } from "@ant-design/icons";
+import { Col } from "antd/lib";
 
 type NavItemProps =
   | {
-      path: string;
-      label: string;
-      subitems: null;
-    }
+    path: string;
+    label: string;
+    subitems: null;
+  }
   | { label: string; subitems: { path: string; label: string }[] };
 
 export type NavBarProps = {
@@ -25,7 +26,7 @@ export default function NavBar({ items }: NavBarProps) {
   const currentUser = useCurrentUserQuery()?.data?.currentUser;
 
   return <>
-    <Menu mode="horizontal" selectedKeys={[router.pathname]} theme="dark">
+    <Menu mode="horizontal" selectedKeys={[router.pathname]} theme="dark" >
       {items.map((item) =>
         item.subitems === null ? (
           <Menu.Item key={item.path}>
@@ -46,7 +47,7 @@ export default function NavBar({ items }: NavBarProps) {
       {currentUser ? (
         <>
           {/* TODO Put information whether person is allowed to access OpenIdConnect information in query result of current user (using OpenIdConnectAuthorization) */}
-          {currentUser?.roles?.includes(UserRole.Administrator) && (
+          {currentUser?.canCurrentUserViewApplications && (
             <Menu.Item key={paths.openIdConnect}>
               <Link href={paths.openIdConnect}>OpenId Connect</Link>
             </Menu.Item>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +37,7 @@ public static class InstitutionAuthorization
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         return user is not null
-               && await CommonAuthorization.IsOwner(
+               && await CommonAuthorization.IsOwnerOfInstitution(
                    user,
                    institutionId,
                    context,
@@ -86,7 +86,7 @@ public static class InstitutionAuthorization
     {
         var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         return user is not null
-               && await CommonAuthorization.IsOwner(
+               && await CommonAuthorization.IsOwnerOfInstitution(
                    user,
                    institutionId,
                    context,

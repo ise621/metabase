@@ -57,18 +57,10 @@ public sealed class AuthorizationController : Controller
         return result;
     }
 
-    private Task<ClaimsPrincipal> CreateUserPrincipalAsync(
-        User user,
-        ImmutableArray<string> scopes
-    )
-    {
-        return CreateUserPrincipalAsync(user, scopes, null);
-    }
-
     private async Task<ClaimsPrincipal> CreateUserPrincipalAsync(
         User user,
         ImmutableArray<string> scopes,
-        Func<ClaimsPrincipal, Task>? extend
+        Func<ClaimsPrincipal, Task>? extend = null
     )
     {
         var principal = await _signInManager.CreateUserPrincipalAsync(user).ConfigureAwait(false);

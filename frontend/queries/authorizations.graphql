@@ -1,0 +1,17 @@
+#import "./openIdConnect.graphql"
+
+query AuthorizationsByApplicationId($applicationId: Uuid!) {
+  authorizationsByApplicationId(applicationId: $applicationId) {    
+    ...AuthorizationPartial
+  }
+}
+
+mutation DeleteAuthorization($authorizationId: Uuid!) {
+  deleteAuthorization(input: { authorizationId: $authorizationId }) {
+    errors {
+      code
+      message
+      path
+    }
+  }
+}

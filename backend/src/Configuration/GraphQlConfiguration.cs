@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using HotChocolate.Data;
 using HotChocolate.Data.Filters;
 using HotChocolate.Data.Sorting;
@@ -22,7 +22,10 @@ using Metabase.GraphQl.InstitutionRepresentatives;
 using Metabase.GraphQl.Institutions;
 using Metabase.GraphQl.Methods;
 using Metabase.GraphQl.Numerations;
-using Metabase.GraphQl.OpenIdConnect;
+using Metabase.GraphQl.OpenIdConnect.Application;
+using Metabase.GraphQl.OpenIdConnect.Authorizations;
+using Metabase.GraphQl.OpenIdConnect.Scopes;
+using Metabase.GraphQl.OpenIdConnect.Tokens;
 using Metabase.GraphQl.Publications;
 using Metabase.GraphQl.References;
 using Metabase.GraphQl.Stakeholders;
@@ -81,8 +84,9 @@ public static class GraphQlConfiguration
                     /* options.UseComplexityMultipliers = ...; */
                 }
             )
-            // Configure `https://github.com/ChilliCream/hotchocolate/blob/main/src/HotChocolate/Core/src/Validation/Options/ValidationOptions.cs`. But how?
-            // Subscriptions
+            // Configure
+            // `https://github.com/ChilliCream/hotchocolate/blob/main/src/HotChocolate/Core/src/Validation/Options/ValidationOptions.cs`.
+            // But how? Subscriptions
             /* .AddInMemorySubscriptions() */
             // Persisted queries
             /* .AddFileSystemOperationDocumentStorage("./persisted_operations") */
@@ -124,7 +128,10 @@ public static class GraphQlConfiguration
             .AddType<DatabaseQueries>()
             .AddType<InstitutionQueries>()
             .AddType<MethodQueries>()
-            .AddType<OpendIdConnectQueries>()
+            .AddType<ApplicationQueries>()
+            .AddType<AuthorizationQueries>()
+            .AddType<TokenQueries>()
+            .AddType<ScopeQueries>()
             .AddType<UserQueries>()
             // Mutation Types
             .AddMutationType(d => d.Name(nameof(Mutation)))
@@ -141,6 +148,9 @@ public static class GraphQlConfiguration
             .AddType<MethodMutations>()
             .AddType<UserMethodDeveloperMutations>()
             .AddType<UserMutations>()
+            .AddType<ApplicationMutations>()
+            .AddType<AuthorizationMutations>()
+            .AddType<TokenMutations>()
             /* .AddSubscriptionType(d => d.Name(nameof(GraphQl.Subscription))) */
             /*     .AddType<ComponentSubscriptions>() */
             // Object Types
@@ -161,10 +171,10 @@ public static class GraphQlConfiguration
             .AddType<InstitutionType>()
             .AddType<MethodType>()
             .AddType<NumerationType>()
-            .AddType<OpenIdConnectApplicationType>()
-            .AddType<OpenIdConnectAuthorizationType>()
-            .AddType<OpenIdConnectScopeType>()
-            .AddType<OpenIdConnectTokenType>()
+            .AddType<ApplicationType>()
+            .AddType<AuthorizationType>()
+            .AddType<ScopeType>()
+            .AddType<TokenType>()
             .AddType<PublicationType>()
             .AddType<ReferenceType>()
             .AddType<StakeholderType>()

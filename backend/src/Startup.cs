@@ -186,7 +186,7 @@ public sealed class Startup
                 options
                     .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
                     .UseSchemaName(_appSettings.Database.SchemaName)
-                    .UseOpenIddict();
+                    .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
                 ConfigureDatabaseContext(options, _environment);
             }
         );

@@ -1,5 +1,7 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Metabase.Data;
@@ -17,8 +19,6 @@ public static class CommonAuthorization
         Guid userId
     )
     {
-        if (user is null) return false;
-
         return user.Id == userId;
     }
 
@@ -34,6 +34,15 @@ public static class CommonAuthorization
         );
     }
 
+    public static async Task<bool> IsAdministrator(
+        ClaimsPrincipal claimsPrincipal,
+        UserManager<User> userManager)
+    {
+        var user = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
+        return user is not null
+               && await CommonAuthorization.IsAdministrator(user, userManager);
+    }
+
     public static Task<bool> IsVerifier(
         User user,
         UserManager<User> userManager
@@ -46,14 +55,28 @@ public static class CommonAuthorization
         );
     }
 
+    public static async Task<bool> IsOwner(
+        User user,
+        ApplicationDbContext context,
+        CancellationToken cancellationToken
+    )
+    {
+        var roles = await FetchRoles(
+                   user,
+                   context,
+                   cancellationToken
+               ).ConfigureAwait(false);
+
+        if (roles == null) return false;
+        return roles.Contains(InstitutionRepresentativeRole.OWNER);
+    }
+
     private static async Task<bool> IsInRole(
         User user,
         UserRole role,
         UserManager<User> userManager
     )
     {
-        if (user is null) return false;
-
         return await userManager.IsInRoleAsync(
             user,
             Role.EnumToName(role)
@@ -74,7 +97,7 @@ public static class CommonAuthorization
             ).ConfigureAwait(false);
     }
 
-    public static async Task<bool> IsOwner(
+    public static async Task<bool> IsOwnerOfInstitution(
         User user,
         Guid institutionId,
         ApplicationDbContext context,
@@ -97,14 +120,12 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        return
-            user is not null &&
-            await IsVerified(
+        return await IsVerified(
                 institutionId,
                 context,
                 cancellationToken
             ).ConfigureAwait(false) &&
-            await IsOwner(
+            await IsOwnerOfInstitution(
                 user,
                 institutionId,
                 context,
@@ -119,8 +140,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        var role =
-            await FetchRole(
+        var role = await FetchRole(
                 user,
                 institutionId,
                 context,
@@ -138,9 +158,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        return
-            user is not null &&
-            await IsVerified(
+        return await IsVerified(
                 institutionId,
                 context,
                 cancellationToken
@@ -160,10 +178,7 @@ public static class CommonAuthorization
         CancellationToken cancellationToken
     )
     {
-        if (user is null) return null;
-
-        var wrappedRole =
-            await context.InstitutionRepresentatives.AsNoTracking()
+        var wrappedRole = await context.InstitutionRepresentatives.AsNoTracking()
                 .Where(x =>
                     x.InstitutionId == institutionId &&
                     x.UserId == user.Id &&
@@ -185,7 +200,7 @@ public static class CommonAuthorization
                     representative => representative.InstitutionId,
                     institution => institution.ManagerId,
                     (representative, institution) => new
-                        { Representative = representative, Institution = institution }
+                    { Representative = representative, Institution = institution }
                 )
                 .Where(x =>
                     x.Institution.Id == institutionId &&
@@ -198,6 +213,19 @@ public static class CommonAuthorization
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         return wrappedManagerRole?.Role;
+    }
+
+    private static async Task<List<InstitutionRepresentativeRole>?> FetchRoles(
+        User user,
+        ApplicationDbContext context,
+        CancellationToken cancellationToken
+    )
+    {
+        return await context.InstitutionRepresentatives.AsNoTracking()
+                .Where(x => x.UserId == user.Id && !x.Pending)
+                .Select(x => x.Role)
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
     }
 
     public static async Task<bool> IsVerifiedManufacturerOfComponents(

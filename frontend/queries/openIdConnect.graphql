@@ -1,97 +1,36 @@
-fragment OpenIdConnectApplicationPartial on OpenIdConnectApplication {
-  applicationType
+fragment ApplicationPartial on Application {
   clientId
   clientSecret
-  clientType
-  concurrencyToken
-  consentType
   displayName
-  displayNames
   id
-  jsonWebKeySet
   permissions
-  postLogoutRedirectUris
-  properties
-  redirectUris
-  requirements
-  settings
+  postLogoutRedirectUri
+  redirectUri
+  canCurrentUserManageApplication
 }
 
-fragment OpenIdConnectAuthorizationPartial on OpenIdConnectAuthorization {
-  concurrencyToken
+fragment AuthorizationPartial on Authorization {
   creationDate
   id
-  properties
-  scopes
   status
   subject
   type
+  canCurrentUserDeleteAuthorization
 }
 
-fragment OpenIdConnectTokenPartial on OpenIdConnectToken {
-  concurrencyToken
+fragment TokenPartial on Token {
   creationDate
   expirationDate
   id
-  payload
-  properties
   redemptionDate
-  referenceId
   status
   subject
   type
+  canCurrentUserRevokeToken
 }
 
-fragment OpenIdConnectScopePartial on OpenIdConnectScope {
-  concurrencyToken
-  description
-  descriptions
+fragment ScopePartial on Scope {
   displayName
-  displayNames
   id
   name
-  properties
-  resources
-}
-
-query OpenIdConnect {
-  openIdConnectApplications {
-    ...OpenIdConnectApplicationPartial
-    # tokens {
-    #   ...OpenIdConnectTokenPartial
-    #   application {
-    #     ...
-    #   }
-    #   authorization {
-    #     ...
-    #   }
-    # }
-    # authorizations {
-    #   ...OpenIdConnectAuthorizationPartial
-    #   tokens {
-    #     ...OpenIdConnectTokenPartial
-    #   }
-    # }
-  }
-  openIdConnectTokens {
-    ...OpenIdConnectTokenPartial
-    application {
-      id
-    }
-    authorization {
-      id
-    }
-  }
-  openIdConnectAuthorizations {
-    ...OpenIdConnectAuthorizationPartial
-    application {
-      id
-    }
-    tokens {
-      ...OpenIdConnectTokenPartial
-    }
-  }
-  openIdConnectScopes {
-    ...OpenIdConnectScopePartial
-  }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -181,10 +181,8 @@ public sealed class DbSeeder
                 new OpenIddictApplicationDescriptor
                 {
                     ClientId = MetabaseClientId,
-                    // The secret is used in tests, see
-                    // `IntegrationTests#RequestAuthToken` and in the
-                    // metabase client, see `OPEN_ID_CONNECT_CLIENT_SECRET`
-                    // in `.env.*`.
+                    // The secret is used in tests, see `IntegrationTests#RequestAuthToken` and in
+                    // the metabase client, see `OPEN_ID_CONNECT_CLIENT_SECRET` in `.env.*`.
                     ClientSecret = appSettings.OpenIdConnectClientSecret,
                     ConsentType = environment.IsEnvironment(Program.TestEnvironment)
                         ? OpenIddictConstants.ConsentTypes.Systematic
@@ -219,8 +217,7 @@ public sealed class DbSeeder
                         environment.IsEnvironment(Program.TestEnvironment)
                             ? OpenIddictConstants.Permissions.GrantTypes.Password
                             : OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
-                        // OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
+                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials, OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
                         OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
                         environment.IsEnvironment(Program.TestEnvironment)
                             ? OpenIddictConstants.Permissions.ResponseTypes.Token
@@ -279,8 +276,7 @@ public sealed class DbSeeder
                         OpenIddictConstants.Permissions.Endpoints.Revocation,
                         OpenIddictConstants.Permissions.Endpoints.Token,
                         OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
-                        // OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
+                        // OpenIddictConstants.Permissions.GrantTypes.ClientCredentials, OpenIddictConstants.Permissions.GrantTypes.DeviceCode,
                         OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
                         OpenIddictConstants.Permissions.ResponseTypes.Code,
                         OpenIddictConstants.Permissions.Scopes.Address,
@@ -378,6 +374,7 @@ public sealed class DbSeeder
         IWebHostEnvironment environment
     )
     {
+        var manager = services.GetRequiredService<IOpenIddictApplicationManager>();
         var context = services.GetRequiredService<ApplicationDbContext>();
         if (environment.IsDevelopment())
         {
@@ -401,6 +398,15 @@ public sealed class DbSeeder
                         Pending = false
                     }
                 );
+                var application = await manager.FindByClientIdAsync(MetabaseClientId).AsTask().ConfigureAwait(false) as OpenIdApplication;
+                if (application != null)
+                {
+                    iseInstitution.ApplicationEdges.Add(
+                        new InstitutionApplication
+                        {
+                            ApplicationId = application.Id
+                        });
+                }
                 context.Institutions.Add(iseInstitution);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -418,6 +424,16 @@ public sealed class DbSeeder
                 {
                     ManagerId = iseInstitution.Id
                 };
+
+                var application = await manager.FindByClientIdAsync(TestlabSolarFacadesClientId).AsTask().ConfigureAwait(false) as OpenIdApplication;
+                if (application != null)
+                {
+                    institution.ApplicationEdges.Add(
+                        new InstitutionApplication
+                        {
+                            ApplicationId = application.Id
+                        });
+                }
                 context.Institutions.Add(institution);
                 await context.SaveChangesAsync().ConfigureAwait(false);
             }

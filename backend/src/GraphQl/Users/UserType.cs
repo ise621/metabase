@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -141,11 +141,9 @@ public sealed class UserType
             .Field(t => t.Name)
             // .Type<NonNullType<StringType>>()
             .Resolve(async context =>
-                // Instead of returning `null`, we return a string because
-                // otherwise the corresponding GraphQL field would need to be
-                // nullable and because the type `User` implements
-                // `IStakeholder`, the stakeholder name would also need to be
-                // nullable.
+                // Instead of returning `null`, we return a string because otherwise the
+                // corresponding GraphQL field would need to be nullable and because the type `User`
+                // implements `IStakeholder`, the stakeholder name would also need to be nullable.
                 await Authorize(context, user => user.Name, Scopes.Profile) ??
                 "<redacted>"
             )
@@ -235,6 +233,14 @@ public sealed class UserType
             .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserDeleteUserAsync(default!, default!))
             .UseUserManager();
         descriptor
+            .Field("canCurrentUserViewApplications")
+            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserViewApplications(default!, default!, default!, default!))
+            .UseUserManager();
+        descriptor
+            .Field("canCurrentUserAddApplications")
+            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserAddApplications(default!, default!, default!, default!))
+            .UseUserManager();
+        descriptor
             .Field(t => t.DevelopedMethods)
             .Argument(nameof(UserMethodDeveloper.Pending).FirstCharToLower(),
                 _ => _.Type<NonNullType<BooleanType>>().DefaultValue(false))
@@ -284,6 +290,24 @@ public sealed class UserType
                     .ConfigureAwait(false),
                 await userManager.CountRecoveryCodesAsync(user).ConfigureAwait(false)
             );
+        }
+
+        public static Task<bool> GetCanCurrentUserViewApplications(
+            ClaimsPrincipal claimsPrincipal,
+            UserManager<User> userManager,
+            ApplicationDbContext context,
+            CancellationToken cancellationToken)
+        {
+            return OpenIdConnectAuthorization.IsAuthorizedToViewApplications(claimsPrincipal, userManager, context, cancellationToken);
+        }
+
+        public static Task<bool> GetCanCurrentUserAddApplications(
+            ClaimsPrincipal claimsPrincipal,
+            UserManager<User> userManager,
+            ApplicationDbContext context,
+            CancellationToken cancellationToken)
+        {
+            return OpenIdConnectAuthorization.IsAuthorizedToManageApplications(claimsPrincipal, userManager, context, cancellationToken);
         }
 
         public static Task<bool> GetCanCurrentUserDeleteUserAsync(

@@ -137,11 +137,36 @@ type AddUserRolePayload {
   user: User
 }
 
+type Application {
+  canCurrentUserManageApplication: Boolean! @cost(weight: "10")
+  clientId: String
+  clientSecret: String
+  displayName: String
+  id: Uuid!
+  institutions: ApplicationInstitutionConnection! @cost(weight: "10")
+  permissions: [String]! @cost(weight: "10")
+  postLogoutRedirectUri: String @cost(weight: "10")
+  redirectUri: String @cost(weight: "10")
+}
+
+type ApplicationInstitutionConnection {
+  edges: [InstitutionApplicationEdge!]! @cost(weight: "10")
+}
+
 type AppliedMethod {
   arguments: [NamedMethodArgument!]!
   method: Method @cost(weight: "10")
   methodId: Uuid!
   sources: [NamedMethodSource!]!
+}
+
+type Authorization {
+  canCurrentUserDeleteAuthorization: Boolean! @cost(weight: "10")
+  creationDate: DateTime
+  id: Uuid!
+  status: String
+  subject: String
+  type: String
 }
 
 type CalorimetricData implements Data {
@@ -400,6 +425,18 @@ type ConfirmUserMethodDeveloperPayload {
   query: Query!
 }
 
+type CreateApplicationError {
+  code: CreateApplicationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type CreateApplicationPayload {
+  application: Application
+  errors: [CreateApplicationError!]
+  query: Query!
+}
+
 type CreateComponentError {
   code: CreateComponentErrorCode!
   message: String!
@@ -575,6 +612,28 @@ type DatabasesEdge {
   cursor: String!
   "The item at the end of the edge."
   node: Database!
+}
+
+type DeleteApplicationError {
+  code: DeleteApplicationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type DeleteApplicationPayload {
+  errors: [DeleteApplicationError!]
+  query: Query!
+}
+
+type DeleteAuthorizationError {
+  code: DeleteAuthorizationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type DeleteAuthorizationPayload {
+  errors: [DeleteAuthorizationError!]
+  query: Query!
 }
 
 type DeleteInstitutionError {
@@ -780,6 +839,7 @@ type HygrothermalDataEdge {
 
 type Institution implements Node & Stakeholder {
   abbreviation: String
+  applications: InstitutionApplicationConnection! @cost(weight: "10")
   canCurrentUserDeleteNode: Boolean! @cost(weight: "10")
   canCurrentUserSwitchOperatingStateOfNode: Boolean! @cost(weight: "10")
   canCurrentUserUpdateNode: Boolean! @cost(weight: "10")
@@ -799,6 +859,14 @@ type Institution implements Node & Stakeholder {
   state: InstitutionState!
   uuid: Uuid! @cost(weight: "10")
   websiteLocator: Url
+}
+
+type InstitutionApplicationConnection {
+  edges: [InstitutionApplicationEdge!]! @cost(weight: "10")
+}
+
+type InstitutionApplicationEdge {
+  node: Institution! @cost(weight: "10")
 }
 
 type InstitutionDevelopedMethodConnection {
@@ -1010,11 +1078,14 @@ type Mutation {
   confirmUserEmail(input: ConfirmUserEmailInput!): ConfirmUserEmailPayload! @cost(weight: "10")
   confirmUserEmailChange(input: ConfirmUserEmailChangeInput!): ConfirmUserEmailChangePayload! @cost(weight: "10")
   confirmUserMethodDeveloper(input: ConfirmUserMethodDeveloperInput!): ConfirmUserMethodDeveloperPayload! @authorize(policy: "Write") @cost(weight: "10")
+  createApplication(input: CreateApplicationInput!): CreateApplicationPayload! @authorize(policy: "Write") @cost(weight: "10")
   createComponent(input: CreateComponentInput!): CreateComponentPayload! @authorize(policy: "Write") @cost(weight: "10")
   createDatabase(input: CreateDatabaseInput!): CreateDatabasePayload! @authorize(policy: "Write") @cost(weight: "10")
   createDataFormat(input: CreateDataFormatInput!): CreateDataFormatPayload! @authorize(policy: "Write") @cost(weight: "10")
   createInstitution(input: CreateInstitutionInput!): CreateInstitutionPayload! @authorize(policy: "Write") @cost(weight: "10")
   createMethod(input: CreateMethodInput!): CreateMethodPayload! @authorize(policy: "Write") @cost(weight: "10")
+  deleteApplication(input: DeleteApplicationInput!): DeleteApplicationPayload! @authorize(policy: "Write") @cost(weight: "10")
+  deleteAuthorization(input: DeleteAuthorizationInput!): DeleteAuthorizationPayload! @authorize(policy: "Write") @cost(weight: "10")
   deleteInstitution(input: DeleteInstitutionInput!): DeleteInstitutionPayload! @authorize(policy: "Write") @cost(weight: "10")
   deletePersonalUserData(input: DeletePersonalUserDataInput!): DeletePersonalUserDataPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   deleteUser(input: DeleteUserInput!): DeleteUserPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
@@ -1041,9 +1112,11 @@ type Mutation {
   resendUserEmailVerification: ResendUserEmailVerificationPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   resetUserPassword(input: ResetUserPasswordInput!): ResetUserPasswordPayload! @cost(weight: "10")
   resetUserTwoFactorAuthenticator: ResetUserTwoFactorAuthenticatorPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
+  revokeToken(input: RevokeTokenInput!): RevokeTokenPayload! @authorize(policy: "Write") @cost(weight: "10")
   setUserPassword(input: SetUserPasswordInput!): SetUserPasswordPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   setUserPhoneNumber(input: SetUserPhoneNumberInput!): SetUserPhoneNumberPayload! @authorize(policy: "ManageUser") @cost(weight: "10")
   switchInstitutionOperatingState(input: SwitchInstitutionOperatingStateInput!): SwitchInstitutionOperatingStatePayload! @authorize(policy: "Write") @cost(weight: "10")
+  updateApplication(input: UpdateApplicationInput!): UpdateApplicationPayload! @authorize(policy: "Write") @cost(weight: "10")
   updateComponent(input: UpdateComponentInput!): UpdateComponentPayload! @authorize(policy: "Write") @cost(weight: "10")
   updateComponentAssembly(input: UpdateComponentAssemblyInput!): UpdateComponentAssemblyPayload! @authorize(policy: "Write") @cost(weight: "10")
   updateDatabase(input: UpdateDatabaseInput!): UpdateDatabasePayload! @authorize(policy: "Write") @cost(weight: "10")
@@ -1073,68 +1146,6 @@ type Numeration {
 type OpenEndedDateTimeRange {
   from: DateTime @cost(weight: "10")
   to: DateTime @cost(weight: "10")
-}
-
-type OpenIdConnectApplication {
-  applicationType: String
-  authorizations: [OpenIdConnectAuthorization!]!
-  clientId: String
-  clientSecret: String
-  clientType: String
-  concurrencyToken: String
-  consentType: String
-  displayName: String
-  displayNames: String
-  id: String
-  jsonWebKeySet: String
-  permissions: String
-  postLogoutRedirectUris: String
-  properties: String
-  redirectUris: String
-  requirements: String
-  settings: String
-  tokens: [OpenIdConnectToken!]!
-}
-
-type OpenIdConnectAuthorization {
-  application: OpenIdConnectApplication
-  concurrencyToken: String
-  creationDate: DateTime
-  id: String
-  properties: String
-  scopes: String
-  status: String
-  subject: String
-  tokens: [OpenIdConnectToken!]!
-  type: String
-}
-
-type OpenIdConnectScope {
-  concurrencyToken: String
-  description: String
-  descriptions: String
-  displayName: String
-  displayNames: String
-  id: String
-  name: String
-  properties: String
-  resources: String
-}
-
-type OpenIdConnectToken {
-  application: OpenIdConnectApplication
-  authorization: OpenIdConnectAuthorization
-  concurrencyToken: String
-  creationDate: DateTime
-  expirationDate: DateTime
-  id: String
-  payload: String
-  properties: String
-  redemptionDate: DateTime
-  referenceId: String
-  status: String
-  subject: String
-  type: String
 }
 
 type OpticalData implements Data {
@@ -1276,6 +1287,11 @@ type Publication implements Reference {
 }
 
 type Query {
+  application(applicationId: Uuid!): Application @authorize(policy: "Read") @cost(weight: "10")
+  applications: [Application!]! @authorize(policy: "Read") @cost(weight: "10")
+  authorization(authorizationId: Uuid!): Authorization @authorize(policy: "Read") @cost(weight: "10")
+  authorizations: [Authorization!]! @authorize(policy: "Read") @cost(weight: "10")
+  authorizationsByApplicationId(applicationId: Uuid!): [Authorization!]! @authorize(policy: "Read") @cost(weight: "10")
   component(uuid: Uuid!): Component @cost(weight: "10")
   components("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [ComponentSortInput!] @cost(weight: "10") where: ComponentFilterInput @cost(weight: "10")): ComponentsConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
   currentUser: User @cost(weight: "10")
@@ -1291,12 +1307,13 @@ type Query {
   node("ID of the object." id: ID!): Node @cost(weight: "10")
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]! @cost(weight: "10")
-  openIdConnectApplications: [OpenIdConnectApplication!]! @cost(weight: "10")
-  openIdConnectAuthorizations: [OpenIdConnectAuthorization!]! @cost(weight: "10")
-  openIdConnectScopes: [OpenIdConnectScope!]! @cost(weight: "10")
-  openIdConnectTokens: [OpenIdConnectToken!]! @cost(weight: "10")
   pendingDatabases("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [DatabaseSortInput!] @cost(weight: "10") where: DatabaseFilterInput @cost(weight: "10")): PendingDatabasesConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
   pendingInstitutions("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [InstitutionSortInput!] @cost(weight: "10") where: InstitutionFilterInput @cost(weight: "10")): PendingInstitutionsConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
+  scope(scopeId: Uuid!): Scope @authorize(policy: "Read") @cost(weight: "10")
+  scopes: [Scope!]! @authorize(policy: "Read") @cost(weight: "10")
+  token(tokenId: Uuid!): Token @authorize(policy: "Read") @cost(weight: "10")
+  tokens: [Token!]! @authorize(policy: "Read") @cost(weight: "10")
+  tokensByApplicationId(applicationId: Uuid!): [Token!]! @authorize(policy: "Read") @cost(weight: "10")
   user(uuid: Uuid!): User @cost(weight: "10")
   users("Returns the elements in the list that come after the specified cursor." after: String "Returns the elements in the list that come before the specified cursor." before: String "Returns the first _n_ elements from the list." first: Int "Returns the last _n_ elements from the list." last: Int order: [UserSortInput!] @cost(weight: "10") where: UserFilterInput @cost(weight: "10")): UsersConnection @listSize(assumedSize: 2147483646, slicingArguments: [ "first", "last" ], sizedFields: [ "edges", "nodes" ]) @cost(weight: "10")
 }
@@ -1481,6 +1498,24 @@ type ResponseApproval {
   timestamp: DateTime!
 }
 
+type RevokeTokenError {
+  code: RevokeTokenErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type RevokeTokenPayload {
+  errors: [RevokeTokenError!]
+  query: Query!
+}
+
+type Scope {
+  description: String
+  displayName: String
+  id: Uuid!
+  name: String! @cost(weight: "10")
+}
+
 type SetUserPasswordError {
   code: SetUserPasswordErrorCode!
   message: String!
@@ -1537,11 +1572,34 @@ type ToTreeVertexAppliedConversionMethod {
   sourceName: String!
 }
 
+type Token {
+  canCurrentUserRevokeToken: Boolean! @cost(weight: "10")
+  creationDate: DateTime
+  expirationDate: DateTime
+  id: Uuid!
+  redemptionDate: DateTime
+  status: String
+  subject: String
+  type: String
+}
+
 type TwoFactorAuthentication {
   hasAuthenticator: Boolean!
   isEnabled: Boolean!
   isMachineRemembered: Boolean!
   recoveryCodesLeftCount: Int!
+}
+
+type UpdateApplicationError {
+  code: UpdateApplicationErrorCode!
+  message: String!
+  path: [String!]!
+}
+
+type UpdateApplicationPayload {
+  application: Application
+  errors: [UpdateApplicationError!]
+  query: Query!
 }
 
 type UpdateComponentAssemblyError {
@@ -1618,7 +1676,9 @@ type UpdateMethodPayload {
 }
 
 type User implements Node & Stakeholder {
+  canCurrentUserAddApplications: Boolean! @cost(weight: "10")
   canCurrentUserDeleteUser: Boolean! @cost(weight: "10")
+  canCurrentUserViewApplications: Boolean! @cost(weight: "10")
   developedMethods(pending: Boolean! = false): UserDevelopedMethodConnection! @cost(weight: "10")
   email: String @cost(weight: "10")
   hasPassword: Boolean @cost(weight: "10")
@@ -1892,6 +1952,15 @@ input ConfirmUserMethodDeveloperInput {
   userId: Uuid!
 }
 
+input CreateApplicationInput {
+  associatedInstitutionId: Uuid!
+  clientId: String!
+  displayName: String!
+  permissions: [String!]!
+  postLogoutRedirectUri: String!
+  redirectUri: String!
+}
+
 input CreateComponentInput {
   abbreviation: String
   availability: OpenEndedDateTimeRangeInput
@@ -2005,6 +2074,14 @@ input DatabaseSortInput {
   description: SortEnumType @cost(weight: "10")
   locator: UriSortInput @cost(weight: "10")
   operator: InstitutionSortInput @cost(weight: "10")
+}
+
+input DeleteApplicationInput {
+  applicationId: Uuid!
+}
+
+input DeleteAuthorizationInput {
+  authorizationId: Uuid!
 }
 
 input DeleteInstitutionInput {
@@ -2392,6 +2469,10 @@ input ResetUserPasswordInput {
   resetCode: String!
 }
 
+input RevokeTokenInput {
+  tokenId: Uuid!
+}
+
 input SetUserPasswordInput {
   password: String!
   passwordConfirmation: String!
@@ -2428,6 +2509,15 @@ input StringOperationFilterInput {
 
 input SwitchInstitutionOperatingStateInput {
   institutionId: Uuid!
+}
+
+input UpdateApplicationInput {
+  applicationId: Uuid!
+  clientId: String!
+  displayName: String!
+  permissions: [String!]!
+  postLogoutRedirectUri: String!
+  redirectUri: String!
 }
 
 input UpdateComponentAssemblyInput {
@@ -2725,6 +2815,12 @@ enum ConfirmUserMethodDeveloperErrorCode {
   UNKNOWN_DEVELOPER
 }
 
+enum CreateApplicationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_INSTITUTION
+}
+
 enum CreateComponentErrorCode {
   UNKNOWN
   UNKNOWN_MANUFACTURER
@@ -2773,6 +2869,18 @@ enum DataKind {
 enum DatabaseVerificationState {
   PENDING
   VERIFIED
+}
+
+enum DeleteApplicationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_APPLICATION
+}
+
+enum DeleteAuthorizationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_AUTHORIZATION
 }
 
 enum DeleteInstitutionErrorCode {
@@ -2988,6 +3096,12 @@ enum ResetUserTwoFactorAuthenticatorErrorCode {
   RESETTING_FAILED
 }
 
+enum RevokeTokenErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_TOKEN
+}
+
 enum SetUserPasswordErrorCode {
   UNKNOWN
   UNKNOWN_USER
@@ -3042,6 +3156,12 @@ enum SwitchInstitutionOperatingStateErrorCode {
   UNKNOWN
   UNKNOWN_INSTITUTION
   UNAUTHORIZED
+}
+
+enum UpdateApplicationErrorCode {
+  UNKNOWN
+  UNAUTHORIZED
+  UNKNOWN_APPLICATION
 }
 
 enum UpdateComponentAssemblyErrorCode {
