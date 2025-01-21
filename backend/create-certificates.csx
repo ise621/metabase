@@ -13,7 +13,7 @@ foreach (var (fileName, name, flags, password) in new[] {
     var path = Path.Join("src", fileName);
     var certificate =
         File.Exists(path)
-        ? new X509Certificate2(path, password)
+        ? X509CertificateLoader.LoadPkcs12FromFile(path, password)
         : null;
     if (certificate is null || certificate.NotAfter <= DateTime.Now)
     {
