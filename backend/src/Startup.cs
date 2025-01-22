@@ -87,7 +87,34 @@ public sealed class Startup(
                         .AllowAnyMethod()
             )
         );
-        services.AddControllersWithViews();
+        services.AddControllersWithViews()
+        .AddRazorOptions(_ =>
+            {
+                // The default location formarts are `/Views/{1}/{0}.cshtml` and `/Views/Shared/{0}.cshtml`.
+                // Add the format that ignores the directory structure, that is,
+                // leave out `/Views` and the controller name `{1}`. For some
+                // reason compiled views land in the root directory. The
+                // debugging output of `make logs` when navigating to
+                // https://local.buildingenvelopedata.org:4041/connect/logout?...
+                // is:
+                // Initializing Razor view compiler with compiled view: '/Authorize.cshtml'.
+                // Initializing Razor view compiler with compiled view: '/Logout.cshtml'.
+                // Initializing Razor view compiler with compiled view: '/Verify.cshtml'.
+                // Initializing Razor view compiler with compiled view: '/Error.cshtml'.
+                // Initializing Razor view compiler with compiled view: '/_Layout.cshtml'.
+                // Initializing Razor view compiler with compiled view: '/_ViewImports.cshtml'.
+                // Initializing Razor view compiler with compiled view: '/_ViewStart.cshtml'.
+                // View lookup cache miss for view 'Logout' in controller 'Authorization'.
+                // Could not find a file for view at path '/Views/Authorization/Logout.cshtml'.
+                // Could not find a file for view at path '/Views/Shared/Logout.cshtml'.
+                // Located compiled view for view at path '/Logout.cshtml'.
+                // Located compiled view for view at path '/_ViewStart.cshtml'.
+                // Executing ViewResult, running view Logout.
+                // The view path '/Logout.cshtml' was found in 5.0269ms.
+                _.ViewLocationFormats.Add("/{0}.cshtml");
+                // TODO I consider the flattened structure a bug. How can we solve this?
+            }
+        );
     }
 
     private void ConfigureMessageSenderServices(IServiceCollection services)
