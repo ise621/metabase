@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.Http;
 using HotChocolate.AspNetCore;
 using Metabase.Configuration;
 using Metabase.Data;
@@ -55,7 +56,7 @@ public sealed class Startup(
         services
             .AddDataProtection()
             .PersistKeysToDbContext<ApplicationDbContext>();
-        ConfigureHttpClientServices(services);
+        ConfigureHttpClientServices(services, _environment);
         services.AddHttpContextAccessor();
         services
             .AddHealthChecks()
@@ -204,20 +205,19 @@ public sealed class Startup(
         // );
     }
 
-    private static void ConfigureHttpClientServices(IServiceCollection services)
+    private static void ConfigureHttpClientServices(IServiceCollection services, IWebHostEnvironment environment)
     {
         services.AddHttpClient();
-        services.AddHttpClient(QueryingDatabases.DatabaseHttpClient);
-        // var httpClientBuilder = services.AddHttpClient(QueryingDatabases.DATABASE_HTTP_CLIENT);
-        // if (!_environment.IsProduction())
-        // {
-        //     httpClientBuilder.ConfigurePrimaryHttpMessageHandler(_ =>
-        //         new HttpClientHandler
-        //         {
-        //             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        //         }
-        //     );
-        // }
+        var databasesHttpClientBuilder = services.AddHttpClient(QueryingDatabases.DatabaseHttpClient);
+        if (environment.IsDevelopment())
+        {
+            databasesHttpClientBuilder.ConfigurePrimaryHttpMessageHandler(_ =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                }
+            );
+        }
     }
 
     public void Configure(WebApplication app)

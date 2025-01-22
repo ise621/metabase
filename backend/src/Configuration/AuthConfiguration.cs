@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Net.Http;
 using Metabase.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -374,7 +375,13 @@ public abstract class AuthConfiguration
                 //       .SetClientId("resource_server_1")
                 //       .SetClientSecret("846B62D0-DEF9-4215-A99D-86E6B8DAB342");
                 // Register the System.Net.Http integration.
-                //options.UseSystemNetHttp();
+                _.UseSystemNetHttp()
+                    .ConfigureHttpClientHandler(handler => {
+                        if (environment.IsDevelopment()) {
+                            // https://documentation.openiddict.com/integrations/system-net-http#register-a-custom-httpclienthandler-configuration-delegate
+                            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                        }
+                    });
             })
             .AddClient(options =>
             {
@@ -395,7 +402,13 @@ public abstract class AuthConfiguration
                 // assembly as a more specific user agent, which can be useful when dealing with
                 // providers that use the user agent as a way to throttle requests (e.g Reddit).
                 options.UseSystemNetHttp()
-                    .SetProductInformation(typeof(Startup).Assembly);
+                    .SetProductInformation(typeof(Startup).Assembly)
+                    .ConfigureHttpClientHandler(handler => {
+                        if (environment.IsDevelopment()) {
+                            // https://documentation.openiddict.com/integrations/system-net-http#register-a-custom-httpclienthandler-configuration-delegate
+                            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                        }
+                    });
 
                 // Add a client registration matching the client application definition in the
                 // server project.
