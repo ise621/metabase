@@ -18,6 +18,8 @@ namespace Metabase.GraphQl.OpenIdConnect.Application;
 [ExtendObjectType(nameof(Query))]
 public sealed class ApplicationQueries
 {
+    // TODO In all queries, instead of returning nothing, report as authentication error to client.
+    // TODO Make the application manager use the scoped database context.
     [UseUserManager]
     [Authorize(Policy = AuthConfiguration.ReadPolicy)]
     public async Task<IList<OpenIdApplication>> GetApplications(
@@ -34,6 +36,7 @@ public sealed class ApplicationQueries
             return Array.Empty<OpenIdApplication>();
         }
 
+        // TODO Is there a more efficient way to return an `AsyncEnumerable` or `AsyncEnumerator` or to turn such a thing into an `Enumerable` or `Enumerator`?
         return await applicationManager.ListAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken)
             .ConfigureAwait(false);
     }

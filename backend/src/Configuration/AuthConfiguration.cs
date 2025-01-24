@@ -375,9 +375,11 @@ public abstract class AuthConfiguration
                 //       .SetClientId("resource_server_1")
                 //       .SetClientSecret("846B62D0-DEF9-4215-A99D-86E6B8DAB342");
                 // Register the System.Net.Http integration.
-                _.UseSystemNetHttp()
-                    .ConfigureHttpClientHandler(handler => {
-                        if (environment.IsDevelopment()) {
+                options.UseSystemNetHttp()
+                    .ConfigureHttpClientHandler(handler =>
+                    {
+                        if (environment.IsDevelopment())
+                        {
                             // https://documentation.openiddict.com/integrations/system-net-http#register-a-custom-httpclienthandler-configuration-delegate
                             handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                         }
@@ -403,8 +405,10 @@ public abstract class AuthConfiguration
                 // providers that use the user agent as a way to throttle requests (e.g Reddit).
                 options.UseSystemNetHttp()
                     .SetProductInformation(typeof(Startup).Assembly)
-                    .ConfigureHttpClientHandler(handler => {
-                        if (environment.IsDevelopment()) {
+                    .ConfigureHttpClientHandler(handler =>
+                    {
+                        if (environment.IsDevelopment())
+                        {
                             // https://documentation.openiddict.com/integrations/system-net-http#register-a-custom-httpclienthandler-configuration-delegate
                             handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                         }

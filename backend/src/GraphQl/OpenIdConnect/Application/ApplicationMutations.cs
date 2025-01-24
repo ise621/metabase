@@ -87,7 +87,7 @@ public sealed class ApplicationMutations
                 // Add default permissions
                 OpenIddictConstants.Permissions.Endpoints.Authorization,
                 OpenIddictConstants.Permissions.Endpoints.Introspection,
-                OpenIddictConstants.Permissions.Endpoints.Logout,
+                OpenIddictConstants.Permissions.Endpoints.EndSession,
                 OpenIddictConstants.Permissions.Endpoints.Revocation,
                 OpenIddictConstants.Permissions.Endpoints.Token,
                 environment.IsEnvironment(Program.TestEnvironment)
