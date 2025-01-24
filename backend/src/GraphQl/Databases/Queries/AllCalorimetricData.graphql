@@ -23,9 +23,9 @@ query AllCalorimetricData(
       }
     }
     totalCount
-    # pageInfo {
-    #   ...PageInfoFields
-    # }
+    pageInfo {
+      ...PageInfoFields
+    }
     # TODO timestamp
   }
 }

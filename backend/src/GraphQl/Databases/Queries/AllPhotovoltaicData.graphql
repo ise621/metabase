@@ -23,9 +23,9 @@ query AllPhotovoltaicData(
       }
     }
     totalCount
-    # pageInfo {
-    #   ...PageInfoFields
-    # }
+    pageInfo {
+      ...PageInfoFields
+    }
     # TODO timestamp
   }
 }

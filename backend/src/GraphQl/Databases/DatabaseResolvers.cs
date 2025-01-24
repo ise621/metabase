@@ -129,7 +129,7 @@ public sealed class DatabaseResolvers(
     private static readonly string[] s_allDataFileNames =
     [
         "DataFields.graphql",
-        // "PageInfoFields.graphql",
+        "PageInfoFields.graphql",
         "AllData.graphql"
     ];
 
@@ -142,7 +142,7 @@ public sealed class DatabaseResolvers(
     [
         "DataFields.graphql",
         "OpticalDataFields.graphql",
-        // "PageInfoFields.graphql",
+        "PageInfoFields.graphql",
         "AllOpticalData.graphql"
     ];
 
@@ -150,7 +150,7 @@ public sealed class DatabaseResolvers(
     [
         "DataFields.graphql",
         "HygrothermalDataFields.graphql",
-        // "PageInfoFields.graphql",
+        "PageInfoFields.graphql",
         "AllHygrothermalData.graphql"
     ];
 
@@ -158,7 +158,7 @@ public sealed class DatabaseResolvers(
     [
         "DataFields.graphql",
         "CalorimetricDataFields.graphql",
-        // "PageInfoFields.graphql",
+        "PageInfoFields.graphql",
         "AllCalorimetricData.graphql"
     ];
 
@@ -166,7 +166,7 @@ public sealed class DatabaseResolvers(
     [
         "DataFields.graphql",
         "PhotovoltaicDataFields.graphql",
-        // "PageInfoFields.graphql",
+        "PageInfoFields.graphql",
         "AllPhotovoltaicData.graphql"
     ];
 
@@ -455,7 +455,11 @@ public sealed class DatabaseResolvers(
                             await QueryingDatabases.ConstructQuery(s_igsdbAllDataFileNames).ConfigureAwait(false),
                             new
                             {
-                                where = RewriteDataPropositionInput(where, database)
+                                where = RewriteDataPropositionInput(where, database),
+                                first,
+                                after,
+                                last,
+                                before
                             },
                             "AllData"
                         ),
@@ -523,7 +527,11 @@ public sealed class DatabaseResolvers(
                                 s_igsdbAllOpticalDataFileNames).ConfigureAwait(false),
                             new
                             {
-                                where = RewriteOpticalDataPropositionInput(where, database)
+                                where = RewriteOpticalDataPropositionInput(where, database),
+                                first,
+                                after,
+                                last,
+                                before
                             },
                             "AllOpticalData"
                         ),
@@ -719,7 +727,11 @@ public sealed class DatabaseResolvers(
                                 s_igsdbAllGeometricDataFileNames).ConfigureAwait(false),
                             new
                             {
-                                where = RewriteGeometricDataPropositionInput(where, database)
+                                where = RewriteGeometricDataPropositionInput(where, database),
+                                first,
+                                after,
+                                last,
+                                before
                             },
                             "AllGeometricData"
                         ),

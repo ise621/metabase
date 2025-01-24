@@ -23,9 +23,9 @@ query AllHygrothermalData(
       }
     }
     totalCount
-    # pageInfo {
-    #   ...PageInfoFields
-    # }
+    pageInfo {
+      ...PageInfoFields
+    }
     # TODO timestamp
   }
 }

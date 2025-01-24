@@ -64,7 +64,8 @@ frontend-build-context : ## Show the build context configured by `./frontend/.do
 .PHONY : frontend-build-context
 
 remove : ## Remove stopped containers
-	${docker_compose} rm
+	${docker_compose} rm \
+		--volumes
 .PHONY : remove
 
 remove-data : ## Remove data volumes
