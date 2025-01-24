@@ -84,7 +84,7 @@ public sealed class CustomWebApplicationFactory
             {
                 using var scope = serviceCollection.BuildServiceProvider().CreateScope();
                 var appSettings = scope.ServiceProvider.GetRequiredService<AppSettings>();
-                // appSettings.Database.SchemaName += Guid.NewGuid().ToString().Replace("-", ""); // does not work because enumeration types in public schema cannot be created when they already exist. We therefore create a whole new database for each test instead of just a new schema.
+                // appSettings.Database.SchemaName = $"metabase_{Guid.NewGuid().ToString().Replace("-", "")}";
                 appSettings.Database.ConnectionString =
                     $"Host=database; Port=5432; Database=xbase_test_{Guid.NewGuid().ToString().Replace("-", "")}; User Id=postgres; Password=postgres; Maximum Pool Size=90;";
                 // Configure `IEmailSender`
@@ -106,28 +106,8 @@ public sealed class CustomWebApplicationFactory
     {
         // https://docs.microsoft.com/en-us/ef/core/managing-schemas/ensure-created#multiple-dbcontext-classes
         var databaseCreator = dbContext.Database.GetService<IRelationalDatabaseCreator>();
-        try
-        {
-            // There are faster ways to reset databases than below. For details see
-            // https://www.mikee.se/posts/fastest_way_to_reset_database_with_ef_core_20220103
-            databaseCreator.EnsureDeleted();
-            databaseCreator.EnsureCreated();
-        }
-        catch (Npgsql.PostgresException exception)
-        {
-            if (exception.Message == "57P01: terminating connection due to administrator command")
-            {
-                // TODO Instead of ignoring the exception, change the code such that it is not thrown in the first place.
-                // For reasons on why this exception may occur see
-                // https://github.com/npgsql/efcore.pg/issues/1926
-                Console.WriteLine($"Caught and ignored 'Npgsql.PostgresException' exception '{exception.Message}'.");
-            }
-            else
-            {
-                throw;
-            }
-        }
-        databaseCreator.CreateTables();
+        databaseCreator.EnsureDeleted();
+        databaseCreator.EnsureCreated();
         Task.Run(SeedDatabase).GetAwaiter().GetResult();
     }
 
