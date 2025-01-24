@@ -77,7 +77,6 @@ remove-data : ## Remove data volumes
 up : build ## (Re)create, and start containers (after building images if necessary)
 	${docker_compose} up \
 		--remove-orphans \
-		--renew-anon-volumes \
 		--detach
 .PHONY : up
 
