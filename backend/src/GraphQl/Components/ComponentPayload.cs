@@ -24,7 +24,7 @@ public abstract class ComponentPayload<TComponentError>
     protected ComponentPayload(
         TComponentError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -43,7 +43,7 @@ public abstract class ComponentPayload<TComponentError>
     )
         : this(
             component,
-            new[] { error }
+            [error]
         )
     {
     }

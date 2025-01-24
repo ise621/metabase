@@ -1,16 +1,10 @@
 namespace Metabase.GraphQl.DataX;
 
-public abstract class DataEdgeBase<TData>
-{
-    protected DataEdgeBase(
-        string cursor,
-        TData node
+public abstract class DataEdgeBase<TData>(
+    string cursor,
+    TData node
     )
-    {
-        Cursor = cursor;
-        Node = node;
-    }
-
-    public string Cursor { get; }
-    public TData Node { get; }
+{
+    public string Cursor { get; } = cursor;
+    public TData Node { get; } = node;
 }

@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using HotChocolate.Authorization;
 using HotChocolate.Types;
 using Metabase.Authorization;
@@ -38,13 +36,15 @@ public sealed class ComponentManufacturerMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new AddComponentManufacturerPayload(
                 new AddComponentManufacturerError(
                     AddComponentManufacturerErrorCode.UNAUTHORIZED,
                     "You are not authorized to add the component manufacturer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<AddComponentManufacturerError>();
         if (!await context.Components.AsQueryable()
@@ -52,28 +52,35 @@ public sealed class ComponentManufacturerMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddComponentManufacturerError(
                     AddComponentManufacturerErrorCode.UNKNOWN_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.ComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .Where(c => c.Id == input.InstitutionId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new AddComponentManufacturerError(
                     AddComponentManufacturerErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new AddComponentManufacturerPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new AddComponentManufacturerPayload(errors.AsReadOnly());
+        }
 
         if (await context.ComponentManufacturers.AsQueryable()
                 .Where(m =>
@@ -83,13 +90,15 @@ public sealed class ComponentManufacturerMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             return new AddComponentManufacturerPayload(
                 new AddComponentManufacturerError(
                     AddComponentManufacturerErrorCode.DUPLICATE,
                     "Component manufacturer already exists.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var componentManufacturer = new ComponentManufacturer
         {
@@ -122,13 +131,15 @@ public sealed class ComponentManufacturerMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new ConfirmComponentManufacturerPayload(
                 new ConfirmComponentManufacturerError(
                     ConfirmComponentManufacturerErrorCode.UNAUTHORIZED,
                     $"You are not authorized to confirm component manufacturer relation for institution ${input.InstitutionId}.",
-                    Array.Empty<string>()
+                    []
                 )
             );
+        }
 
         var errors = new List<ConfirmComponentManufacturerError>();
         if (!await context.Components.AsQueryable()
@@ -136,28 +147,35 @@ public sealed class ComponentManufacturerMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmComponentManufacturerError(
                     ConfirmComponentManufacturerErrorCode.UNKNOWN_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.ComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .Where(i => i.Id == input.InstitutionId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new ConfirmComponentManufacturerError(
                     ConfirmComponentManufacturerErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new ConfirmComponentManufacturerPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new ConfirmComponentManufacturerPayload(errors.AsReadOnly());
+        }
 
         var componentManufacturer =
             await context.ComponentManufacturers.AsQueryable()
@@ -168,13 +186,15 @@ public sealed class ComponentManufacturerMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (componentManufacturer is null)
+        {
             return new ConfirmComponentManufacturerPayload(
                 new ConfirmComponentManufacturerError(
                     ConfirmComponentManufacturerErrorCode.UNKNOWN_MANUFACTURER,
                     "Unknown manufacturer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         componentManufacturer.Pending = false;
         var x = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -199,13 +219,15 @@ public sealed class ComponentManufacturerMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new RemoveComponentManufacturerPayload(
                 new RemoveComponentManufacturerError(
                     RemoveComponentManufacturerErrorCode.UNAUTHORIZED,
                     "You are not authorized to remove the component manufacturer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         var errors = new List<RemoveComponentManufacturerError>();
         if (!await context.Components.AsQueryable()
@@ -213,28 +235,35 @@ public sealed class ComponentManufacturerMutations
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveComponentManufacturerError(
                     RemoveComponentManufacturerErrorCode.UNKNOWN_COMPONENT,
                     "Unknown component.",
-                    new[] { nameof(input), nameof(input.ComponentId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ComponentId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .Where(c => c.Id == input.InstitutionId)
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false)
            )
+        {
             errors.Add(
                 new RemoveComponentManufacturerError(
                     RemoveComponentManufacturerErrorCode.UNKNOWN_INSTITUTION,
                     "Unknown institution.",
-                    new[] { nameof(input), nameof(input.InstitutionId).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
                 )
             );
+        }
 
-        if (errors.Count is not 0) return new RemoveComponentManufacturerPayload(errors.AsReadOnly());
+        if (errors.Count is not 0)
+        {
+            return new RemoveComponentManufacturerPayload(errors.AsReadOnly());
+        }
 
         var componentManufacturer =
             await context.ComponentManufacturers.AsQueryable()
@@ -245,13 +274,15 @@ public sealed class ComponentManufacturerMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (componentManufacturer is null)
+        {
             return new RemoveComponentManufacturerPayload(
                 new RemoveComponentManufacturerError(
                     RemoveComponentManufacturerErrorCode.UNKNOWN_MANUFACTURER,
                     "Unknown manufacturer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (!await context.ComponentManufacturers.AsQueryable()
                 .Where(a =>
@@ -261,13 +292,15 @@ public sealed class ComponentManufacturerMutations
                 )
                 .AnyAsync(cancellationToken)
                 .ConfigureAwait(false))
+        {
             return new RemoveComponentManufacturerPayload(
                 new RemoveComponentManufacturerError(
                     RemoveComponentManufacturerErrorCode.LAST_MANUFACTURER,
                     "Cannot remove last manufacturer.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         context.ComponentManufacturers.Remove(componentManufacturer);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

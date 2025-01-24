@@ -64,8 +64,7 @@ server {
   ssl_ecdh_curve            secp384r1;
   ssl_session_cache         shared:SSL:10m;
   ssl_session_tickets       off;
-  ssl_stapling              on; #ensure your cert is capable
-  ssl_stapling_verify       on; #ensure your cert is capable
+  ssl_stapling              off; # Stapling does not work for self-signed certificates
 
   add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload" always;
   add_header X-Frame-Options DENY;

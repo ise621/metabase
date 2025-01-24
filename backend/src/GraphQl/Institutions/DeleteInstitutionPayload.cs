@@ -12,7 +12,7 @@ public sealed class DeleteInstitutionPayload
         DeleteInstitutionError error
     )
     {
-        Errors = new[] { error };
+        Errors = [error];
     }
 
     public IReadOnlyCollection<DeleteInstitutionError>? Errors { get; }

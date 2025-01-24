@@ -24,7 +24,7 @@ public sealed class AddComponentGeneralizationPayload
     public AddComponentGeneralizationPayload(
         AddComponentGeneralizationError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

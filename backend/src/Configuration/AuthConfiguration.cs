@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Net.Http;
 using Metabase.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -34,8 +35,8 @@ public abstract class AuthConfiguration
     public const string ManageUserApiScope = ScopePrefixApi + ":user:manage";
 
     // Keep in sync with the scopes set in `OpenIddictClientRegistration`.
-    private static readonly HashSet<string> _clientScopes = new()
-    {
+    private static readonly HashSet<string> s_clientScopes =
+    [
         OpenIddictConstants.Scopes.Address,
         OpenIddictConstants.Scopes.Email,
         OpenIddictConstants.Scopes.Phone,
@@ -44,7 +45,7 @@ public abstract class AuthConfiguration
         ReadApiScope,
         WriteApiScope,
         ManageUserApiScope
-    };
+    ];
 
     public static void ConfigureServices(
         IServiceCollection services,
@@ -67,12 +68,17 @@ public abstract class AuthConfiguration
         string password
     )
     {
-        if (string.IsNullOrEmpty(password)) throw new ArgumentException($"Empty password for certificate {fileName}.");
-        var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Metabase.{fileName}")
+        if (string.IsNullOrEmpty(password))
+        {
+            throw new ArgumentException($"Empty password for certificate {fileName}.");
+        }
+
+        var stream =
+            Assembly.GetExecutingAssembly().GetManifestResourceStream($"Metabase.{fileName}")
             ?? throw new ArgumentException($"Missing certificate {fileName}.");
         using var buffer = new MemoryStream();
         stream.CopyTo(buffer);
-        return new X509Certificate2(
+        return X509CertificateLoader.LoadPkcs12(
             buffer.ToArray(),
             password,
             X509KeyStorageFlags.EphemeralKeySet
@@ -163,7 +169,7 @@ public abstract class AuthConfiguration
                         // `ClaimsPrincipal.HasScope`. And it is also allowed to read data, write
                         // data, and manage users. The corresponding policies `*Policy` use scopes,
                         // so we need to add them.
-                        identity.SetScopes(_clientScopes);
+                        identity.SetScopes(s_clientScopes);
                         context.Principal.AddIdentity(identity);
                     }
 
@@ -179,12 +185,13 @@ public abstract class AuthConfiguration
                              (ManageUserPolicy, ManageUserApiScope)
                          }
                         )
+                {
                     options.AddPolicy(policyName, policy =>
                         {
-                            policy.AuthenticationSchemes = new[]
-                            {
+                            policy.AuthenticationSchemes =
+                            [
                                 OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
-                            };
+                            ];
                             policy.RequireAuthenticatedUser();
                             policy.RequireAssertion(context =>
                                 {
@@ -208,6 +215,7 @@ public abstract class AuthConfiguration
                             );
                         }
                     );
+                }
             }
         );
     }
@@ -230,8 +238,10 @@ public abstract class AuthConfiguration
                 _.MaxConcurrency = 10
             );
             if (environment.IsEnvironment(Program.TestEnvironment))
+            {
                 // See https://gitter.im/MassTransit/MassTransit?at=5db2d058f6db7f4f856fb404
                 options.SchedulerName = Guid.NewGuid().ToString();
+            }
         });
         // Register the Quartz.NET service and configure it to block shutdown until jobs are complete.
         services.AddQuartzHostedService(_ =>
@@ -265,13 +275,15 @@ public abstract class AuthConfiguration
                 {
                     options.SetIssuer(new Uri(appSettings.Host, UriKind.Absolute));
                     options.SetAuthorizationEndpointUris("connect/authorize")
-                        .SetDeviceEndpointUris("connect/device")
-                        .SetLogoutEndpointUris("connect/logout")
+                        .SetDeviceAuthorizationEndpointUris("connect/device")
+                        .SetEndSessionEndpointUris("connect/logout")
                         .SetIntrospectionEndpointUris("connect/introspect")
-                        // .SetRevocationEndpointUris("") .SetCryptographyEndpointUris("") .SetConfigurationEndpointUris("")
+                        // .SetRevocationEndpointUris("")
+                        // .SetJSONWebKeySetEndpointUris("")
+                        // .SetConfigurationEndpointUris("")
                         .SetTokenEndpointUris("connect/token")
-                        .SetUserinfoEndpointUris("connect/userinfo")
-                        .SetVerificationEndpointUris("connect/verify");
+                        .SetUserInfoEndpointUris("connect/userinfo")
+                        .SetEndUserVerificationEndpointUris("connect/verify");
                     options.RegisterScopes(
                         OpenIddictConstants.Scopes.Address,
                         OpenIddictConstants.Scopes.Email,
@@ -283,7 +295,7 @@ public abstract class AuthConfiguration
                         ManageUserApiScope
                     );
                     options.AllowAuthorizationCodeFlow()
-                        .AllowDeviceCodeFlow()
+                        .AllowDeviceAuthorizationFlow()
                         .AllowRefreshTokenFlow();
                     // .AllowHybridFlow()
                     if (environment.IsEnvironment(Program.TestEnvironment))
@@ -301,10 +313,10 @@ public abstract class AuthConfiguration
                     var builder = options.UseAspNetCore()
                         .EnableStatusCodePagesIntegration()
                         .EnableAuthorizationEndpointPassthrough()
-                        .EnableLogoutEndpointPassthrough()
+                        .EnableEndSessionEndpointPassthrough()
                         .EnableTokenEndpointPassthrough()
-                        .EnableUserinfoEndpointPassthrough()
-                        .EnableVerificationEndpointPassthrough();
+                        .EnableUserInfoEndpointPassthrough()
+                        .EnableEndUserVerificationEndpointPassthrough();
                     // .EnableStatusCodePagesIntegration();
                     if (environment.IsEnvironment(Program.TestEnvironment))
                     {
@@ -363,7 +375,13 @@ public abstract class AuthConfiguration
                 //       .SetClientId("resource_server_1")
                 //       .SetClientSecret("846B62D0-DEF9-4215-A99D-86E6B8DAB342");
                 // Register the System.Net.Http integration.
-                //options.UseSystemNetHttp();
+                _.UseSystemNetHttp()
+                    .ConfigureHttpClientHandler(handler => {
+                        if (environment.IsDevelopment()) {
+                            // https://documentation.openiddict.com/integrations/system-net-http#register-a-custom-httpclienthandler-configuration-delegate
+                            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                        }
+                    });
             })
             .AddClient(options =>
             {
@@ -384,7 +402,13 @@ public abstract class AuthConfiguration
                 // assembly as a more specific user agent, which can be useful when dealing with
                 // providers that use the user agent as a way to throttle requests (e.g Reddit).
                 options.UseSystemNetHttp()
-                    .SetProductInformation(typeof(Startup).Assembly);
+                    .SetProductInformation(typeof(Startup).Assembly)
+                    .ConfigureHttpClientHandler(handler => {
+                        if (environment.IsDevelopment()) {
+                            // https://documentation.openiddict.com/integrations/system-net-http#register-a-custom-httpclienthandler-configuration-delegate
+                            handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                        }
+                    });
 
                 // Add a client registration matching the client application definition in the
                 // server project.
@@ -401,7 +425,7 @@ public abstract class AuthConfiguration
                         // https://auth0.com/docs/get-started/apis/scopes/openid-connect-scopes#standard-claims
                         Scopes =
                         {
-                            // Keep in sync with `_clientScopes`.
+                            // Keep in sync with `s_clientScopes`.
                             OpenIddictConstants.Scopes.Address,
                             OpenIddictConstants.Scopes.Email,
                             OpenIddictConstants.Scopes.Phone,

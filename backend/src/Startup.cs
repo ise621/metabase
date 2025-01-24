@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Net.Http;
 using HotChocolate.AspNetCore;
 using Metabase.Configuration;
 using Metabase.Data;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -28,24 +31,18 @@ using Serilog;
 
 namespace Metabase;
 
-public sealed class Startup
+public sealed class Startup(
+    IWebHostEnvironment environment,
+    IConfiguration configuration
+    )
 {
     private const string GraphQlCorsPolicy = "GraphQlCorsPolicy";
     private const string AntiforgeryHeaderName = "X-XSRF-TOKEN";
-    private readonly AppSettings _appSettings;
-
-    private readonly IWebHostEnvironment _environment;
-
-    public Startup(
-        IWebHostEnvironment environment,
-        IConfiguration configuration
-    )
-    {
-        _environment = environment;
-        _appSettings = configuration.Get<AppSettings>() ??
+    private readonly AppSettings _appSettings = configuration.Get<AppSettings>() ??
                        throw new InvalidOperationException(
                            "Failed to get application settings from configuration.");
-    }
+
+    private readonly IWebHostEnvironment _environment = environment;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -59,7 +56,7 @@ public sealed class Startup
         services
             .AddDataProtection()
             .PersistKeysToDbContext<ApplicationDbContext>();
-        ConfigureHttpClientServices(services);
+        ConfigureHttpClientServices(services, _environment);
         services.AddHttpContextAccessor();
         services
             .AddHealthChecks()
@@ -155,70 +152,72 @@ public sealed class Startup
 
     private static void ConfigureDatabaseContext(
         DbContextOptionsBuilder options,
-        IWebHostEnvironment environment
+        IWebHostEnvironment environment,
+        AppSettings appSettings
         )
     {
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(appSettings.Database.ConnectionString);
+        // https://www.npgsql.org/efcore/mapping/enum.html#mapping-your-enum
+        // Keep in sync with `ApplicationDbContext.CreateEnumerations`.
+        dataSourceBuilder.MapEnum<ComponentCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.ComponentCategoryTypeName}");
+        dataSourceBuilder.MapEnum<DatabaseVerificationState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.DatabaseVerificationStateTypeName}");
+        dataSourceBuilder.MapEnum<InstitutionRepresentativeRole>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionRepresentativeRoleTypeName}");
+        dataSourceBuilder.MapEnum<InstitutionState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionStateTypeName}");
+        dataSourceBuilder.MapEnum<InstitutionOperatingState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionOperatingStateTypeName}");
+        dataSourceBuilder.MapEnum<MethodCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.MethodCategoryTypeName}");
+        dataSourceBuilder.MapEnum<PrimeSurface>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.PrimeSurfaceTypeName}");
+        dataSourceBuilder.MapEnum<Standardizer>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.StandardizerTypeName}");
+        options
+            .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
+            .UseSchemaName(appSettings.Database.SchemaName)
+            .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
         if (!environment.IsProduction())
+        {
             options
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors();
+        }
+
         if (environment.IsEnvironment(Program.TestEnvironment))
+        {
             options.ConfigureWarnings(x =>
                 x.Ignore(CoreEventId.ManyServiceProvidersCreatedWarning)
             );
+        }
     }
 
     private void ConfigureDatabaseServices(IServiceCollection services)
     {
         services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
-            {
-                var dataSourceBuilder = new NpgsqlDataSourceBuilder(_appSettings.Database.ConnectionString);
-                // https://www.npgsql.org/efcore/mapping/enum.html#mapping-your-enum
-                // Keep in sync with `ApplicationDbContext.CreateEnumerations`.
-                dataSourceBuilder.MapEnum<ComponentCategory>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.ComponentCategoryTypeName}");
-                dataSourceBuilder.MapEnum<DatabaseVerificationState>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.DatabaseVerificationStateTypeName}");
-                dataSourceBuilder.MapEnum<InstitutionRepresentativeRole>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionRepresentativeRoleTypeName}");
-                dataSourceBuilder.MapEnum<InstitutionState>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionStateTypeName}");
-                dataSourceBuilder.MapEnum<InstitutionOperatingState>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionOperatingStateTypeName}");
-                dataSourceBuilder.MapEnum<MethodCategory>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.MethodCategoryTypeName}");
-                dataSourceBuilder.MapEnum<PrimeSurface>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.PrimeSurfaceTypeName}");
-                dataSourceBuilder.MapEnum<Standardizer>($"{_appSettings.Database.SchemaName}.{ApplicationDbContext.StandardizerTypeName}");
-                options
-                    .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
-                    .UseSchemaName(_appSettings.Database.SchemaName)
-                    .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
-                ConfigureDatabaseContext(options, _environment);
-            }
+            ConfigureDatabaseContext(options, _environment, _appSettings)
         );
-        // Database context as services are used by `Identity` and
+        // Database context as service are used by `Identity` and
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
-        services.AddDbContext<ApplicationDbContext>(
-            (services, options) =>
-            {
-                ConfigureDatabaseContext(options, _environment);
-                services
-                    .GetRequiredService<IDbContextFactory<ApplicationDbContext>>()
-                    .CreateDbContext();
-            },
-            ServiceLifetime.Transient
+        services.AddDbContext<ApplicationDbContext>(options =>
+            ConfigureDatabaseContext(options, _environment, _appSettings),
+            contextLifetime: ServiceLifetime.Transient,
+            optionsLifetime: ServiceLifetime.Singleton
         );
+        // services.ConfigureDbContext<ApplicationDbContext>(options =>
+        //     ConfigureDatabaseContext(options, _environment, _appSettings),
+        //     optionsLifetime: ServiceLifetime.Singleton
+        // );
     }
 
-    private static void ConfigureHttpClientServices(IServiceCollection services)
+    private static void ConfigureHttpClientServices(IServiceCollection services, IWebHostEnvironment environment)
     {
         services.AddHttpClient();
-        services.AddHttpClient(QueryingDatabases.DatabaseHttpClient);
-        // var httpClientBuilder = services.AddHttpClient(QueryingDatabases.DATABASE_HTTP_CLIENT);
-        // if (!_environment.IsProduction())
-        // {
-        //     httpClientBuilder.ConfigurePrimaryHttpMessageHandler(_ =>
-        //         new HttpClientHandler
-        //         {
-        //             ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        //         }
-        //     );
-        // }
+        var databasesHttpClientBuilder = services.AddHttpClient(QueryingDatabases.DatabaseHttpClient);
+        if (environment.IsDevelopment())
+        {
+            databasesHttpClientBuilder.ConfigurePrimaryHttpMessageHandler(_ =>
+                new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                }
+            );
+        }
     }
 
     public void Configure(WebApplication app)
@@ -292,7 +291,7 @@ public sealed class Startup
             {
                 ResponseWriter = WriteJsonResponse
             }
-        );
+        ).DisableHttpMetrics();
     }
 
     // Inspired by https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-7.0#customize-output
@@ -317,7 +316,10 @@ public sealed class Startup
                 jsonWriter.WriteString("duration",
                     healthReportEntry.Value.Duration.ToString());
                 jsonWriter.WriteStartArray("tags");
-                foreach (var tag in healthReportEntry.Value.Tags) jsonWriter.WriteStringValue(tag);
+                foreach (var tag in healthReportEntry.Value.Tags)
+                {
+                    jsonWriter.WriteStringValue(tag);
+                }
 
                 jsonWriter.WriteEndArray();
                 var exception = healthReportEntry.Value.Exception;
@@ -325,15 +327,25 @@ public sealed class Startup
                 {
                     jsonWriter.WriteStartObject("exception");
                     jsonWriter.WriteString("message", exception.Message);
-                    if (exception.StackTrace is not null) jsonWriter.WriteString("stackTrace", exception.StackTrace);
+                    if (exception.StackTrace is not null)
+                    {
+                        jsonWriter.WriteString("stackTrace", exception.StackTrace);
+                    }
 
                     if (exception.InnerException is not null)
+                    {
                         jsonWriter.WriteString("innerException", exception.InnerException.ToString());
+                    }
 
-                    if (exception.Source is not null) jsonWriter.WriteString("source", exception.Source);
+                    if (exception.Source is not null)
+                    {
+                        jsonWriter.WriteString("source", exception.Source);
+                    }
 
                     if (exception.TargetSite is not null)
+                    {
                         jsonWriter.WriteString("targetSite", exception.TargetSite.ToString());
+                    }
 
                     jsonWriter.WriteEndObject();
                 }

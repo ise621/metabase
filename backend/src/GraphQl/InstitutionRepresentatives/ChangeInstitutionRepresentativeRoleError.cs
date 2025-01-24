@@ -2,15 +2,11 @@ using System.Collections.Generic;
 
 namespace Metabase.GraphQl.InstitutionRepresentatives;
 
-public sealed class ChangeInstitutionRepresentativeRoleError
-    : UserErrorBase<ChangeInstitutionRepresentativeRoleErrorCode>
-{
-    public ChangeInstitutionRepresentativeRoleError(
-        ChangeInstitutionRepresentativeRoleErrorCode code,
-        string message,
-        IReadOnlyList<string> path
+public sealed class ChangeInstitutionRepresentativeRoleError(
+    ChangeInstitutionRepresentativeRoleErrorCode code,
+    string message,
+    IReadOnlyList<string> path
     )
-        : base(code, message, path)
-    {
-    }
+        : UserErrorBase<ChangeInstitutionRepresentativeRoleErrorCode>(code, message, path)
+{
 }

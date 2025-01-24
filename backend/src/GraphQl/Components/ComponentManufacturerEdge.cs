@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using Metabase.Authorization;
 using Metabase.Data;
 using Metabase.GraphQl.Institutions;
@@ -10,18 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentManufacturerEdge
-    : Edge<Institution, InstitutionByIdDataLoader>
-{
-    private readonly ComponentManufacturer _association;
-
-    public ComponentManufacturerEdge(
-        ComponentManufacturer association
+public sealed class ComponentManufacturerEdge(
+    ComponentManufacturer association
     )
-        : base(association.InstitutionId)
-    {
-        _association = association;
-    }
+        : Edge<Institution, InstitutionByIdDataLoader>(association.InstitutionId)
+{
+    private readonly ComponentManufacturer _association = association;
 
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(

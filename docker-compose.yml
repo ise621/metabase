@@ -117,6 +117,9 @@ services:
       # https://docs.microsoft.com/en-us/aspnet/core/security/docker-compose-https#starting-a-container-with-https-support-using-docker-compose
       # - ASPNETCORE_Kestrel__Certificates__Default__Password=${SSL_CERTIFICATE_PASSWORD}
       # - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/ssl/${SSL_CERTIFICATE_BASE_FILE_NAME}.pfx
+      # - SSL_CERT_FILE=/app/ssl/${SSL_CERTIFICATE_BASE_FILE_NAME}.pfx
+      # - ASPNETCORE_DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING=1
+      # - ASPNETCORE_DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING_SPECIFIER=all
     extra_hosts:
       - ${HOST}:host-gateway
       - ${TESTLAB_SOLAR_FACADES_HOST}:host-gateway

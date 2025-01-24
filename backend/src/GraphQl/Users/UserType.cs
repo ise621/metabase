@@ -11,6 +11,7 @@ using Metabase.Authorization;
 using Metabase.Configuration;
 using Metabase.Data;
 using Metabase.Extensions;
+using Metabase.GraphQl.Entities;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -36,7 +37,10 @@ public sealed class UserType
         var claimsPrincipal =
             context.GetGlobalStateOrDefault<ClaimsPrincipal>(nameof(ClaimsPrincipal))
             ?? throw new ArgumentException("Claims principal must not be null.");
-        if (scope is not null && !claimsPrincipal.HasScope(scope)) return null;
+        if (scope is not null && !claimsPrincipal.HasScope(scope))
+        {
+            return null;
+        }
 
         var user = context.Parent<User>();
         var userManager =
@@ -47,7 +51,9 @@ public sealed class UserType
                 user.Id,
                 userManager
             ).ConfigureAwait(false))
+        {
             return null;
+        }
 
         return getValue(user);
     }
@@ -62,7 +68,10 @@ public sealed class UserType
         var claimsPrincipal =
             context.GetGlobalStateOrDefault<ClaimsPrincipal>(nameof(ClaimsPrincipal))
             ?? throw new ArgumentException("Claims principal must not be null.");
-        if (scope is not null && !claimsPrincipal.HasScope(scope)) return null;
+        if (scope is not null && !claimsPrincipal.HasScope(scope))
+        {
+            return null;
+        }
 
         var user = context.Parent<User>();
         var userManager =
@@ -73,7 +82,9 @@ public sealed class UserType
                 user.Id,
                 userManager
             ).ConfigureAwait(false))
+        {
             return null;
+        }
 
         return getValue(user);
     }
@@ -88,7 +99,10 @@ public sealed class UserType
         var claimsPrincipal =
             context.GetGlobalStateOrDefault<ClaimsPrincipal>(nameof(ClaimsPrincipal))
             ?? throw new ArgumentException("Claims principal must not be null.");
-        if (scope is not null && !claimsPrincipal.HasScope(scope)) return null;
+        if (scope is not null && !claimsPrincipal.HasScope(scope))
+        {
+            return null;
+        }
 
         var user = context.Parent<User>();
         var userManager =
@@ -99,7 +113,9 @@ public sealed class UserType
                 user.Id,
                 userManager
             ).ConfigureAwait(false))
+        {
             return null;
+        }
 
         return await getValue(user, userManager).ConfigureAwait(false);
     }
@@ -114,7 +130,10 @@ public sealed class UserType
         var claimsPrincipal =
             context.GetGlobalStateOrDefault<ClaimsPrincipal>(nameof(ClaimsPrincipal))
             ?? throw new ArgumentException("Claims principal must not be null.");
-        if (scope is not null && !claimsPrincipal.HasScope(scope)) return null;
+        if (scope is not null && !claimsPrincipal.HasScope(scope))
+        {
+            return null;
+        }
 
         var user = context.Parent<User>();
         var userManager =
@@ -125,7 +144,9 @@ public sealed class UserType
                 user.Id,
                 userManager
             ).ConfigureAwait(false))
+        {
             return null;
+        }
 
         return await getValue(user, userManager).ConfigureAwait(false);
     }
@@ -274,14 +295,19 @@ public sealed class UserType
             SignInManager<User> signInManager
         )
         {
-            if (!claimsPrincipal.HasScope(AuthConfiguration.ManageUserApiScope)) return null;
+            if (!claimsPrincipal.HasScope(AuthConfiguration.ManageUserApiScope))
+            {
+                return null;
+            }
 
             if (!await UserAuthorization.IsAuthorizedToManageUser(
                     claimsPrincipal,
                     user.Id,
                     userManager
                 ).ConfigureAwait(false))
+            {
                 return null;
+            }
 
             return new TwoFactorAuthentication(
                 await userManager.GetAuthenticatorKeyAsync(user).ConfigureAwait(false) != null,
@@ -346,12 +372,16 @@ public sealed class UserType
         )
         {
             foreach (var role in Role.AllEnum)
+            {
                 if (await UserAuthorization.IsAuthorizedToAddOrRemoveRole(
                         claimsPrincipal,
                         role,
                         userManager
                     ).ConfigureAwait(false))
+                {
                     yield return role;
+                }
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ public sealed record VerifyViewModel
 {
     [Display(Name = "Application")] public string? ApplicationName { get; init; }
 
-    [BindNever] [Display(Name = "Error")] public string? Error { get; init; }
+    [BindNever][Display(Name = "Error")] public string? Error { get; init; }
 
     [BindNever]
     [Display(Name = "Error description")]

@@ -24,7 +24,7 @@ public abstract class MethodPayload<TMethodError>
     protected MethodPayload(
         TMethodError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -43,7 +43,7 @@ public abstract class MethodPayload<TMethodError>
     )
         : this(
             method,
-            new[] { error }
+            [error]
         )
     {
     }

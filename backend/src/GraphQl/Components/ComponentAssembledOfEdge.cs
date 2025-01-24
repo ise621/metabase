@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using Metabase.Authorization;
 using Metabase.Data;
 using Metabase.Enumerations;
@@ -10,18 +9,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Components;
 
-public sealed class ComponentAssembledOfEdge
-    : Edge<Component, ComponentByIdDataLoader>
-{
-    private readonly ComponentAssembly _association;
-
-    public ComponentAssembledOfEdge(
-        ComponentAssembly association
+public sealed class ComponentAssembledOfEdge(
+    ComponentAssembly association
     )
-        : base(association.PartComponentId)
-    {
-        _association = association;
-    }
+        : Edge<Component, ComponentByIdDataLoader>(association.PartComponentId)
+{
+    private readonly ComponentAssembly _association = association;
 
     public byte? Index => _association.Index;
 

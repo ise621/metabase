@@ -24,7 +24,7 @@ public abstract class DataFormatPayload<TDataFormatError>
     protected DataFormatPayload(
         TDataFormatError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 
@@ -43,7 +43,7 @@ public abstract class DataFormatPayload<TDataFormatError>
     )
         : this(
             person,
-            new[] { error }
+            [error]
         )
     {
     }

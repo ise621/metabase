@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Metabase.Data;
 using Metabase.GraphQl.Institutions;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Metabase.Tests.Integration.GraphQl.Institutions;
 
@@ -19,7 +18,7 @@ public abstract class InstitutionIntegrationTests
         "Best institution ever!",
         new Uri("https://institution-a.com", UriKind.Absolute),
         null,
-        Array.Empty<Guid>(),
+        [],
         null
     );
 

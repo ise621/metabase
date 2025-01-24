@@ -25,7 +25,7 @@ public sealed class RemoveUserMethodDeveloperPayload
     public RemoveUserMethodDeveloperPayload(
         RemoveUserMethodDeveloperError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

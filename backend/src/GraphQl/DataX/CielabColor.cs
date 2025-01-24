@@ -1,19 +1,12 @@
 namespace Metabase.GraphQl.DataX;
 
-public sealed class CielabColor
-{
-    public CielabColor(
-        double lStar,
-        double aStar,
-        double bStar
+public sealed class CielabColor(
+    double lStar,
+    double aStar,
+    double bStar
     )
-    {
-        LStar = lStar;
-        AStar = aStar;
-        BStar = bStar;
-    }
-
-    public double LStar { get; }
-    public double AStar { get; }
-    public double BStar { get; }
+{
+    public double LStar { get; } = lStar;
+    public double AStar { get; } = aStar;
+    public double BStar { get; } = bStar;
 }

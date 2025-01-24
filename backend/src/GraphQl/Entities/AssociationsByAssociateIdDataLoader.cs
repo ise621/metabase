@@ -4,34 +4,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GreenDonut;
-using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Entities;
 
-public abstract class AssociationsByAssociateIdDataLoader<TAssociation>
-    : GroupedDataLoader<Guid, TAssociation>
+public abstract class AssociationsByAssociateIdDataLoader<TAssociation>(
+    IBatchScheduler batchScheduler,
+    DataLoaderOptions options,
+    IDbContextFactory<ApplicationDbContext> dbContextFactory,
+    Func<ApplicationDbContext, IReadOnlyList<Guid>, IQueryable<TAssociation>> getAssociations,
+    Func<TAssociation, Guid> getAssociateId
+    )
+    : GroupedDataLoader<Guid, TAssociation>(batchScheduler, options)
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
+    private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory = dbContextFactory;
 
-    private readonly Func<TAssociation, Guid> _getAssociateId;
+    private readonly Func<TAssociation, Guid> _getAssociateId = getAssociateId;
 
     private readonly Func<ApplicationDbContext, IReadOnlyList<Guid>, IQueryable<TAssociation>>
-        _getAssociations;
-
-    protected AssociationsByAssociateIdDataLoader(
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions options,
-        IDbContextFactory<ApplicationDbContext> dbContextFactory,
-        Func<ApplicationDbContext, IReadOnlyList<Guid>, IQueryable<TAssociation>> getAssociations,
-        Func<TAssociation, Guid> getAssociateId
-    )
-        : base(batchScheduler, options)
-    {
-        _dbContextFactory = dbContextFactory;
         _getAssociations = getAssociations;
-        _getAssociateId = getAssociateId;
-    }
 
     protected override async Task<ILookup<Guid, TAssociation>> LoadGroupedBatchAsync(
         IReadOnlyList<Guid> keys,

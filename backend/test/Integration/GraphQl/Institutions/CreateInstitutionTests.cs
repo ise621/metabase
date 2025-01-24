@@ -57,7 +57,7 @@ public sealed class CreateInstitutionTests
         var response = await CreateInstitution(
             input with
             {
-                OwnerIds = new[] { userId }
+                OwnerIds = [userId]
             }
         ).ConfigureAwait(false);
         // Assert
@@ -91,7 +91,7 @@ public sealed class CreateInstitutionTests
         var (institutionId, institutionUuid) = await CreateInstitutionReturningIdAndUuid(
             input with
             {
-                OwnerIds = new[] { userId }
+                OwnerIds = [userId]
             }
         ).ConfigureAwait(false);
         var response = await GetPendingInstitutions().ConfigureAwait(false);

@@ -20,23 +20,16 @@ public static partial class Log
     );
 }
 
-public sealed class EmailSender
-    : IEmailSender
-{
-    private readonly ILogger<EmailSender> _logger;
-    private readonly string _smtpHost;
-    private readonly int _smtpPort;
-
-    public EmailSender(
-        string smtpHost,
-        int smtpPort,
-        ILogger<EmailSender> logger
+public sealed class EmailSender(
+    string smtpHost,
+    int smtpPort,
+    ILogger<EmailSender> logger
     )
-    {
-        _smtpHost = smtpHost;
-        _smtpPort = smtpPort;
-        _logger = logger;
-    }
+        : IEmailSender
+{
+    private readonly ILogger<EmailSender> _logger = logger;
+    private readonly string _smtpHost = smtpHost;
+    private readonly int _smtpPort = smtpPort;
 
     public Task SendAsync(
         (string name, string address) recipient,

@@ -100,7 +100,10 @@ public sealed class Program
                 rollingInterval: RollingInterval.Day,
                 rollOnFileSizeLimit: true,
                 retainedFileCountLimit: 7);
-        if (environment != "production") configuration.WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture);
+        if (environment != "production")
+        {
+            configuration.WriteTo.Debug(formatProvider: CultureInfo.InvariantCulture);
+        }
     }
 
     private static async Task CreateAndSeedDb(

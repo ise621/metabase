@@ -5,17 +5,12 @@ using GreenDonut;
 
 namespace Metabase.GraphQl;
 
-public abstract class Edge<TNode, TNodeByIdDataLoader>
+public abstract class Edge<TNode, TNodeByIdDataLoader>(
+    Guid nodeId
+    )
     where TNodeByIdDataLoader : IDataLoader<Guid, TNode?>
 {
-    private readonly Guid _nodeId;
-
-    protected Edge(
-        Guid nodeId
-    )
-    {
-        _nodeId = nodeId;
-    }
+    private readonly Guid _nodeId = nodeId;
 
     public async Task<TNode> GetNodeAsync(
         TNodeByIdDataLoader byId,

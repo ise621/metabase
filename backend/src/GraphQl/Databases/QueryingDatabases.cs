@@ -48,7 +48,7 @@ public sealed class QueryingDatabases
         }
     }
 
-    private static readonly JsonSerializerOptions NonDataSerializerOptions =
+    private static readonly JsonSerializerOptions s_nonDataSerializerOptions =
         new()
         {
             Converters =
@@ -79,7 +79,7 @@ public sealed class QueryingDatabases
             {
                 new JsonStringEnumConverter(new ConstantCaseJsonNamingPolicy(), false),
                 new DateTimeConverterUsingDateTimeParseAsFallback(),
-                new DataConverterWithTypeDiscriminatorProperty(NonDataSerializerOptions)
+                new DataConverterWithTypeDiscriminatorProperty(s_nonDataSerializerOptions)
             },
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             IgnoreReadOnlyFields = true,
@@ -115,7 +115,10 @@ public sealed class QueryingDatabases
         IHttpContextAccessor httpContextAccessor
     )
     {
-        if (httpContextAccessor.HttpContext is null) return null;
+        if (httpContextAccessor.HttpContext is null)
+        {
+            return null;
+        }
 
         // Extract bearer token stored in cookie (used by Metabase Web
         // frontend)
@@ -123,7 +126,10 @@ public sealed class QueryingDatabases
             CookieAuthenticationDefaults.AuthenticationScheme,
             OpenIddictClientAspNetCoreConstants.Tokens.BackchannelAccessToken
         ).ConfigureAwait(false);
-        if (cookieBearerToken is not null) return cookieBearerToken;
+        if (cookieBearerToken is not null)
+        {
+            return cookieBearerToken;
+        }
 
         // Extract bearer token given in authorization header (used by
         // third-party frontends)
@@ -172,13 +178,17 @@ public sealed class QueryingDatabases
         {
             httpClient.SetToken("Token", apiToken);
         }
-        else {
+        else
+        {
             // We extract and set the bearer token below. Alternatively, we could
             // add a named client to the factory and set the bearer token there as
             // detailed in
             // https://stackoverflow.com/questions/51358870/configure-httpclientfactory-to-use-data-from-the-current-request-context/51460160#51460160
             var bearerToken = await ExtractBearerToken(httpContextAccessor).ConfigureAwait(false);
-            if (bearerToken is not null) httpClient.SetBearerToken(bearerToken);
+            if (bearerToken is not null)
+            {
+                httpClient.SetBearerToken(bearerToken);
+            }
         }
 
         // For some reason `httpClient.PostAsJsonAsync` without `MakeJsonHttpContent` but with `SerializerOptions` results in `BadRequest` status code. It has to do with `JsonContent.Create` used within `PostAsJsonAsync` --- we also cannot use `JsonContent.Create` in `MakeJsonHttpContent`. What is happening here?
@@ -190,9 +200,11 @@ public sealed class QueryingDatabases
                 cancellationToken
             ).ConfigureAwait(false);
         if (httpResponseMessage.StatusCode != HttpStatusCode.OK)
+        {
             throw new HttpRequestException(
                 $"The status code is not {HttpStatusCode.OK} but {httpResponseMessage.StatusCode}.", null,
                 httpResponseMessage.StatusCode);
+        }
 
         // We could use `httpResponseMessage.Content.ReadFromJsonAsync<GraphQL.GraphQLResponse<TGraphQlResponse>>` which would make debugging more difficult though, https://docs.microsoft.com/en-us/dotnet/api/system.net.http.json.httpcontentjsonextensions.readfromjsonasync?view=net-5.0#System_Net_Http_Json_HttpContentJsonExtensions_ReadFromJsonAsync__1_System_Net_Http_HttpContent_System_Text_Json_JsonSerializerOptions_System_Threading_CancellationToken_
         using var graphQlResponseStream =
@@ -206,9 +218,7 @@ public sealed class QueryingDatabases
                 graphQlResponseStream,
                 SerializerOptions,
                 cancellationToken
-            ).ConfigureAwait(false);
-        if (deserializedGraphQlResponse is null) throw new JsonException("Failed to deserialize the GraphQL response.");
-
+            ).ConfigureAwait(false) ?? throw new JsonException("Failed to deserialize the GraphQL response.");
         return deserializedGraphQlResponse;
     }
 
@@ -242,7 +252,9 @@ public sealed class QueryingDatabases
 
     // Inspired by https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#support-polymorphic-deserialization
     // and https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#an-alternative-way-to-do-polymorphic-deserialization
-    public sealed class DataConverterWithTypeDiscriminatorProperty : JsonConverter<IData>
+    public sealed class DataConverterWithTypeDiscriminatorProperty(
+        JsonSerializerOptions options
+        ) : JsonConverter<IData>
     {
         private const string DISCRIMINATOR_PROPERTY_NAME = "__typename";
 
@@ -253,14 +265,7 @@ public sealed class QueryingDatabases
         private const string PHOTOVOLTAIC_DATA = "PhotovoltaicData";
         private const string GEOMETRIC_DATA = "GeometricData";
 
-        private readonly JsonSerializerOptions _options;
-
-        public DataConverterWithTypeDiscriminatorProperty(
-            JsonSerializerOptions options
-        )
-        {
-            _options = options;
-        }
+        private readonly JsonSerializerOptions _options = options;
 
         public override bool CanConvert(Type typeToConvert)
         {
@@ -273,19 +278,27 @@ public sealed class QueryingDatabases
         {
             var readerClone = reader; // clones `reader` because it is a struct!
             if (readerClone.TokenType != JsonTokenType.StartObject)
+            {
                 throw new JsonException($"Token is not a start object but {readerClone.TokenType}.");
+            }
 
             readerClone.Read();
             if (readerClone.TokenType != JsonTokenType.PropertyName)
+            {
                 throw new JsonException($"Token is not a property but {readerClone.TokenType}.");
+            }
 
             var propertyName = readerClone.GetString();
             if (propertyName != DISCRIMINATOR_PROPERTY_NAME)
+            {
                 throw new JsonException($"Property is not discriminator property but {propertyName}.");
+            }
 
             readerClone.Read();
             if (readerClone.TokenType != JsonTokenType.String)
+            {
                 throw new JsonException($"Token is not a string but {readerClone.TokenType}.");
+            }
 
             var typeDiscriminator = readerClone.GetString();
             // Note that you can't pass in the original options instance

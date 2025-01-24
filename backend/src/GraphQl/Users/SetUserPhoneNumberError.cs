@@ -2,15 +2,11 @@ using System.Collections.Generic;
 
 namespace Metabase.GraphQl.Users;
 
-public sealed class SetUserPhoneNumberError
-    : UserErrorBase<SetUserPhoneNumberErrorCode>
-{
-    public SetUserPhoneNumberError(
-        SetUserPhoneNumberErrorCode code,
-        string message,
-        IReadOnlyList<string> path
+public sealed class SetUserPhoneNumberError(
+    SetUserPhoneNumberErrorCode code,
+    string message,
+    IReadOnlyList<string> path
     )
-        : base(code, message, path)
-    {
-    }
+        : UserErrorBase<SetUserPhoneNumberErrorCode>(code, message, path)
+{
 }

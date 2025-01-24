@@ -6,32 +6,22 @@ using Metabase.GraphQl.Institutions;
 
 namespace Metabase.GraphQl.DataX;
 
-public sealed class DataApproval
-    : IApproval
-{
-    public DataApproval(
-        DateTime timestamp,
-        string signature,
-        string keyFingerprint,
-        string query,
-        string response,
-        Guid approverId
+public sealed class DataApproval(
+    DateTime timestamp,
+    string signature,
+    string keyFingerprint,
+    string query,
+    string response,
+    Guid approverId
     )
-    {
-        Timestamp = timestamp;
-        Signature = signature;
-        KeyFingerprint = keyFingerprint;
-        Query = query;
-        Response = response;
-        ApproverId = approverId;
-    }
-
-    public Guid ApproverId { get; }
-    public DateTime Timestamp { get; }
-    public string Signature { get; }
-    public string KeyFingerprint { get; }
-    public string Query { get; }
-    public string Response { get; }
+        : IApproval
+{
+    public Guid ApproverId { get; } = approverId;
+    public DateTime Timestamp { get; } = timestamp;
+    public string Signature { get; } = signature;
+    public string KeyFingerprint { get; } = keyFingerprint;
+    public string Query { get; } = query;
+    public string Response { get; } = response;
 
     public Task<Institution?> GetApproverAsync(
         InstitutionByIdDataLoader institutionById,

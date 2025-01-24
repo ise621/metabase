@@ -1,13 +1,8 @@
 namespace Metabase.GraphQl.DataX;
 
-public sealed class GetHttpsResourceTreeIgsdb
-{
-    public GetHttpsResourceTreeIgsdb(
-        GetHttpsResourceTreeRootIgsdb root
+public sealed class GetHttpsResourceTreeIgsdb(
+    GetHttpsResourceTreeRootIgsdb root
     )
-    {
-        Root = root;
-    }
-
-    public GetHttpsResourceTreeRootIgsdb Root { get; }
+{
+    public GetHttpsResourceTreeRootIgsdb Root { get; } = root;
 }

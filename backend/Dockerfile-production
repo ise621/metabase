@@ -13,7 +13,8 @@
 #########
 
 # https://hub.docker.com/_/microsoft-dotnet-sdk
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim-amd64 AS build
+# https://mcr.microsoft.com/artifact/mar/dotnet/sdk/tags
+FROM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim-amd64 AS build
 
 RUN \
   apt-get update && \
@@ -46,7 +47,8 @@ RUN \
 ###########
 
 # https://hub.docker.com/_/microsoft-dotnet-aspnet
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim-amd64
+# https://mcr.microsoft.com/artifact/mar/dotnet/sdk/tags
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-bookworm-slim-amd64
 
 RUN \
   apt-get update && \
@@ -64,7 +66,7 @@ WORKDIR /app
 
 COPY \
   --from=build \
-  /app/src/bin/Release/net8.0/publish \
+  /app/src/bin/Release/net9.0/publish \
   ./
 
 RUN \

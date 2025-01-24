@@ -76,7 +76,7 @@ public sealed class CustomWebApplicationFactory
                 Metabase.Program.ConfigureAppConfiguration(
                     configurationBuilder,
                     webHostBuilderContext.HostingEnvironment,
-                    Array.Empty<string>()
+                    []
                 );
             }
         );
@@ -92,7 +92,10 @@ public sealed class CustomWebApplicationFactory
                     serviceCollection.SingleOrDefault(d =>
                         d.ServiceType == typeof(IEmailSender)
                     );
-                if (emailSenderServiceDescriptor is not null) serviceCollection.Remove(emailSenderServiceDescriptor);
+                if (emailSenderServiceDescriptor is not null)
+                {
+                    serviceCollection.Remove(emailSenderServiceDescriptor);
+                }
 
                 serviceCollection.AddTransient<IEmailSender>(_ => EmailSender);
             }

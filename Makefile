@@ -220,7 +220,7 @@ prepare-release : ## Prepare release
 
 diagrams-plantuml : ## Draw images from textual UML diagrams
 	plantuml diagrams/plantuml/*.puml
-.PHONY : diagrams
+.PHONY : diagrams-plantuml
 
 # `diagrams-structurizr starts a server which can be accessed with a browser at localhost:9090. The diagrams can be downloaded manually from there.
 diagrams-structurizr : ## Serve diagrams to browser localhost Port 9090
@@ -266,6 +266,7 @@ ssl : ## Generate and trust certificate authority, and generate SSL certificates
 # See also https://gist.github.com/Soarez/9688998
 # OpenSSL Quick Reference: https://www.digicert.com/kb/ssl-support/openssl-quick-reference-guide.htm
 # X509v3 Extensions: See `man x509v3_config` and https://superuser.com/questions/738612/openssl-ca-keyusage-extension/1248085#1248085 and https://access.redhat.com/solutions/28965
+# Which file extensions are meant for which file layout? https://serverfault.com/questions/9708/what-is-a-pem-file-and-how-does-it-differ-from-other-openssl-generated-key-file/9717#9717
 generate-certificate-authority : ## Generate certificate authority ECDSA private key and self-signed certificate
 	mkdir --parents ./ssl/
 		docker run \

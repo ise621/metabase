@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate.Data;
-using HotChocolate.Types;
 using HotChocolate.Data.Sorting;
-using Microsoft.EntityFrameworkCore;
+using HotChocolate.Types;
 using Metabase.Data;
 using Metabase.Enumerations;
 using Metabase.GraphQl.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Databases;
 

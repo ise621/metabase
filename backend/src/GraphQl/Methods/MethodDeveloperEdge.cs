@@ -2,7 +2,6 @@ using System;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using Metabase.Data;
 using Metabase.GraphQl.Institutions;
 using Metabase.GraphQl.Users;
@@ -36,11 +35,15 @@ public sealed class MethodDeveloperEdge
     )
     {
         if (_institutionMethodDeveloperEdge is not null)
+        {
             return await _institutionMethodDeveloperEdge.GetNodeAsync(institutionById, cancellationToken)
                 .ConfigureAwait(false);
+        }
 
         if (_userMethodDeveloperEdge is not null)
+        {
             return await _userMethodDeveloperEdge.GetNodeAsync(userById, cancellationToken).ConfigureAwait(false);
+        }
 
         throw new ArgumentException("Impossible!");
     }
@@ -54,13 +57,17 @@ public sealed class MethodDeveloperEdge
     )
     {
         if (_institutionMethodDeveloperEdge is not null)
+        {
             return await _institutionMethodDeveloperEdge
                 .CanCurrentUserConfirmEdgeAsync(claimsPrincipal, userManager, context, cancellationToken)
                 .ConfigureAwait(false);
+        }
 
         if (_userMethodDeveloperEdge is not null)
+        {
             return await _userMethodDeveloperEdge.CanCurrentUserConfirmEdgeAsync(claimsPrincipal, userManager)
                 .ConfigureAwait(false);
+        }
 
         throw new ArgumentException("Impossible!");
     }
@@ -74,14 +81,18 @@ public sealed class MethodDeveloperEdge
     )
     {
         if (_institutionMethodDeveloperEdge is not null)
+        {
             return await _institutionMethodDeveloperEdge
                 .CanCurrentUserRemoveEdgeAsync(claimsPrincipal, userManager, context, cancellationToken)
                 .ConfigureAwait(false);
+        }
 
         if (_userMethodDeveloperEdge is not null)
+        {
             return await _userMethodDeveloperEdge
                 .CanCurrentUserRemoveEdgeAsync(claimsPrincipal, userManager, context, cancellationToken)
                 .ConfigureAwait(false);
+        }
 
         throw new ArgumentException("Impossible!");
     }

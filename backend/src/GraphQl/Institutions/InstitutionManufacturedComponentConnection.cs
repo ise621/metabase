@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using Metabase.Authorization;
 using Metabase.Data;
 using Metabase.GraphQl.Users;
@@ -9,23 +8,18 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionManufacturedComponentConnection
-    : ForkingConnection<Institution, ComponentManufacturer,
-        PendingInstitutionManufacturedComponentsByInstitutionIdDataLoader,
-        InstitutionManufacturedComponentsByInstitutionIdDataLoader, InstitutionManufacturedComponentEdge>
-{
-    public InstitutionManufacturedComponentConnection(
-        Institution institution,
-        bool pending
+public sealed class InstitutionManufacturedComponentConnection(
+    Institution institution,
+    bool pending
     )
-        : base(
-            institution,
-            pending,
-            x => new InstitutionManufacturedComponentEdge(x)
+        : ForkingConnection<Institution, ComponentManufacturer,
+        PendingInstitutionManufacturedComponentsByInstitutionIdDataLoader,
+        InstitutionManufacturedComponentsByInstitutionIdDataLoader, InstitutionManufacturedComponentEdge>(
+        institution,
+        pending,
+        x => new InstitutionManufacturedComponentEdge(x)
         )
-    {
-    }
-
+{
     [UseUserManager]
     public Task<bool> CanCurrentUserAddEdgeAsync(
         ClaimsPrincipal claimsPrincipal,

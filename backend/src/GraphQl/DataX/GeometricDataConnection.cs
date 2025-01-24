@@ -4,8 +4,16 @@ using System.Linq;
 
 namespace Metabase.GraphQl.DataX;
 
-public sealed class GeometricDataConnection
-    : DataConnectionBase<GeometricDataEdge>
+public sealed class GeometricDataConnection(
+    IReadOnlyList<GeometricDataEdge> edges,
+    uint totalCount,
+    DateTime timestamp
+    )
+        : DataConnectionBase<GeometricDataEdge>(
+        edges,
+        totalCount,
+        timestamp
+        )
 {
     internal static GeometricDataConnection? From(GeometricDataConnectionIgsdb? allGeometricData)
     {
@@ -18,18 +26,5 @@ public sealed class GeometricDataConnection
             Convert.ToUInt32(allGeometricData.Edges.Count),
             DateTime.UtcNow
         );
-    }
-
-    public GeometricDataConnection(
-        IReadOnlyList<GeometricDataEdge> edges,
-        uint totalCount,
-        DateTime timestamp
-    )
-        : base(
-            edges,
-            totalCount,
-            timestamp
-        )
-    {
     }
 }

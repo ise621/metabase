@@ -31,7 +31,7 @@ public sealed class AddUserRolePayload
     public AddUserRolePayload(
         AddUserRoleError error
     )
-        : this(new[] { error })
+        : this([error])
     {
     }
 

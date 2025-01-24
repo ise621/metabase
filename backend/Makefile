@@ -74,6 +74,10 @@ inspect : ## Inspect with ReSharper, for example, `make OUTPUT=./inspection.xml 
 	dotnet tool run jb inspectcode --build ./Metabase.sln -o ${OUTPUT}
 .PHONY : inspect
 
+editorconfig : ## Debug editorconfig
+	editorconfig ./.editorconfig
+.PHONY : editorconfig
+
 play : ## Run tests in `Metabase.Tests.Play` (semi-alternative to the buggy `dotnet script` REPL)
 	dotnet test --filter "FullyQualifiedName~Metabase.Tests.Play"
 .PHONY : play
@@ -94,19 +98,20 @@ dos2unix : ## Strip the byte-order mark, also known as, BOM, and remove carriage
 	# find . -type f -exec dos2unix {} \;
 .PHONY : dos2unix
 
-format : ## Format code
-	dotnet tool run jb cleanupcode --profile="Built-in: Reformat Code" ./Metabase.sln
-.PHONY : format
-
-syntax : ## Apply syntax style
-	dotnet tool run jb cleanupcode --profile="Built-in: Reformat & Apply Syntax Style" ./Metabase.sln
-.PHONY : syntax
-
+# See https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format
+# We do not run JetBrains ReSharper cleanupcode because it does wrong things
+# like removing private setters needed by EntityFramework Core. We used to run
+# it as follows: For formatting
+# `dotnet tool run jb cleanupcode --profile="Built-in: Reformat Code" ./Metabase.sln`
+# For syntax styling
+# `dotnet tool run jb cleanupcode --profile="Built-in: Reformat & Apply Syntax Style" ./Metabase.sln`
+# For cleanup
+# `dotnet tool run jb cleanupcode ./Metabase.sln`
 # The profile `Built-in: Full Cleanup` does not update file headers.
 # See https://www.jetbrains.com/help/resharper/Code_Cleanup__Index.html#profiles
-cleanup : ## Clean-up code
-	dotnet tool run jb cleanupcode ./Metabase.sln
-.PHONY : cleanup
+format : ## Format code
+	dotnet format ./Metabase.sln
+.PHONY : format
 
 update-packages : ## Update packages
 	for subproject in src test ; do ( \

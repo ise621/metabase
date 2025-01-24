@@ -3,13 +3,9 @@ using Metabase.Data;
 
 namespace Metabase.GraphQl.Institutions;
 
-public sealed class InstitutionManagerEdge
-    : Edge<Institution, InstitutionByIdDataLoader>
-{
-    public InstitutionManagerEdge(
-        Institution association
+public sealed class InstitutionManagerEdge(
+    Institution association
     )
-        : base(association.ManagerId ?? Guid.Empty)
-    {
-    }
+        : Edge<Institution, InstitutionByIdDataLoader>(association.ManagerId ?? Guid.Empty)
+{
 }

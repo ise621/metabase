@@ -38,13 +38,15 @@ public sealed class MethodMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new CreateMethodPayload(
                 new CreateMethodError(
                     CreateMethodErrorCode.UNAUTHORIZED,
                     "You are not authorized to create methods for the institution.",
-                    new[] { nameof(input), nameof(input.ManagerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManagerId).FirstCharToLower()]
                 )
             );
+        }
 
         if (!await context.Institutions.AsQueryable()
                 .AnyAsync(
@@ -53,13 +55,15 @@ public sealed class MethodMutations
                 )
                 .ConfigureAwait(false)
            )
+        {
             return new CreateMethodPayload(
                 new CreateMethodError(
                     CreateMethodErrorCode.UNKNOWN_MANAGER,
                     "Unknown manager.",
-                    new[] { nameof(input), nameof(input.ManagerId).FirstCharToLower() }
+                    [nameof(input), nameof(input.ManagerId).FirstCharToLower()]
                 )
             );
+        }
 
         var unknownInstitutionDeveloperIds =
             input.InstitutionDeveloperIds.Except(
@@ -70,13 +74,15 @@ public sealed class MethodMutations
                     .ConfigureAwait(false)
             );
         if (unknownInstitutionDeveloperIds.Any())
+        {
             return new CreateMethodPayload(
                 new CreateMethodError(
                     CreateMethodErrorCode.UNKNOWN_INSTITUTION_DEVELOPERS,
                     $"There are no institutions with identifier(s) {string.Join(", ", unknownInstitutionDeveloperIds)}.",
-                    new[] { nameof(input), nameof(input.InstitutionDeveloperIds).FirstCharToLower() }
+                    [nameof(input), nameof(input.InstitutionDeveloperIds).FirstCharToLower()]
                 )
             );
+        }
 
         var unknownUserDeveloperIds =
             input.UserDeveloperIds.Except(
@@ -87,24 +93,28 @@ public sealed class MethodMutations
                     .ConfigureAwait(false)
             );
         if (unknownUserDeveloperIds.Any())
+        {
             return new CreateMethodPayload(
                 new CreateMethodError(
                     CreateMethodErrorCode.UNKNOWN_USER_DEVELOPERS,
                     $"There are no users with identifier(s) {string.Join(", ", unknownUserDeveloperIds)}.",
-                    new[] { nameof(input), nameof(input.UserDeveloperIds).FirstCharToLower() }
+                    [nameof(input), nameof(input.UserDeveloperIds).FirstCharToLower()]
                 )
             );
+        }
 
         if (input.Reference?.Standard is not null &&
             input.Reference?.Publication is not null
            )
+        {
             return new CreateMethodPayload(
                 new CreateMethodError(
                     CreateMethodErrorCode.TWO_REFERENCES,
                     "Specify either a standard or a publication as reference.",
-                    new[] { nameof(input), nameof(input.Reference).FirstCharToLower() }
+                    [nameof(input), nameof(input.Reference).FirstCharToLower()]
                 )
             );
+        }
 
         var method = new Method(
             input.Name,
@@ -130,6 +140,7 @@ public sealed class MethodMutations
                     : PublicationType.FromInput(input.Reference.Publication),
         };
         foreach (var institutionDeveloperId in input.InstitutionDeveloperIds.Distinct())
+        {
             method.InstitutionDeveloperEdges.Add(
                 new InstitutionMethodDeveloper
                 {
@@ -138,9 +149,11 @@ public sealed class MethodMutations
                         institutionDeveloperId, userManager, context, cancellationToken).ConfigureAwait(false)
                 }
             );
+        }
 
         var loggedInUser = await userManager.GetUserAsync(claimsPrincipal).ConfigureAwait(false);
         foreach (var userDeveloperId in input.UserDeveloperIds.Distinct())
+        {
             method.UserDeveloperEdges.Add(
                 new UserMethodDeveloper
                 {
@@ -149,6 +162,7 @@ public sealed class MethodMutations
                         .IsAuthorizedToConfirm(claimsPrincipal, userDeveloperId, userManager).ConfigureAwait(false)
                 }
             );
+        }
 
         context.Methods.Add(method);
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -173,24 +187,28 @@ public sealed class MethodMutations
                 cancellationToken
             ).ConfigureAwait(false)
            )
+        {
             return new UpdateMethodPayload(
                 new UpdateMethodError(
                     UpdateMethodErrorCode.UNAUTHORIZED,
                     "You are not authorized to the update method.",
-                    new[] { nameof(input) }
+                    [nameof(input)]
                 )
             );
+        }
 
         if (input.Reference?.Standard is not null &&
             input.Reference?.Publication is not null
            )
+        {
             return new UpdateMethodPayload(
                 new UpdateMethodError(
                     UpdateMethodErrorCode.TWO_REFERENCES,
                     "Specify either a standard or a publication as reference.",
-                    new[] { nameof(input), nameof(input.Reference).FirstCharToLower() }
+                    [nameof(input), nameof(input.Reference).FirstCharToLower()]
                 )
             );
+        }
 
         var method =
             await context.Methods.AsQueryable()
@@ -198,13 +216,15 @@ public sealed class MethodMutations
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
         if (method is null)
+        {
             return new UpdateMethodPayload(
                 new UpdateMethodError(
                     UpdateMethodErrorCode.UNKNOWN_METHOD,
                     "Unknown method.",
-                    new[] { nameof(input), nameof(input.MethodId).FirstCharToLower() }
+                    [nameof(input), nameof(input.MethodId).FirstCharToLower()]
                 )
             );
+        }
 
         method.Update(
             input.Name,

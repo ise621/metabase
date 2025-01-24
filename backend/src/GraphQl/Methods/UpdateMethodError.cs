@@ -2,15 +2,11 @@ using System.Collections.Generic;
 
 namespace Metabase.GraphQl.Methods;
 
-public sealed class UpdateMethodError
-    : UserErrorBase<UpdateMethodErrorCode>
-{
-    public UpdateMethodError(
-        UpdateMethodErrorCode code,
-        string message,
-        IReadOnlyList<string> path
+public sealed class UpdateMethodError(
+    UpdateMethodErrorCode code,
+    string message,
+    IReadOnlyList<string> path
     )
-        : base(code, message, path)
-    {
-    }
+        : UserErrorBase<UpdateMethodErrorCode>(code, message, path)
+{
 }

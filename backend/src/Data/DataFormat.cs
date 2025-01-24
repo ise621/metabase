@@ -29,13 +29,13 @@ public sealed class DataFormat
         SchemaLocator = schemaLocator;
     }
 
-    [Required] [MinLength(1)] public string Name { get; private set; }
+    [Required][MinLength(1)] public string Name { get; private set; }
 
     [MinLength(1)] public string? Extension { get; private set; }
 
-    [Required] [MinLength(1)] public string Description { get; private set; }
+    [Required][MinLength(1)] public string Description { get; private set; }
 
-    [Required] [MinLength(1)] public string MediaType { get; private set; }
+    [Required][MinLength(1)] public string MediaType { get; private set; }
 
     [Url] public Uri? SchemaLocator { get; private set; }
 

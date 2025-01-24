@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using HotChocolate.Data;
 using HotChocolate.Data.Sorting;
 using HotChocolate.Types;
-using Microsoft.EntityFrameworkCore;
 using Metabase.Data;
 using Metabase.GraphQl.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Metabase.GraphQl.Methods;
 

@@ -11,7 +11,7 @@ public sealed class CollectingEmailSender
 
     public CollectingEmailSender()
     {
-        _emails = new List<Email>();
+        _emails = [];
     }
 
     public IReadOnlyCollection<Email> Emails => _emails.AsReadOnly();

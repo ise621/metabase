@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using HotChocolate;
 using Metabase.Authorization;
 using Metabase.Data;
 using Metabase.GraphQl.Users;
@@ -9,18 +8,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Metabase.GraphQl.Methods;
 
-public sealed class UserMethodDeveloperEdge
-    : Edge<User, UserByIdDataLoader>
-{
-    private readonly UserMethodDeveloper _association;
-
-    public UserMethodDeveloperEdge(
-        UserMethodDeveloper association
+public sealed class UserMethodDeveloperEdge(
+    UserMethodDeveloper association
     )
-        : base(association.UserId)
-    {
-        _association = association;
-    }
+        : Edge<User, UserByIdDataLoader>(association.UserId)
+{
+    private readonly UserMethodDeveloper _association = association;
 
     [UseUserManager]
     public Task<bool> CanCurrentUserConfirmEdgeAsync(
