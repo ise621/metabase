@@ -18,7 +18,7 @@ namespace Metabase.Controllers;
 
 // Inspired by https://github.com/openiddict/openiddict-samples/blob/dev/samples/Velusia/Velusia.Client/Controllers/AuthenticationController.cs
 // https://github.com/openiddict/openiddict-samples/blob/855c31f91d6bf5cde735ef3f96fcc3c015b51d79/samples/Velusia/Velusia.Client/Controllers/AuthenticationController.cs
-public class AuthenticationController(
+public sealed class AuthenticationController(
     AppSettings appSettings,
     IOptions<IdentityOptions> identityOptions
     ) : Controller
