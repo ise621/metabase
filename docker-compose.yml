@@ -123,7 +123,6 @@ services:
     extra_hosts:
       - ${HOST}:host-gateway
       - ${TESTLAB_SOLAR_FACADES_HOST}:host-gateway
-      # - ${LBNL_HOST}:host-gateway
     depends_on:
       - database
       - email
