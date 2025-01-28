@@ -18,17 +18,4 @@ public sealed class GeometricDataConnection(
         pageInfo
         )
 {
-    internal static GeometricDataConnection? From(GeometricDataConnectionIgsdb? allGeometricData)
-    {
-        if (allGeometricData is null)
-        {
-            return null;
-        }
-        return new GeometricDataConnection(
-            allGeometricData.Edges.Select(GeometricDataEdge.From).ToList().AsReadOnly(),
-            Convert.ToUInt32(allGeometricData.Edges.Count),
-            DateTime.UtcNow,
-            allGeometricData.PageInfo
-        );
-    }
 }

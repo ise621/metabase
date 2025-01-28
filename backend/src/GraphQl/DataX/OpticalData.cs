@@ -45,39 +45,6 @@ public sealed class OpticalData(
     resourceTree
     )
 {
-    internal static OpticalData From(OpticalDataIgsdb node)
-    {
-        return new OpticalData(
-            node.Id,
-            node.Uuid ?? node.ComponentId, // The IGSDB has one data set per component.
-            node.Timestamp,
-            IgsdbLocale,
-            new Guid(IgsdbDatabaseId),
-            node.ComponentId,
-            node.Name,
-            node.Description,
-            Array.Empty<string>().AsReadOnly(),
-            new Guid(IgsdbInstitutionId), // We suppose that LBNL created the data set.
-            DateTime.UtcNow, // That is the best date-time information we have.
-            new AppliedMethod(
-                new Guid(IgsdbMethodId),
-                Array.Empty<NamedMethodArgument>().AsReadOnly(),
-                Array.Empty<NamedMethodSource>().AsReadOnly()
-            ),
-            [GetHttpsResource.From(node.ResourceTree.Root.Value)],
-            GetHttpsResourceTree.From(node.ResourceTree),
-            // node.Approvals
-            // node.Approval
-            node.NearnormalHemisphericalVisibleTransmittances,
-            node.NearnormalHemisphericalVisibleReflectances,
-            node.NearnormalHemisphericalSolarTransmittances,
-            node.NearnormalHemisphericalSolarReflectances,
-            node.InfraredEmittances,
-            Array.Empty<double>().AsReadOnly(),
-            Array.Empty<CielabColor>().AsReadOnly()
-        );
-    }
-
     public IReadOnlyList<double> NearnormalHemisphericalVisibleTransmittances { get; } = nearnormalHemisphericalVisibleTransmittances;
     public IReadOnlyList<double> NearnormalHemisphericalVisibleReflectances { get; } = nearnormalHemisphericalVisibleReflectances;
     public IReadOnlyList<double> NearnormalHemisphericalSolarTransmittances { get; } = nearnormalHemisphericalSolarTransmittances;

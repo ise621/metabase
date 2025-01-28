@@ -18,17 +18,4 @@ public sealed class OpticalDataConnection(
         pageInfo
         )
 {
-    internal static OpticalDataConnection? From(OpticalDataConnectionIgsdb? allOpticalData)
-    {
-        if (allOpticalData is null)
-        {
-            return null;
-        }
-        return new OpticalDataConnection(
-            allOpticalData.Edges.Select(OpticalDataEdge.From).ToList().AsReadOnly(),
-            Convert.ToUInt32(allOpticalData.Edges.Count),
-            DateTime.UtcNow,
-            allOpticalData.PageInfo
-        );
-    }
 }
