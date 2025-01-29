@@ -156,19 +156,22 @@ public sealed class Startup(
         AppSettings appSettings
         )
     {
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(appSettings.Database.ConnectionString);
-        // https://www.npgsql.org/efcore/mapping/enum.html#mapping-your-enum
-        // Keep in sync with `ApplicationDbContext.CreateEnumerations`.
-        dataSourceBuilder.MapEnum<ComponentCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.ComponentCategoryTypeName}");
-        dataSourceBuilder.MapEnum<DatabaseVerificationState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.DatabaseVerificationStateTypeName}");
-        dataSourceBuilder.MapEnum<InstitutionRepresentativeRole>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionRepresentativeRoleTypeName}");
-        dataSourceBuilder.MapEnum<InstitutionState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionStateTypeName}");
-        dataSourceBuilder.MapEnum<InstitutionOperatingState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionOperatingStateTypeName}");
-        dataSourceBuilder.MapEnum<MethodCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.MethodCategoryTypeName}");
-        dataSourceBuilder.MapEnum<PrimeSurface>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.PrimeSurfaceTypeName}");
-        dataSourceBuilder.MapEnum<Standardizer>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.StandardizerTypeName}");
+        // https://www.npgsql.org/efcore/mapping/enum.html
         options
-            .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
+            .UseNpgsql(
+                appSettings.Database.ConnectionString,
+                options => {
+                    options.MapEnum<ComponentCategory>(ApplicationDbContext.ComponentCategoryTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<DatabaseVerificationState>(ApplicationDbContext.DatabaseVerificationStateTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<InstitutionRepresentativeRole>(ApplicationDbContext.InstitutionRepresentativeRoleTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<InstitutionState>(ApplicationDbContext.InstitutionStateTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<InstitutionOperatingState>(ApplicationDbContext.InstitutionOperatingStateTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<MethodCategory>(ApplicationDbContext.MethodCategoryTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<PrimeSurface>(ApplicationDbContext.PrimeSurfaceTypeName, appSettings.Database.SchemaName);
+                    options.MapEnum<Standardizer>(ApplicationDbContext.StandardizerTypeName, appSettings.Database.SchemaName);
+                    // options.UseNodaTime()
+                }
+            )
             .UseSchemaName(appSettings.Database.SchemaName)
             .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
         if (!environment.IsProduction())
