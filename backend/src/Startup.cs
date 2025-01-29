@@ -160,17 +160,17 @@ public sealed class Startup(
         options
             .UseNpgsql(
                 appSettings.Database.ConnectionString,
-                options => {
-                    options.MapEnum<ComponentCategory>(ApplicationDbContext.ComponentCategoryTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<DatabaseVerificationState>(ApplicationDbContext.DatabaseVerificationStateTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<InstitutionRepresentativeRole>(ApplicationDbContext.InstitutionRepresentativeRoleTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<InstitutionState>(ApplicationDbContext.InstitutionStateTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<InstitutionOperatingState>(ApplicationDbContext.InstitutionOperatingStateTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<MethodCategory>(ApplicationDbContext.MethodCategoryTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<PrimeSurface>(ApplicationDbContext.PrimeSurfaceTypeName, appSettings.Database.SchemaName);
-                    options.MapEnum<Standardizer>(ApplicationDbContext.StandardizerTypeName, appSettings.Database.SchemaName);
-                    // options.UseNodaTime()
-                }
+                _ => _
+                    .SetPostgresVersion(13, 13)
+                    .MapEnum<ComponentCategory>(ApplicationDbContext.ComponentCategoryTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<DatabaseVerificationState>(ApplicationDbContext.DatabaseVerificationStateTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<InstitutionRepresentativeRole>(ApplicationDbContext.InstitutionRepresentativeRoleTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<InstitutionState>(ApplicationDbContext.InstitutionStateTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<InstitutionOperatingState>(ApplicationDbContext.InstitutionOperatingStateTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<MethodCategory>(ApplicationDbContext.MethodCategoryTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<PrimeSurface>(ApplicationDbContext.PrimeSurfaceTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<Standardizer>(ApplicationDbContext.StandardizerTypeName, appSettings.Database.SchemaName)
+            // .UseNodaTime()
             )
             .UseSchemaName(appSettings.Database.SchemaName)
             .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();

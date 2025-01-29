@@ -1,5 +1,7 @@
+# Keep setup in sync with the one in ./docker-compose.production.yml
 services:
   database: # https://hub.docker.com/_/postgres
+    # Keep version in sync with the one in ./backend/src/Startup.cs set by calling `SetPostgresVersion`
     image: postgres:13.13-bookworm
     # ports:
     #   - 5432:5432
