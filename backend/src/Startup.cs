@@ -191,6 +191,8 @@ public sealed class Startup(
 
     private void ConfigureDatabaseServices(IServiceCollection services)
     {
+        // Configure the database-context options only once as suggested in
+        // https://github.com/npgsql/efcore.pg/issues/3375#issuecomment-2509746639
         services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
             ConfigureDatabaseContext(options, _environment, _appSettings)
         );
@@ -198,7 +200,7 @@ public sealed class Startup(
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
         services.AddDbContext<ApplicationDbContext>(options =>
-            ConfigureDatabaseContext(options, _environment, _appSettings),
+            {},
             contextLifetime: ServiceLifetime.Transient,
             optionsLifetime: ServiceLifetime.Singleton
         );
