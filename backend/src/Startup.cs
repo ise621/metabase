@@ -303,6 +303,8 @@ public sealed class Startup(
             }
         )
         .WithName("Health")
+        .WithDescription("Check the webserver health.")
+        .WithTags("Health")
         .DisableHttpMetrics();
     }
 
