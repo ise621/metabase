@@ -8,13 +8,11 @@ namespace Metabase.GraphQl.DataX;
 public sealed class DataConnection(
     IReadOnlyList<DataEdge> edges,
     uint totalCount,
-    DateTime timestamp,
     ConnectionPageInfo pageInfo
     )
         : DataConnectionBase<DataEdge>(
         edges,
         totalCount,
-        timestamp,
         pageInfo
         )
 {
@@ -27,7 +25,6 @@ public sealed class DataConnection(
         return new DataConnection(
             connection.Edges.Select(DataEdge.From).ToList().AsReadOnly(),
             connection.TotalCount,
-            connection.Timestamp,
             connection.PageInfo
         );
     }

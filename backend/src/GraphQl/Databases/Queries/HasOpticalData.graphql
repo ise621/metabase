@@ -1,7 +1,6 @@
 query HasOpticalData(
   $where: OpticalDataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
 ) {
-  hasOpticalData(where: $where, timestamp: $timestamp, locale: $locale)
+  hasOpticalData(where: $where, locale: $locale)
 }

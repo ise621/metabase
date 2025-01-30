@@ -1,7 +1,6 @@
 query HasCalorimetricData(
   $where: CalorimetricDataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
 ) {
-  hasCalorimetricData(where: $where, timestamp: $timestamp, locale: $locale)
+  hasCalorimetricData(where: $where, locale: $locale)
 }

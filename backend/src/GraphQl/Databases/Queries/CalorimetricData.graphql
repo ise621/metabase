@@ -1,5 +1,5 @@
-query CalorimetricData($id: Uuid!, $timestamp: DateTime, $locale: Locale) {
-  calorimetricData(id: $id, timestamp: $timestamp, locale: $locale) {
+query CalorimetricData($id: Uuid!, $locale: Locale) {
+  calorimetricData(id: $id, locale: $locale) {
     ...CalorimetricDataFields
   }
 }

@@ -1,6 +1,5 @@
 query AllData(
   $where: DataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
   $first: Int
   $after: String
@@ -9,7 +8,6 @@ query AllData(
 ) {
   allData(
     where: $where
-    timestamp: $timestamp
     locale: $locale
     first: $first
     after: $after
@@ -27,6 +25,5 @@ query AllData(
     pageInfo {
       ...PageInfoFields
     }
-    # TODO timestamp
   }
 }

@@ -1,5 +1,5 @@
-query HygrothermalData($id: Uuid!, $timestamp: DateTime, $locale: Locale) {
-  hygrothermalData(id: $id, timestamp: $timestamp, locale: $locale) {
+query HygrothermalData($id: Uuid!, $locale: Locale) {
+  hygrothermalData(id: $id, locale: $locale) {
     ...HygrothermalDataFields
   }
 }

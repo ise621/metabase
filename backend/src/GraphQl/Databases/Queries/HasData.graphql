@@ -1,7 +1,6 @@
 query HasData(
   $where: DataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
 ) {
-  hasData(where: $where, timestamp: $timestamp, locale: $locale)
+  hasData(where: $where, locale: $locale)
 }

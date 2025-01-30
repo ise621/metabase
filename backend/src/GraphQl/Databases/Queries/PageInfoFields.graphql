@@ -3,5 +3,4 @@ fragment PageInfoFields on PageInfo {
   hasPreviousPage
   startCursor
   endCursor
-  # TODO count
 }

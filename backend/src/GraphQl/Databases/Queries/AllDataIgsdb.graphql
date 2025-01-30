@@ -1,6 +1,5 @@
 query AllData(
   $where: WhereInput!
-  # $timestamp: DateTime
   $locale: Locale
   $first: Int
   $after: String
@@ -14,7 +13,7 @@ query AllData(
     after: $after
     last: $last
     before: $before
-  ) { # timestamp: $timestamp
+  ) {
     edges {
       cursor
       node {
@@ -112,6 +111,5 @@ query AllData(
       startCursor
       endCursor
     }
-    # timestamp
   }
 }

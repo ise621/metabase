@@ -1,5 +1,5 @@
-query OpticalData($id: Uuid!, $timestamp: DateTime, $locale: Locale) {
-  opticalData(id: $id, timestamp: $timestamp, locale: $locale) {
+query OpticalData($id: Uuid!, $locale: Locale) {
+  opticalData(id: $id, locale: $locale) {
     ...OpticalDataFields
   }
 }

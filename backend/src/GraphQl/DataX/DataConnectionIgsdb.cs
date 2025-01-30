@@ -11,7 +11,6 @@ public sealed class DataConnectionIgsdb(
         : DataConnectionBase<DataEdgeIgsdb>(
         edges,
         Convert.ToUInt32(edges.Count),
-        DateTime.UtcNow,
         pageInfo
         )
 {

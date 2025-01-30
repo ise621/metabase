@@ -29,98 +29,98 @@ public sealed class DatabaseType
         ConfigureDataField(
             descriptor,
             "data",
-            _ => _.GetDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureAllDataField<DataPropositionInput>(
             descriptor,
             "allData",
-            _ => _.GetAllDataAsync(default!, default, default, default, default, default, default, default,
+            _ => _.GetAllDataAsync(default!, default, default, default, default, default, default,
                 default!, default!, default)
         );
         ConfigureHasDataField<DataPropositionInput>(
             descriptor,
             "hasData",
-            _ => _.GetHasDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHasDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureDataField(
             descriptor,
             "opticalData",
-            _ => _.GetOpticalDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetOpticalDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureAllDataField<OpticalDataPropositionInput>(
             descriptor,
             "allOpticalData",
-            _ => _.GetAllOpticalDataAsync(default!, default, default, default, default, default, default, default,
+            _ => _.GetAllOpticalDataAsync(default!, default, default, default, default, default, default,
                 default!, default!, default)
         );
         ConfigureHasDataField<OpticalDataPropositionInput>(
             descriptor,
             "hasOpticalData",
-            _ => _.GetHasOpticalDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHasOpticalDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureDataField(
             descriptor,
             "hygrothermalData",
-            _ => _.GetHygrothermalDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHygrothermalDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureAllDataField<HygrothermalDataPropositionInput>(
             descriptor,
             "allHygrothermalData",
-            _ => _.GetAllHygrothermalDataAsync(default!, default, default, default, default, default, default,
+            _ => _.GetAllHygrothermalDataAsync(default!, default, default, default, default, default,
                 default, default!, default!, default)
         );
         ConfigureHasDataField<HygrothermalDataPropositionInput>(
             descriptor,
             "hasHygrothermalData",
-            _ => _.GetHasHygrothermalDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHasHygrothermalDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureDataField(
             descriptor,
             "calorimetricData",
-            _ => _.GetCalorimetricDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetCalorimetricDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureAllDataField<CalorimetricDataPropositionInput>(
             descriptor,
             "allCalorimetricData",
-            _ => _.GetAllCalorimetricDataAsync(default!, default, default, default, default, default, default,
+            _ => _.GetAllCalorimetricDataAsync(default!, default, default, default, default, default,
                 default, default!, default!, default)
         );
         ConfigureHasDataField<CalorimetricDataPropositionInput>(
             descriptor,
             "hasCalorimetricData",
-            _ => _.GetHasCalorimetricDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHasCalorimetricDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureDataField(
             descriptor,
             "photovoltaicData",
-            _ => _.GetPhotovoltaicDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetPhotovoltaicDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureAllDataField<PhotovoltaicDataPropositionInput>(
             descriptor,
             "allPhotovoltaicData",
-            _ => _.GetAllPhotovoltaicDataAsync(default!, default, default, default, default, default, default,
+            _ => _.GetAllPhotovoltaicDataAsync(default!, default, default, default, default, default,
                 default, default!, default!, default)
         );
         ConfigureHasDataField<PhotovoltaicDataPropositionInput>(
             descriptor,
             "hasPhotovoltaicData",
-            _ => _.GetHasPhotovoltaicDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHasPhotovoltaicDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureDataField(
             descriptor,
             "geometricData",
-            _ => _.GetGeometricDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetGeometricDataAsync(default!, default, default, default!, default!, default)
         );
         ConfigureAllDataField<GeometricDataPropositionInput>(
             descriptor,
             "allGeometricData",
-            _ => _.GetAllGeometricDataAsync(default!, default, default, default, default, default, default,
+            _ => _.GetAllGeometricDataAsync(default!, default, default, default, default, default,
                 default, default!, default!, default)
         );
         ConfigureHasDataField<GeometricDataPropositionInput>(
             descriptor,
             "hasGeometricData",
-            _ => _.GetHasGeometricDataAsync(default!, default, default, default, default!, default!, default)
+            _ => _.GetHasGeometricDataAsync(default!, default, default, default!, default!, default)
         );
         descriptor
             .Field("canCurrentUserUpdateNode")
@@ -143,7 +143,6 @@ public sealed class DatabaseType
         descriptor
             .Field(fieldName)
             .Argument("id", _ => _.Type<NonNullType<UuidType>>())
-            .Argument("timestamp", _ => _.Type<DateTimeType>())
             .Argument("locale", _ => _.Type<StringType>())
             .ResolveWith(resolverMethod);
     }
@@ -157,7 +156,6 @@ public sealed class DatabaseType
         descriptor
             .Field(fieldName)
             .Argument("where", _ => _.Type<InputObjectType<TDataPropositionInput>>())
-            .Argument("timestamp", _ => _.Type<DateTimeType>())
             .Argument("locale", _ => _.Type<StringType>())
             .Argument("first", _ => _.Type<NonNegativeIntType>())
             .Argument("after", _ => _.Type<StringType>())
@@ -175,7 +173,6 @@ public sealed class DatabaseType
         descriptor
             .Field(fieldName)
             .Argument("where", _ => _.Type<InputObjectType<TDataPropositionInput>>())
-            .Argument("timestamp", _ => _.Type<DateTimeType>())
             .Argument("locale", _ => _.Type<StringType>())
             .ResolveWith(resolverMethod);
     }

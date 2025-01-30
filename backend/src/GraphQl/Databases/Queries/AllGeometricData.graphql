@@ -1,6 +1,5 @@
 query AllGeometricData(
   $where: GeometricDataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
   $first: Int
   $after: String
@@ -9,7 +8,6 @@ query AllGeometricData(
 ) {
   allGeometricData(
     where: $where
-    timestamp: $timestamp
     locale: $locale
     first: $first
     after: $after

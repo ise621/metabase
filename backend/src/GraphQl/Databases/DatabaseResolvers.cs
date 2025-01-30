@@ -249,7 +249,6 @@ public sealed class DatabaseResolvers(
     public async Task<IData?> GetDataAsync(
         [Parent] Database database,
         Guid id,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -265,7 +264,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             id,
-                            timestamp,
                             locale
                         },
                         nameof(Data)
@@ -280,7 +278,6 @@ public sealed class DatabaseResolvers(
     public async Task<OpticalData?> GetOpticalDataAsync(
         [Parent] Database database,
         Guid id,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -296,7 +293,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             id,
-                            timestamp,
                             locale
                         },
                         nameof(OpticalData)
@@ -311,7 +307,6 @@ public sealed class DatabaseResolvers(
     public async Task<HygrothermalData?> GetHygrothermalDataAsync(
         [Parent] Database database,
         Guid id,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -327,7 +322,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             id,
-                            timestamp,
                             locale
                         },
                         nameof(HygrothermalData)
@@ -342,7 +336,6 @@ public sealed class DatabaseResolvers(
     public async Task<CalorimetricData?> GetCalorimetricDataAsync(
         [Parent] Database database,
         Guid id,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -358,7 +351,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             id,
-                            timestamp,
                             locale
                         },
                         nameof(CalorimetricData)
@@ -373,7 +365,6 @@ public sealed class DatabaseResolvers(
     public async Task<PhotovoltaicData?> GetPhotovoltaicDataAsync(
         [Parent] Database database,
         Guid id,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -389,7 +380,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             id,
-                            timestamp,
                             locale
                         },
                         nameof(PhotovoltaicData)
@@ -404,7 +394,6 @@ public sealed class DatabaseResolvers(
     public async Task<GeometricData?> GetGeometricDataAsync(
         [Parent] Database database,
         Guid id,
-        DateTime? timestamp,
         string? locale,
         [Service] IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -420,7 +409,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             id,
-                            timestamp,
                             locale
                         },
                         nameof(GeometricData)
@@ -435,7 +423,6 @@ public sealed class DatabaseResolvers(
     public async Task<DataConnection?> GetAllDataAsync(
         [Parent] Database database,
         DataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         uint? first,
         string? after,
@@ -477,7 +464,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where = RewriteDataPropositionInput(where, database),
-                            timestamp,
                             locale,
                             first,
                             after,
@@ -506,7 +492,6 @@ public sealed class DatabaseResolvers(
     public async Task<OpticalDataConnection?> GetAllOpticalDataAsync(
         [Parent] Database database,
         OpticalDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         uint? first,
         string? after,
@@ -550,7 +535,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale,
                             first,
                             after,
@@ -579,7 +563,6 @@ public sealed class DatabaseResolvers(
     public async Task<HygrothermalDataConnection?> GetAllHygrothermalDataAsync(
         [Parent] Database database,
         HygrothermalDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         uint? first,
         string? after,
@@ -599,7 +582,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale,
                             first,
                             after,
@@ -618,7 +600,6 @@ public sealed class DatabaseResolvers(
     public async Task<CalorimetricDataConnection?> GetAllCalorimetricDataAsync(
         [Parent] Database database,
         CalorimetricDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         uint? first,
         string? after,
@@ -638,7 +619,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale,
                             first,
                             after,
@@ -657,7 +637,6 @@ public sealed class DatabaseResolvers(
     public async Task<PhotovoltaicDataConnection?> GetAllPhotovoltaicDataAsync(
         [Parent] Database database,
         PhotovoltaicDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         uint? first,
         string? after,
@@ -677,7 +656,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale,
                             first,
                             after,
@@ -706,7 +684,6 @@ public sealed class DatabaseResolvers(
     public async Task<GeometricDataConnection?> GetAllGeometricDataAsync(
         [Parent] Database database,
         GeometricDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         uint? first,
         string? after,
@@ -750,7 +727,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale,
                             first,
                             after,
@@ -769,7 +745,6 @@ public sealed class DatabaseResolvers(
     public async Task<bool?> GetHasDataAsync(
         [Parent] Database database,
         DataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -785,7 +760,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where = RewriteDataPropositionInput(where, database),
-                            timestamp,
                             locale
                         },
                         "HasData"
@@ -800,7 +774,6 @@ public sealed class DatabaseResolvers(
     public async Task<bool?> GetHasOpticalDataAsync(
         [Parent] Database database,
         OpticalDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -816,7 +789,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where = RewriteOpticalDataPropositionInput(where, database),
-                            timestamp,
                             locale
                         },
                         "HasOpticalData"
@@ -831,7 +803,6 @@ public sealed class DatabaseResolvers(
     public async Task<bool?> GetHasCalorimetricDataAsync(
         [Parent] Database database,
         CalorimetricDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -847,7 +818,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale
                         },
                         "HasCalorimetricData"
@@ -862,7 +832,6 @@ public sealed class DatabaseResolvers(
     public async Task<bool?> GetHasHygrothermalDataAsync(
         [Parent] Database database,
         HygrothermalDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -878,7 +847,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale
                         },
                         "HasHygrothermalData"
@@ -893,7 +861,6 @@ public sealed class DatabaseResolvers(
     public async Task<bool?> GetHasPhotovoltaicDataAsync(
         [Parent] Database database,
         PhotovoltaicDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -909,7 +876,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale
                         },
                         "HasPhotovoltaicData"
@@ -924,7 +890,6 @@ public sealed class DatabaseResolvers(
     public async Task<bool?> GetHasGeometricDataAsync(
         [Parent] Database database,
         GeometricDataPropositionInput? where,
-        DateTime? timestamp,
         string? locale,
         [Service] IHttpContextAccessor httpContextAccessor,
         IResolverContext resolverContext,
@@ -940,7 +905,6 @@ public sealed class DatabaseResolvers(
                         new
                         {
                             where,
-                            timestamp,
                             locale
                         },
                         "HasGeometricData"

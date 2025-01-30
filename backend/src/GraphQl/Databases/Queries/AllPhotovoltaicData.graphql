@@ -1,6 +1,5 @@
 query AllPhotovoltaicData(
   $where: PhotovoltaicDataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
   $first: Int
   $after: String
@@ -9,7 +8,6 @@ query AllPhotovoltaicData(
 ) {
   allPhotovoltaicData(
     where: $where
-    timestamp: $timestamp
     locale: $locale
     first: $first
     after: $after
@@ -26,6 +24,5 @@ query AllPhotovoltaicData(
     pageInfo {
       ...PageInfoFields
     }
-    # TODO timestamp
   }
 }

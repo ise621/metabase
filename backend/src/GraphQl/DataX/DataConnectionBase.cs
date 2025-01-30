@@ -9,7 +9,6 @@ namespace Metabase.GraphQl.DataX;
 public abstract class DataConnectionBase<TDataEdge>(
     IReadOnlyList<TDataEdge> edges,
     uint totalCount,
-    DateTime timestamp,
     ConnectionPageInfo pageInfo
     )
 {
@@ -18,6 +17,4 @@ public abstract class DataConnectionBase<TDataEdge>(
     [GraphQLType<NonNegativeIntType>] public uint TotalCount { get; } = totalCount;
 
     public ConnectionPageInfo PageInfo { get; } = pageInfo;
-
-    public DateTime Timestamp { get; } = timestamp;
 }

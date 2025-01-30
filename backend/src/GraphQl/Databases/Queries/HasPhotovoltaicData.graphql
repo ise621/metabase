@@ -1,7 +1,6 @@
 query HasPhotovoltaicData(
   $where: PhotovoltaicDataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
 ) {
-  hasPhotovoltaicData(where: $where, timestamp: $timestamp, locale: $locale)
+  hasPhotovoltaicData(where: $where, locale: $locale)
 }

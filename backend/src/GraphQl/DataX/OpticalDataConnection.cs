@@ -8,13 +8,11 @@ namespace Metabase.GraphQl.DataX;
 public sealed class OpticalDataConnection(
     IReadOnlyList<OpticalDataEdge> edges,
     uint totalCount,
-    DateTime timestamp,
     ConnectionPageInfo pageInfo
     )
         : DataConnectionBase<OpticalDataEdge>(
         edges,
         totalCount,
-        timestamp,
         pageInfo
         )
 {
@@ -27,7 +25,6 @@ public sealed class OpticalDataConnection(
         return new OpticalDataConnection(
             allOpticalData.Edges.Select(OpticalDataEdge.From).ToList().AsReadOnly(),
             Convert.ToUInt32(allOpticalData.Edges.Count),
-            DateTime.UtcNow,
             allOpticalData.PageInfo
         );
     }

@@ -1,7 +1,6 @@
 query HasHygrothermalData(
   $where: HygrothermalDataPropositionInput
-  $timestamp: DateTime
   $locale: Locale
 ) {
-  hasHygrothermalData(where: $where, timestamp: $timestamp, locale: $locale)
+  hasHygrothermalData(where: $where, locale: $locale)
 }
