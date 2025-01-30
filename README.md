@@ -329,25 +329,28 @@ gosu postgres pg_resetwal /var/lib/postgresql/data
 
 Note that both solutions may cause data to be lost.
 
-#### Update a SQL field
+#### Update a SQL field manually
 
-If one field in the SQL database needs to be updated and there is no GraphQL mutation available, then the following example illustrates how a SQL field can be updated first in the `staging` environment and later in `production`:
+If one field in the SQL database needs to be updated and there is no GraphQL
+mutation available, then you may update it in PostgreSQL directly as
+illustrated in the following example. Test it in the `staging` environment
+under /app/staging before doing it in `production` under /app/production.
 
-```
-ssh -CvX -A cloud@IpAdressOfCloudServer
-cd staging/
-make --file=Makefile.production
-make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/$(date +"%Y-%m-%d_%H_%M_%S") backup
-make --file=Makefile.production psql
-\dt metabase.*
-select * from metabase.method;
-# Update a single field
-update metabase.method set "Description" ='Harmonized European Standard 410';
-# Create a new method
-insert into metabase.method("Id" ,"Name", "Description", "Categories","ManagerId") values ('f07499ab-f119-471f-8aad-d3c016676bce', 'EN 410','European Standard 410','{calculation}','5320d6fb-b96d-4aeb-a24c-eb7036d3437a');
-# Delete a faulty method
-delete from metabase.method where "Id"='f07499ab-f119-471f-8aad-d3c016676bce';
-```
+1. Drop into a shell on the server as user `cloud` by running
+   `ssh -CvX -A cloud@IpAdressOfCloudServer`.
+1. Navigate to the production environment by running `cd /app/production`.
+1. Make a database backup by running `DATE=$(date +"%Y-%m-%d_%H_%M_%S")` and
+   `make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/${DATE} backup`
+1. Navigate to the staging environment by running `cd /app/staging`.
+1. Load the backup into the staging database by running
+   `make --file=Makefile.production BACKUP_DIRECTORY=/app/data/backups/${DATE} restore`.
+1. Drop into `psql` by running `make --file=Makefile.production psql`.
+1. List all tables in the schema `metabase` by running `\dt metabase.*`.
+1. List all methods by running `select * from metabase.method;` and remember
+   for example one identifier of a method that you want to update.
+1. Update a single field by running `update metabase.method set "Description" = 'Harmonized European Standard 410' where "Id" = 'f07499ab-f119-471f-8aad-d3c016676bce';`.
+1. Create a new method by running `insert into metabase.method("Id" ,"Name", "Description", "Categories","ManagerId") values ('f07499ab-f119-471f-8aad-d3c016676bce', 'EN 410','European Standard 410','{calculation}','5320d6fb-b96d-4aeb-a24c-eb7036d3437a');`
+1. Delete a faulty method by running `delete from metabase.method where "Id" = 'f07499ab-f119-471f-8aad-d3c016676bce';`.
 
 ## Original Idea
 
