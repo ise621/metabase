@@ -1,6 +1,5 @@
 query AllGeometricData(
-  $where: WhereInput!
-  # $timestamp: DateTime
+  $where: GeometricDataPropositionInput!
   $locale: Locale
   $first: Int
   $after: String
@@ -14,7 +13,7 @@ query AllGeometricData(
     after: $after
     last: $last
     before: $before
-  ) { # timestamp: $timestamp
+  ) {
     edges {
       cursor
       node {
@@ -113,6 +112,5 @@ query AllGeometricData(
       startCursor
       endCursor
     }
-    # timestamp
   }
 }

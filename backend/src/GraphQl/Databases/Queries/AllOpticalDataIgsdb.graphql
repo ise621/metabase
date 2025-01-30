@@ -1,6 +1,5 @@
 query AllOpticalData(
-  $where: WhereInput!
-  # $timestamp: DateTime
+  $where: OpticalDataPropositionInput!
   $locale: Locale
   $first: Int
   $after: String
@@ -14,7 +13,7 @@ query AllOpticalData(
     after: $after
     last: $last
     before: $before
-  ) { # timestamp: $timestamp
+  ) {
     edges {
       cursor
       node {
@@ -117,6 +116,5 @@ query AllOpticalData(
       startCursor
       endCursor
     }
-    # timestamp
   }
 }

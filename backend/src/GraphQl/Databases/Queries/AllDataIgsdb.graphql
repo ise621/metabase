@@ -1,5 +1,5 @@
 query AllData(
-  $where: WhereInput!
+  $where: DataPropositionInput!
   $locale: Locale
   $first: Int
   $after: String
