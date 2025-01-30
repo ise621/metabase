@@ -68,7 +68,21 @@ public sealed class UserMutations
             );
         }
 
-        var confirmationToken = DecodeCode(input.ConfirmationCode);
+        string? confirmationToken;
+        try
+        {
+            confirmationToken = DecodeCode(input.ConfirmationCode);
+        }
+        catch (FormatException exception)
+        {
+            return new ConfirmUserEmailPayload(
+                new ConfirmUserEmailError(
+                    ConfirmUserEmailErrorCode.INVALID_CONFIRMATION_CODE,
+                    exception.Message,
+                    [nameof(input), nameof(input.ConfirmationCode).FirstCharToLower()]
+                )
+            );
+        }
         var identityResult = await userManager.ConfirmEmailAsync(user, confirmationToken).ConfigureAwait(false);
         if (!identityResult.Succeeded)
         {
@@ -126,11 +140,26 @@ public sealed class UserMutations
             );
         }
 
+        string? confirmationToken;
+        try
+        {
+            confirmationToken = DecodeCode(input.ConfirmationCode);
+        }
+        catch (FormatException exception)
+        {
+            return new ConfirmUserEmailChangePayload(
+                new ConfirmUserEmailChangeError(
+                    ConfirmUserEmailChangeErrorCode.INVALID_CONFIRMATION_CODE,
+                    exception.Message,
+                    [nameof(input), nameof(input.ConfirmationCode).FirstCharToLower()]
+                )
+            );
+        }
         var changeEmailIdentityResult =
             await userManager.ChangeEmailAsync(
                 user,
                 input.NewEmail,
-                DecodeCode(input.ConfirmationCode)
+                confirmationToken
             ).ConfigureAwait(false);
         // For us email and user name are one and the same, so when we
         // update the email we need to update the user name.

@@ -1,1 +1,1 @@
-﻿{"data":{"confirmUserEmailChange":{"user":null,"errors":[{"code":"INVALID_CONFIRMATION_CODE","message":"Invalid token.","path":["input","confirmationCode"]}]}}}
+﻿{"data":{"confirmUserEmailChange":{"user":null,"errors":[{"code":"INVALID_CONFIRMATION_CODE","message":"The input is not a valid Base-64 string as it contains a non-base 64 character, more than two padding characters, or an illegal character among the padding characters.","path":["input","confirmationCode"]}]}}}

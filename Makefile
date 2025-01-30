@@ -148,9 +148,10 @@ traceb : ## Trace backend container with identifier `${CONTAINER_ID}`, for examp
 				"
 .PHONY : traceb
 
-shelln : CONTAINER = nginx
-shelln : COMMAND = bash
-shelln : exec ## Enter shell in an existing `nginx` container (after starting all containers if necessary)
+shelln : up ## Enter shell in an existing `nginx` container (after starting all containers if necessary)
+	${docker_compose} exec \
+		nginx \
+		bash
 .PHONY : shelln
 
 psql : ## Enter PostgreSQL interactive terminal in the running `database` container

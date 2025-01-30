@@ -83,24 +83,6 @@ public sealed class ApplicationDbContext
         }
     }
 
-    private static void CreateEnumerations(ModelBuilder builder, string schemaName)
-    {
-        // https://www.npgsql.org/efcore/mapping/enum.html?tabs=with-datasource#mapping-your-enum
-        // Create enumerations in the same schema used by
-        // `NpgsqlDataSourceBuilder.MapEnum` in `Startup`. The format of how to
-        // specify the type name here and in `Startup` differ slightly. This
-        // was complained about in
-        // https://github.com/npgsql/efcore.pg/issues/2963#issuecomment-1818866360
-        builder.HasPostgresEnum<ComponentCategory>(schemaName, ComponentCategoryTypeName);
-        builder.HasPostgresEnum<DatabaseVerificationState>(schemaName, DatabaseVerificationStateTypeName);
-        builder.HasPostgresEnum<InstitutionRepresentativeRole>(schemaName, InstitutionRepresentativeRoleTypeName);
-        builder.HasPostgresEnum<InstitutionState>(schemaName, InstitutionStateTypeName);
-        builder.HasPostgresEnum<InstitutionOperatingState>(schemaName, InstitutionOperatingStateTypeName);
-        builder.HasPostgresEnum<MethodCategory>(schemaName, MethodCategoryTypeName);
-        builder.HasPostgresEnum<PrimeSurface>(schemaName, PrimeSurfaceTypeName);
-        builder.HasPostgresEnum<Standardizer>(schemaName, StandardizerTypeName);
-    }
-
     private static
         EntityTypeBuilder<TEntity>
         ConfigureEntity<TEntity>(
@@ -358,7 +340,6 @@ public sealed class ApplicationDbContext
         builder.HasDefaultSchema(_schemaName);
         builder.HasPostgresExtension(
             "pgcrypto"); // https://www.npgsql.org/efcore/modeling/generated-properties.html#guiduuid-generation
-        CreateEnumerations(builder, _schemaName);
         ConfigureIdentityEntities(builder);
         ConfigureEntity(
                 builder.Entity<Component>()

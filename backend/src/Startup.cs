@@ -156,19 +156,22 @@ public sealed class Startup(
         AppSettings appSettings
         )
     {
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(appSettings.Database.ConnectionString);
-        // https://www.npgsql.org/efcore/mapping/enum.html#mapping-your-enum
-        // Keep in sync with `ApplicationDbContext.CreateEnumerations`.
-        dataSourceBuilder.MapEnum<ComponentCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.ComponentCategoryTypeName}");
-        dataSourceBuilder.MapEnum<DatabaseVerificationState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.DatabaseVerificationStateTypeName}");
-        dataSourceBuilder.MapEnum<InstitutionRepresentativeRole>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionRepresentativeRoleTypeName}");
-        dataSourceBuilder.MapEnum<InstitutionState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionStateTypeName}");
-        dataSourceBuilder.MapEnum<InstitutionOperatingState>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.InstitutionOperatingStateTypeName}");
-        dataSourceBuilder.MapEnum<MethodCategory>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.MethodCategoryTypeName}");
-        dataSourceBuilder.MapEnum<PrimeSurface>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.PrimeSurfaceTypeName}");
-        dataSourceBuilder.MapEnum<Standardizer>($"{appSettings.Database.SchemaName}.{ApplicationDbContext.StandardizerTypeName}");
+        // https://www.npgsql.org/efcore/mapping/enum.html
         options
-            .UseNpgsql(dataSourceBuilder.Build() /*, optionsBuilder => optionsBuilder.UseNodaTime() */)
+            .UseNpgsql(
+                appSettings.Database.ConnectionString,
+                _ => _
+                    .SetPostgresVersion(13, 13)
+                    .MapEnum<ComponentCategory>(ApplicationDbContext.ComponentCategoryTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<DatabaseVerificationState>(ApplicationDbContext.DatabaseVerificationStateTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<InstitutionRepresentativeRole>(ApplicationDbContext.InstitutionRepresentativeRoleTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<InstitutionState>(ApplicationDbContext.InstitutionStateTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<InstitutionOperatingState>(ApplicationDbContext.InstitutionOperatingStateTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<MethodCategory>(ApplicationDbContext.MethodCategoryTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<PrimeSurface>(ApplicationDbContext.PrimeSurfaceTypeName, appSettings.Database.SchemaName)
+                    .MapEnum<Standardizer>(ApplicationDbContext.StandardizerTypeName, appSettings.Database.SchemaName)
+            // .UseNodaTime()
+            )
             .UseSchemaName(appSettings.Database.SchemaName)
             .UseOpenIddict<OpenIdApplication, OpenIdAuthorization, OpenIdScope, OpenIdToken, Guid>();
         if (!environment.IsProduction())
@@ -188,6 +191,8 @@ public sealed class Startup(
 
     private void ConfigureDatabaseServices(IServiceCollection services)
     {
+        // Configure the database-context options only once as suggested in
+        // https://github.com/npgsql/efcore.pg/issues/3375#issuecomment-2509746639
         services.AddPooledDbContextFactory<ApplicationDbContext>(options =>
             ConfigureDatabaseContext(options, _environment, _appSettings)
         );
@@ -195,7 +200,7 @@ public sealed class Startup(
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
         services.AddDbContext<ApplicationDbContext>(options =>
-            ConfigureDatabaseContext(options, _environment, _appSettings),
+            {},
             contextLifetime: ServiceLifetime.Transient,
             optionsLifetime: ServiceLifetime.Singleton
         );

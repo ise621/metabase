@@ -1,6 +1,8 @@
+# Keep setup in sync with the one in ./docker-compose.yml
 services:
   database: # https://hub.docker.com/_/postgres
     restart: always
+    # Keep version in sync with the one in ./backend/src/Startup.cs set by calling `SetPostgresVersion`
     image: postgres:13.13-bookworm
     # For possible command-line arguments see
     # https://www.postgresql.org/docs/current/app-postgres.html
