@@ -143,6 +143,28 @@ they try to restart `dotnet watch` themselves, instead of waiting for the
 polling file watcher of `dotnet watch` to restart
 `/app/src/bin/Debug/net9.0/Metabase run` and attach to that process.
 
+### Troubleshooting
+
+After migrating the PostgreSQL database or changing the `metabase` schema
+manually or upgrading Npgsql, the service `backend` may throw exceptions
+regarding the object-relational mapping (Npgsql or EF Core). In that case it
+may be necessary to restart the service `backend`, for example, by running
+`make down up` and it may even be necessary recreate the database from scratch
+by running `make down remove-data up`. Note that the latter will remove all
+data from PostgreSQL, recreate the database and its schema, and seed it
+freshly.
+
+After changing the domain model in `./backend/src/data`, you probably need to
+migrate the database by dropping into `make shellb`, adding a migration `make
+NAME=${MIGRATION_NAME} add-migration`, generating a migration script `make
+FROM=${PREVIOUS_MIGRATION} TO=${NEW_MIGRATION} generate-migration-script`, and
+executing it `make SQL=${SCRIPT_PATH} sql`.
+
+When your hard-disk starts to grow full, it may be the case that Docker does
+not clean-up anonymous volumes properly. You can do so manually by running
+`docker system prune` potentially with the argument `--all`. Note that this may
+result in loss of data.
+
 ## Deployment
 
 For information on using Docker in production see
