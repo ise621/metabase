@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using HotChocolate;
+using Metabase.Enumerations;
 using Microsoft.AspNetCore.Identity;
 using Guid = System.Guid;
 
@@ -34,6 +35,11 @@ public sealed class User
         WebsiteLocator = websiteLocator;
     }
 
+    [GraphQLDescription("Full name")]
+    [ProtectedPersonalData]
+    [PersonalData]
+    public string Name { get; private set; }
+
     [MinLength(1)]
     [ProtectedPersonalData]
     [PersonalData]
@@ -57,10 +63,7 @@ public sealed class User
 
     public ICollection<Institution> RepresentedInstitutions { get; } = [];
 
-    public uint Version { get; private set; } // https://www.npgsql.org/efcore/modeling/concurrency.html
+    public DataSigningPermission DataSigningPermission { get; set; } = DataSigningPermission.NEVER;
 
-    [GraphQLDescription("Full name")]
-    [ProtectedPersonalData]
-    [PersonalData]
-    public string Name { get; private set; }
+    public uint Version { get; private set; } // https://www.npgsql.org/efcore/modeling/concurrency.html
 }

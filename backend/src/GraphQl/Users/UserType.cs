@@ -262,6 +262,10 @@ public sealed class UserType
             .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserAddApplications(default!, default!, default!, default!))
             .UseUserManager();
         descriptor
+            .Field("canCurrentUserAddApprovals")
+            .ResolveWith<UserResolvers>(x => UserResolvers.GetCanCurrentUserAddApprovals(default!, default!, default!, default!))
+            .UseUserManager();
+        descriptor
             .Field(t => t.DevelopedMethods)
             .Argument(nameof(UserMethodDeveloper.Pending).FirstCharToLower(),
                 _ => _.Type<NonNullType<BooleanType>>().DefaultValue(false))
@@ -334,6 +338,15 @@ public sealed class UserType
             CancellationToken cancellationToken)
         {
             return OpenIdConnectAuthorization.IsAuthorizedToManageApplications(claimsPrincipal, userManager, context, cancellationToken);
+        }
+
+        public static Task<bool> GetCanCurrentUserAddApprovals(
+            ClaimsPrincipal claimsPrincipal,
+            UserManager<User> userManager,
+            ApplicationDbContext context,
+            CancellationToken cancellationToken)
+        {
+            return ApprovalAuthorization.IsAuthorizedToAddApprovals(claimsPrincipal, userManager, context, cancellationToken);
         }
 
         public static Task<bool> GetCanCurrentUserDeleteUserAsync(
