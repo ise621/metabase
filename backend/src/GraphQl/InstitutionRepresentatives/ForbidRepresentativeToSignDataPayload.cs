@@ -1,15 +1,15 @@
-﻿using Metabase.Data;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Metabase.Data;
 
-namespace Metabase.GraphQl.Users;
+namespace Metabase.GraphQl.InstitutionRepresentatives;
 
 public class ForbidRepresentativeToSignDataPayload
 {
     public ForbidRepresentativeToSignDataPayload(
-        User user
+        InstitutionRepresentative institutionRepresentative
     )
     {
-        User = user;
+        InstitutionRepresentative = institutionRepresentative;
     }
 
     public ForbidRepresentativeToSignDataPayload(
@@ -20,11 +20,11 @@ public class ForbidRepresentativeToSignDataPayload
     }
 
     public ForbidRepresentativeToSignDataPayload(
-        User user,
+        InstitutionRepresentative institutionRepresentative,
         IReadOnlyCollection<ForbidRepresentativeToSignDataError> errors
     )
     {
-        User = user;
+        InstitutionRepresentative = institutionRepresentative;
         Errors = errors;
     }
 
@@ -35,6 +35,6 @@ public class ForbidRepresentativeToSignDataPayload
     {
     }
 
-    public User? User { get; }
+    public InstitutionRepresentative? InstitutionRepresentative { get; }
     public IReadOnlyCollection<ForbidRepresentativeToSignDataError>? Errors { get; }
 }

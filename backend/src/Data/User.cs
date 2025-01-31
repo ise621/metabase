@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using HotChocolate;
-using Metabase.Enumerations;
 using Microsoft.AspNetCore.Identity;
 using Guid = System.Guid;
 
@@ -62,8 +61,6 @@ public sealed class User
         [];
 
     public ICollection<Institution> RepresentedInstitutions { get; } = [];
-
-    public DataSigningPermission DataSigningPermission { get; set; } = DataSigningPermission.NEVER;
 
     public uint Version { get; private set; } // https://www.npgsql.org/efcore/modeling/concurrency.html
 }

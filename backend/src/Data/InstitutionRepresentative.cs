@@ -14,5 +14,7 @@ public sealed class InstitutionRepresentative
 
     [Required] public InstitutionRepresentativeRole Role { get; set; }
 
+    public DataSigningPermission DataSigningPermission { get; set; } = DataSigningPermission.NEVER;
+
     public bool Pending { get; set; } = true;
 }

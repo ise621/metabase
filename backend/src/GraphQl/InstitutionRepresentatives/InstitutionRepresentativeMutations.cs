@@ -12,6 +12,8 @@ using Metabase.Data;
 using Metabase.Enumerations;
 using Metabase.Extensions;
 using Metabase.GraphQl.Users;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -412,6 +414,187 @@ public sealed class InstitutionRepresentativeMutations
         institutionRepresentative.Pending = false;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new ConfirmInstitutionRepresentativePayload(institutionRepresentative);
+    }
+
+    [Authorize(Policy = AuthConfiguration.ManageUserPolicy)]
+    [UseUserManager]
+    public async Task<AllowRepresentativeToSignDataPayload> AllowRepresentativeToSignData(
+        AllowRepresentativeToSignDataInput input,
+        ClaimsPrincipal claimsPrincipal,
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor,
+        ApplicationDbContext context,
+        CancellationToken cancellationToken)
+    {
+        if (!await UserAuthorization.IsAuthorizedToManageSigningPermission(input.InstitutionId, claimsPrincipal, userManager, context, cancellationToken)
+                .ConfigureAwait(false))
+        {
+            return new AllowRepresentativeToSignDataPayload(
+                new AllowRepresentativeToSignDataError(
+                    AllowRepresentativeToSignDataErrorCode.UNAUTHORIZED,
+                    $"You are not authorized to grant signing permission.",
+                    []
+                )
+            );
+        }
+
+        var errors = new List<AllowRepresentativeToSignDataError>();
+        if (!await context.Institutions.AsQueryable()
+                .Where(i => i.Id == input.InstitutionId)
+                .AnyAsync(cancellationToken)
+                .ConfigureAwait(false)
+           )
+        {
+            errors.Add(
+                new AllowRepresentativeToSignDataError(
+                    AllowRepresentativeToSignDataErrorCode.UNKNOWN_INSTITUTION,
+                    "Unknown institution.",
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
+                )
+            );
+        }
+
+        if (!await context.Users.AsQueryable()
+                .Where(u => u.Id == input.UserId)
+                .AnyAsync(cancellationToken)
+                .ConfigureAwait(false)
+           )
+        {
+            errors.Add(
+                new AllowRepresentativeToSignDataError(
+                    AllowRepresentativeToSignDataErrorCode.UNKNOWN_USER,
+                    "Unknown user.",
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
+                )
+            );
+        }
+
+        if (errors.Count is not 0)
+        {
+            return new AllowRepresentativeToSignDataPayload(errors.AsReadOnly());
+        }
+
+        var institutionRepresentative = await context.InstitutionRepresentatives.AsQueryable()
+            .SingleOrDefaultAsync(
+                x => x.UserId == input.UserId && x.InstitutionId == input.InstitutionId,
+                cancellationToken
+            ).ConfigureAwait(false);
+        if (institutionRepresentative is null)
+        {
+            return new AllowRepresentativeToSignDataPayload(
+                new AllowRepresentativeToSignDataError(
+                    AllowRepresentativeToSignDataErrorCode.UNKNOWN_USER,
+                    "Unknown representative.",
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
+                )
+            );
+        }
+        if (institutionRepresentative.Role == Enumerations.InstitutionRepresentativeRole.OWNER || institutionRepresentative.Role == Enumerations.InstitutionRepresentativeRole.ASSISTANT)
+        {
+            return new AllowRepresentativeToSignDataPayload(
+                new AllowRepresentativeToSignDataError(
+                    AllowRepresentativeToSignDataErrorCode.UNAUTHORIZED,
+                    $"Representative can not be granted signing permission.",
+                    []
+                )
+            );
+        }
+
+        institutionRepresentative.DataSigningPermission = Enumerations.DataSigningPermission.GRANTED;
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return new AllowRepresentativeToSignDataPayload(institutionRepresentative);
+    }
+
+    [Authorize(Policy = AuthConfiguration.ManageUserPolicy)]
+    [UseUserManager]
+    public async Task<ForbidRepresentativeToSignDataPayload> ForbidRepresentativeToSignData(
+        ForbidRepresentativeToSignDataInput input,
+        ClaimsPrincipal claimsPrincipal,
+        UserManager<User> userManager,
+        IAntiforgery antiforgeryService,
+        IHttpContextAccessor httpContextAccessor,
+        ApplicationDbContext context,
+        CancellationToken cancellationToken)
+    {
+        if (!await UserAuthorization.IsAuthorizedToManageSigningPermission(input.InstitutionId, claimsPrincipal, userManager, context, cancellationToken)
+                .ConfigureAwait(false))
+        {
+            return new ForbidRepresentativeToSignDataPayload(
+                new ForbidRepresentativeToSignDataError(
+                    ForbidRepresentativeToSignDataErrorCode.UNAUTHORIZED,
+                    $"You are not authorized to forbid signing permission.",
+                    []
+                )
+            );
+        }
+
+        var errors = new List<ForbidRepresentativeToSignDataError>();
+        if (!await context.Institutions.AsQueryable()
+                .Where(i => i.Id == input.InstitutionId)
+                .AnyAsync(cancellationToken)
+                .ConfigureAwait(false)
+           )
+        {
+            errors.Add(
+                new ForbidRepresentativeToSignDataError(
+                    ForbidRepresentativeToSignDataErrorCode.UNKNOWN_INSTITUTION,
+                    "Unknown institution.",
+                    [nameof(input), nameof(input.InstitutionId).FirstCharToLower()]
+                )
+            );
+        }
+
+        if (!await context.Users.AsQueryable()
+                .Where(u => u.Id == input.UserId)
+                .AnyAsync(cancellationToken)
+                .ConfigureAwait(false)
+           )
+        {
+            errors.Add(
+                new ForbidRepresentativeToSignDataError(
+                    ForbidRepresentativeToSignDataErrorCode.UNKNOWN_USER,
+                    "Unknown user.",
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
+                )
+            );
+        }
+
+        if (errors.Count is not 0)
+        {
+            return new ForbidRepresentativeToSignDataPayload(errors.AsReadOnly());
+        }
+
+        var rinstitutionRepresentativep = await context.InstitutionRepresentatives.AsQueryable()
+            .SingleOrDefaultAsync(
+                x => x.UserId == input.UserId && x.InstitutionId == input.InstitutionId,
+                cancellationToken
+            ).ConfigureAwait(false);
+        if (rinstitutionRepresentativep is null)
+        {
+            return new ForbidRepresentativeToSignDataPayload(
+                new ForbidRepresentativeToSignDataError(
+                    ForbidRepresentativeToSignDataErrorCode.UNKNOWN_USER,
+                    "Unknown representative.",
+                    [nameof(input), nameof(input.UserId).FirstCharToLower()]
+                )
+            );
+        }
+        if (rinstitutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.OWNER
+            || rinstitutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.ASSISTANT)
+        {
+            return new ForbidRepresentativeToSignDataPayload(
+                new ForbidRepresentativeToSignDataError(
+                    ForbidRepresentativeToSignDataErrorCode.UNAUTHORIZED,
+                    $"Representative can not be forbid signing permission.",
+                    []
+                )
+            );
+        }
+
+        rinstitutionRepresentativep.DataSigningPermission = Enumerations.DataSigningPermission.REMOVED;
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return new ForbidRepresentativeToSignDataPayload(rinstitutionRepresentativep);
     }
 
     private static async Task<bool> ExistsOtherInstitutionOwner(
