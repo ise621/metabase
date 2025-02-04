@@ -565,12 +565,12 @@ public sealed class InstitutionRepresentativeMutations
             return new ForbidRepresentativeToSignDataPayload(errors.AsReadOnly());
         }
 
-        var rinstitutionRepresentativep = await context.InstitutionRepresentatives.AsQueryable()
+        var institutionRepresentativep = await context.InstitutionRepresentatives.AsQueryable()
             .SingleOrDefaultAsync(
                 x => x.UserId == input.UserId && x.InstitutionId == input.InstitutionId,
                 cancellationToken
             ).ConfigureAwait(false);
-        if (rinstitutionRepresentativep is null)
+        if (institutionRepresentativep is null)
         {
             return new ForbidRepresentativeToSignDataPayload(
                 new ForbidRepresentativeToSignDataError(
@@ -580,8 +580,8 @@ public sealed class InstitutionRepresentativeMutations
                 )
             );
         }
-        if (rinstitutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.OWNER
-            || rinstitutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.ASSISTANT)
+        if (institutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.OWNER
+            || institutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.ASSISTANT)
         {
             return new ForbidRepresentativeToSignDataPayload(
                 new ForbidRepresentativeToSignDataError(
@@ -592,9 +592,9 @@ public sealed class InstitutionRepresentativeMutations
             );
         }
 
-        rinstitutionRepresentativep.DataSigningPermission = Enumerations.DataSigningPermission.REMOVED;
+        institutionRepresentativep.DataSigningPermission = Enumerations.DataSigningPermission.REMOVED;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        return new ForbidRepresentativeToSignDataPayload(rinstitutionRepresentativep);
+        return new ForbidRepresentativeToSignDataPayload(institutionRepresentativep);
     }
 
     private static async Task<bool> ExistsOtherInstitutionOwner(
