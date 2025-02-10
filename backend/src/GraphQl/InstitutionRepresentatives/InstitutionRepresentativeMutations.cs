@@ -580,8 +580,8 @@ public sealed class InstitutionRepresentativeMutations
                 )
             );
         }
-        if (institutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.OWNER
-            || institutionRepresentativep.Role == Enumerations.InstitutionRepresentativeRole.ASSISTANT)
+        if (institutionRepresentativep.Role == InstitutionRepresentativeRole.OWNER
+            || institutionRepresentativep.Role == InstitutionRepresentativeRole.ASSISTANT)
         {
             return new ForbidRepresentativeToSignDataPayload(
                 new ForbidRepresentativeToSignDataError(
@@ -592,7 +592,7 @@ public sealed class InstitutionRepresentativeMutations
             );
         }
 
-        institutionRepresentativep.DataSigningPermission = Enumerations.DataSigningPermission.REMOVED;
+        institutionRepresentativep.DataSigningPermission = DataSigningPermission.REMOVED;
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return new ForbidRepresentativeToSignDataPayload(institutionRepresentativep);
     }
