@@ -18,7 +18,9 @@ query AllData(
       cursor
       node {
         __typename
+        id
         uuid
+        databaseId
         timestamp
         componentId
         name

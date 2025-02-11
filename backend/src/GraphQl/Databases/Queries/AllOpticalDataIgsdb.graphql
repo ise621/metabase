@@ -19,6 +19,7 @@ query AllOpticalData(
       node {
         id
         uuid
+        databaseId
         timestamp
         componentId
         name

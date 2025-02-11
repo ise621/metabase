@@ -1,5 +1,6 @@
 fragment DataFields on Data {
   uuid
+  databaseId
   timestamp
   componentId
   name
