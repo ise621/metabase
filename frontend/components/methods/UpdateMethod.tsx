@@ -46,7 +46,7 @@ type FormValues = {
     | [dayjs.Dayjs | null | undefined, dayjs.Dayjs | null | undefined]
     | null
     | undefined;
-  reference: ReferenceInput | null | undefined;
+  newReference: ReferenceInput | null | undefined;
   newCalculationLocator: Scalars["Url"] | null | undefined;
   newCategories: MethodCategory[] | null | undefined;
 };
@@ -101,7 +101,7 @@ export default function UpdateMethod({
     newDescription,
     newValidity,
     newAvailability,
-    reference: newReference,
+    newReference,
     newCalculationLocator,
     newCategories,
   }: FormValues) => {
@@ -243,7 +243,7 @@ export default function UpdateMethod({
             />
           </Form.Item>
           <Divider />
-          <ReferenceForm form={form} initialValue={reference} />
+          <ReferenceForm form={form} namespace={["newReference"]} initialValue={reference} />
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit" loading={updating}>
               Update

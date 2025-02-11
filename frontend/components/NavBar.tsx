@@ -1,13 +1,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Menu, Button, Row, Flex } from "antd";
+import { Menu, Button } from "antd";
 import { useCurrentUserQuery } from "../queries/currentUser.graphql";
 import paths from "../paths";
 import { getXsrfToken } from "../lib/apollo";
-import { UserRole } from "../__generated__/__types__";
 import { UserOutlined } from "@ant-design/icons";
-import { Col } from "antd/lib";
 
 type NavItemProps =
   | {

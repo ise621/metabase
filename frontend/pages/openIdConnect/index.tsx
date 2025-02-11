@@ -28,7 +28,7 @@ function Page() {
 
   return (
     <Layout>
-      <ApplicationTable loading={loading} applications={data?.applications as Array<Application> || []}></ApplicationTable>
+      <ApplicationTable editable={false} loading={loading} applications={data?.applications as Array<Application> || []}></ApplicationTable>
     </Layout>
   );
 }

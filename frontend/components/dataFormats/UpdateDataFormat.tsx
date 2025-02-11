@@ -29,7 +29,7 @@ type FormValues = {
   newDescription: string;
   newMediaType: string;
   newSchemaLocator: Scalars["Url"] | null | undefined;
-  reference: ReferenceInput | null | undefined;
+  newReference: ReferenceInput | null | undefined;
 };
 
 export type UpdateDataFormatProps = {
@@ -81,7 +81,7 @@ export default function UpdateDataFormat({
     newDescription,
     newMediaType,
     newSchemaLocator,
-    reference: newReference,
+    newReference,
   }: FormValues) => {
     const update = async () => {
       try {
@@ -213,7 +213,7 @@ export default function UpdateDataFormat({
             <Input />
           </Form.Item>
           <Divider />
-          <ReferenceForm form={form} namespace={["reference"]} initialValue={reference} />
+          <ReferenceForm form={form} namespace={["newReference"]} initialValue={reference} />
           <Form.Item {...tailLayout}>
             <Button type="primary" htmlType="submit" loading={updating}>
               Update
