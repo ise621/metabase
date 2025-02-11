@@ -179,6 +179,7 @@ public sealed class DatabaseResolvers(
     [
         "DataFields.graphql",
         "GeometricDataFields.graphql",
+        "PageInfoFields.graphql",
         "AllGeometricData.graphql"
     ];
 
