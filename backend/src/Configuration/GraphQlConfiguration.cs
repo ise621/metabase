@@ -240,6 +240,11 @@ public partial class CustomFilterConvention : FilterConvention
     protected override void Configure(IFilterConventionDescriptor descriptor)
     {
         descriptor.AddDefaults();
+        // Use argument name `where`
+        descriptor.ArgumentName("where");
+        // Allow conjunction and disjunction
+        descriptor.AllowAnd();
+        descriptor.AllowOr();
         // Bind custom types
         descriptor.BindRuntimeType<Component, ComponentFilterType>();
         descriptor.BindRuntimeType<ComponentAssembly, ComponentAssemblyFilterType>();
@@ -256,6 +261,102 @@ public partial class CustomFilterConvention : FilterConvention
     }
 }
 
+public static class FilterConventionDescriptorExtensions
+{
+    // Inspired by FilterConventionDescriptorExtensions#AddDefaults
+    // https://github.com/ChilliCream/hotchocolate/blob/ee5813646fdfea81035c681989793514f33b5d94/src/HotChocolate/Data/src/Data/Filters/Convention/Extensions/FilterConventionDescriptorExtensions.cs#L16
+    public static IFilterConventionDescriptor AddDefaults(
+        this IFilterConventionDescriptor descriptor)
+    {
+        return descriptor.AddDefaultOperations().BindDefaultTypes().UseQueryableProvider();
+    }
+
+    // Inspired by FilterConventionDescriptorExtensions#AddDefaultOperations
+    // https://github.com/ChilliCream/hotchocolate/blob/ee5813646fdfea81035c681989793514f33b5d94/src/HotChocolate/Data/src/Data/Filters/Convention/Extensions/FilterConventionDescriptorExtensions.cs#L28
+    public static IFilterConventionDescriptor AddDefaultOperations(
+        this IFilterConventionDescriptor descriptor)
+    {
+        descriptor.Operation(DefaultFilterOperations.Equals).Name("equalTo");
+        descriptor.Operation(DefaultFilterOperations.NotEquals).Name("notEqualTo");
+        descriptor.Operation(DefaultFilterOperations.GreaterThan).Name("greaterThan");
+        descriptor.Operation(DefaultFilterOperations.NotGreaterThan).Name("notGreaterThan");
+        descriptor.Operation(DefaultFilterOperations.GreaterThanOrEquals).Name("greaterThanOrEqualTo");
+        descriptor.Operation(DefaultFilterOperations.NotGreaterThanOrEquals).Name("notGreaterThanOrEqualTo");
+        descriptor.Operation(DefaultFilterOperations.LowerThan).Name("lessThan");
+        descriptor.Operation(DefaultFilterOperations.NotLowerThan).Name("notLessThan");
+        descriptor.Operation(DefaultFilterOperations.LowerThanOrEquals).Name("lessThanOrEqualTo");
+        descriptor.Operation(DefaultFilterOperations.NotLowerThanOrEquals).Name("notLessThanOrEqualTo");
+        descriptor.Operation(DefaultFilterOperations.Contains).Name("contains");
+        descriptor.Operation(DefaultFilterOperations.NotContains).Name("doesNotContain");
+        descriptor.Operation(DefaultFilterOperations.In).Name("in");
+        descriptor.Operation(DefaultFilterOperations.NotIn).Name("notIn");
+        descriptor.Operation(DefaultFilterOperations.StartsWith).Name("startsWith");
+        descriptor.Operation(DefaultFilterOperations.NotStartsWith).Name("doesNotStartWith");
+        descriptor.Operation(DefaultFilterOperations.EndsWith).Name("endsWith");
+        descriptor.Operation(DefaultFilterOperations.NotEndsWith).Name("doesNotEndWith");
+        descriptor.Operation(DefaultFilterOperations.All).Name("all");
+        descriptor.Operation(DefaultFilterOperations.None).Name("none");
+        descriptor.Operation(DefaultFilterOperations.Some).Name("some");
+        descriptor.Operation(DefaultFilterOperations.Any).Name("any");
+        descriptor.Operation(DefaultFilterOperations.And).Name("and");
+        descriptor.Operation(DefaultFilterOperations.Or).Name("or");
+        descriptor.Operation(DefaultFilterOperations.Data).Name("data");
+        // TODO `descriptor.Operation(AdditionalFilterOperations.Not).Name("not");` as in the project `database`
+        // TODO `inClosedInterval`
+        return descriptor;
+    }
+
+    // Inspired by FilterConventionDescriptorExtensions#BindDefaultTypes
+    // https://github.com/ChilliCream/hotchocolate/blob/ee5813646fdfea81035c681989793514f33b5d94/src/HotChocolate/Data/src/Data/Filters/Convention/Extensions/FilterConventionDescriptorExtensions.cs#L73
+    public static IFilterConventionDescriptor BindDefaultTypes(
+        this IFilterConventionDescriptor descriptor)
+    {
+        descriptor
+            .BindRuntimeType<string, StringOperationFilterInputType>()
+            .BindRuntimeType<bool, BooleanOperationFilterInputType>()
+            .BindRuntimeType<bool?, BooleanOperationFilterInputType>()
+            .BindComparableType<byte>("BytePropositionInput")
+            .BindComparableType<short>("ShortPropositionInput")
+            .BindComparableType<int>("IntPropositionInput")
+            .BindComparableType<long>("LongPropositionInput")
+            .BindComparableType<float>("FloatXPropositionInput")
+            .BindComparableType<double>("FloatPropositionInput")
+            .BindComparableType<decimal>("DecimalPropositionInput")
+            .BindComparableType<sbyte>("SignedBytePropositionInput")
+            .BindComparableType<ushort>("UnsignedShortPropositionInput")
+            .BindComparableType<uint>("UnsignedIntPropositionInput")
+            .BindComparableType<ulong>("UnsigendLongPropositionInput")
+            .BindComparableType<Guid>("UuidPropositionInput")
+            .BindComparableType<DateTime>("DateTimePropositionInput")
+            .BindComparableType<DateTimeOffset>("DateTimeOffsetPropositionInput")
+            .BindComparableType<TimeSpan>("TimeSpanPropositionInput");
+        // TODO Why does this not work?
+        // descriptor
+        //     .Configure<StringOperationFilterInputType>(x => x.Name("StringPropositionInput"))
+        //     .Configure<BooleanOperationFilterInputType>(x => x.Name("BooleanPropositionInput"));
+        return descriptor;
+    }
+
+    // Inspired by FilterConventionDescriptorExtensions#FilterConventionDescriptorExtensions
+    // https://github.com/ChilliCream/hotchocolate/blob/ee5813646fdfea81035c681989793514f33b5d94/src/HotChocolate/Data/src/Data/Filters/Convention/Extensions/FilterConventionDescriptorExtensions.cs#L102
+    private static IFilterConventionDescriptor BindComparableType<T>(
+        this IFilterConventionDescriptor descriptor,
+        string? name = null)
+        where T : struct
+    {
+        descriptor
+            .BindRuntimeType<T, ComparableOperationFilterInputType<T>>()
+            .BindRuntimeType<T?, ComparableOperationFilterInputType<T?>>();
+        // TODO Why does this not work?
+        // if (name is not null)
+        // {
+        //     descriptor
+        //         .Configure<ComparableOperationFilterInputType<T>>(x => x.Name(name))
+        //         .Configure<ComparableOperationFilterInputType<T?>>(x => x.Name($"Maybe{name}"));
+        // }
+        return descriptor;
+    }
+}
 
 // See https://chillicream.com/docs/hotchocolate/fetching-data/sorting/#sorting-conventions
 public partial class CustomSortConvention : SortConvention
