@@ -80,12 +80,6 @@ public sealed class DatabaseResolvers(
     private const string IgsdbUrl = "https://igsdb-v2.herokuapp.com/graphql/";
     private const string IgsdbStagingUrl = "https://igsdb-v2-staging.herokuapp.com/graphql/";
 
-    private static readonly string[] s_dataFileNames =
-    [
-        "DataFields.graphql",
-        "Data.graphql"
-    ];
-
     private static readonly string[] s_opticalDataFileNames =
     [
         "DataFields.graphql",
@@ -119,18 +113,6 @@ public sealed class DatabaseResolvers(
         "DataFields.graphql",
         "GeometricDataFields.graphql",
         "GeometricData.graphql"
-    ];
-
-    private static readonly string[] s_igsdbAllDataFileNames =
-    [
-        "AllDataIgsdb.graphql"
-    ];
-
-    private static readonly string[] s_allDataFileNames =
-    [
-        "DataFields.graphql",
-        "PageInfoFields.graphql",
-        "AllData.graphql"
     ];
 
     private static readonly string[] s_igsdbAllOpticalDataFileNames =
@@ -245,35 +227,6 @@ public sealed class DatabaseResolvers(
     {
         return DatabaseAuthorization.IsAuthorizedToVerify(claimsPrincipal, database.Id, userManager, context,
             cancellationToken);
-    }
-
-    public async Task<IData?> GetDataAsync(
-        [Parent] Database database,
-        Guid id,
-        string? locale,
-        IHttpContextAccessor httpContextAccessor,
-        IResolverContext resolverContext,
-        CancellationToken cancellationToken
-    )
-    {
-        return (await QueryDatabase<DataData>(
-                    database,
-                    new GraphQLRequest(
-                        await QueryingDatabases.ConstructQuery(
-                            s_dataFileNames
-                        ).ConfigureAwait(false),
-                        new
-                        {
-                            id,
-                            locale
-                        },
-                        nameof(Data)
-                    ),
-                    httpContextAccessor,
-                    resolverContext,
-                    cancellationToken
-                ).ConfigureAwait(false)
-            )?.Data;
     }
 
     public async Task<OpticalData?> GetOpticalDataAsync(
@@ -419,65 +372,6 @@ public sealed class DatabaseResolvers(
                     cancellationToken
                 ).ConfigureAwait(false)
             )?.GeometricData;
-    }
-
-    public async Task<DataConnection?> GetAllDataAsync(
-        [Parent] Database database,
-        DataPropositionInput? where,
-        string? locale,
-        uint? first,
-        string? after,
-        uint? last,
-        string? before,
-        IHttpContextAccessor httpContextAccessor,
-        IResolverContext resolverContext,
-        CancellationToken cancellationToken
-    )
-    {
-        if (IsIgsdbDatabase(database))
-        {
-            return DataConnection.From(
-                (await QueryDatabase<AllDataDataIgsdb>(
-                        database,
-                        new GraphQLRequest(
-                            await QueryingDatabases.ConstructQuery(s_igsdbAllDataFileNames).ConfigureAwait(false),
-                            new
-                            {
-                                where = RewriteDataPropositionInput(where, database),
-                                first,
-                                after,
-                                last,
-                                before
-                            },
-                            "AllData"
-                        ),
-                        httpContextAccessor,
-                        resolverContext,
-                        cancellationToken
-                    ).ConfigureAwait(false)
-                )?.AllData
-            );
-        }
-        return (await QueryDatabase<AllDataData>(
-                    database,
-                    new GraphQLRequest(
-                        await QueryingDatabases.ConstructQuery(s_allDataFileNames).ConfigureAwait(false),
-                        new
-                        {
-                            where = RewriteDataPropositionInput(where, database),
-                            locale,
-                            first,
-                            after,
-                            last,
-                            before
-                        },
-                        "AllData"
-                    ),
-                    httpContextAccessor,
-                    resolverContext,
-                    cancellationToken
-                ).ConfigureAwait(false)
-            )?.AllData;
     }
 
     private static DataPropositionInput? RewriteDataPropositionInput(
@@ -743,35 +637,6 @@ public sealed class DatabaseResolvers(
             )?.AllGeometricData;
     }
 
-    public async Task<bool?> GetHasDataAsync(
-        [Parent] Database database,
-        DataPropositionInput? where,
-        string? locale,
-        IHttpContextAccessor httpContextAccessor,
-        IResolverContext resolverContext,
-        CancellationToken cancellationToken
-    )
-    {
-        return (await QueryDatabase<HasDataData>(
-                    database,
-                    new GraphQLRequest(
-                        await QueryingDatabases.ConstructQuery(
-                            s_hasDataFileNames
-                        ).ConfigureAwait(false),
-                        new
-                        {
-                            where = RewriteDataPropositionInput(where, database),
-                            locale
-                        },
-                        "HasData"
-                    ),
-                    httpContextAccessor,
-                    resolverContext,
-                    cancellationToken
-                ).ConfigureAwait(false)
-            )?.HasData;
-    }
-
     public async Task<bool?> GetHasOpticalDataAsync(
         [Parent] Database database,
         OpticalDataPropositionInput? where,
@@ -1014,14 +879,11 @@ public sealed class DatabaseResolvers(
         }
     }
 
-    private sealed record DataData(DataX.Data Data);
     private sealed record OpticalDataData(OpticalData OpticalData);
     private sealed record HygrothermalDataData(HygrothermalData HygrothermalData);
     private sealed record CalorimetricDataData(CalorimetricData CalorimetricData);
     private sealed record PhotovoltaicDataData(PhotovoltaicData PhotovoltaicData);
     private sealed record GeometricDataData(GeometricData GeometricData);
-    private sealed record AllDataData(DataConnection AllData);
-    private sealed record AllDataDataIgsdb(DataConnectionIgsdb AllData);
     private sealed record AllOpticalDataData(OpticalDataConnection AllOpticalData);
     private sealed record AllOpticalDataDataIgsdb(OpticalDataConnectionIgsdb AllOpticalData);
     private sealed record AllHygrothermalDataData(HygrothermalDataConnection AllHygrothermalData);
@@ -1029,7 +891,6 @@ public sealed class DatabaseResolvers(
     private sealed record AllGeometricDataData(GeometricDataConnection AllGeometricData);
     private sealed record AllGeometricDataDataIgsdb(GeometricDataConnectionIgsdb AllGeometricData);
     private sealed record AllPhotovoltaicDataData(PhotovoltaicDataConnection AllPhotovoltaicData);
-    private sealed record HasDataData(bool HasData);
     private sealed record HasOpticalDataData(bool HasOpticalData);
     private sealed record HasCalorimetricDataData(bool HasCalorimetricData);
     private sealed record HasGeometricDataData(bool HasGeometricData);

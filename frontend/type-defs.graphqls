@@ -515,17 +515,6 @@ type DataApproval {
   timestamp: DateTime!
 }
 
-type DataConnection {
-  edges: [DataEdge!]!
-  pageInfo: PageInfo!
-  totalCount: NonNegativeInt
-}
-
-type DataEdge {
-  cursor: String!
-  node: Data!
-}
-
 type DataFormat implements Node {
   canCurrentUserUpdateNode: Boolean! @cost(weight: "10")
   description: String!
@@ -563,7 +552,6 @@ type DataFormatsEdge {
 
 type Database implements Node {
   allCalorimetricData(after: String before: String first: NonNegativeInt last: NonNegativeInt locale: String where: CalorimetricDataPropositionInput): CalorimetricDataConnection @cost(weight: "10")
-  allData(after: String before: String first: NonNegativeInt last: NonNegativeInt locale: String where: DataPropositionInput): DataConnection @cost(weight: "10")
   allGeometricData(after: String before: String first: NonNegativeInt last: NonNegativeInt locale: String where: GeometricDataPropositionInput): GeometricDataConnection @cost(weight: "10")
   allHygrothermalData(after: String before: String first: NonNegativeInt last: NonNegativeInt locale: String where: HygrothermalDataPropositionInput): HygrothermalDataConnection @cost(weight: "10")
   allOpticalData(after: String before: String first: NonNegativeInt last: NonNegativeInt locale: String where: OpticalDataPropositionInput): OpticalDataConnection @cost(weight: "10")
@@ -571,11 +559,9 @@ type Database implements Node {
   calorimetricData(id: Uuid! locale: String): CalorimetricData @cost(weight: "10")
   canCurrentUserUpdateNode: Boolean! @cost(weight: "10")
   canCurrentUserVerifyNode: Boolean! @cost(weight: "10")
-  data(id: Uuid! locale: String): Data @cost(weight: "10")
   description: String!
   geometricData(id: Uuid! locale: String): GeometricData @cost(weight: "10")
   hasCalorimetricData(locale: String where: CalorimetricDataPropositionInput): Boolean @cost(weight: "10")
-  hasData(locale: String where: DataPropositionInput): Boolean @cost(weight: "10")
   hasGeometricData(locale: String where: GeometricDataPropositionInput): Boolean @cost(weight: "10")
   hasHygrothermalData(locale: String where: HygrothermalDataPropositionInput): Boolean @cost(weight: "10")
   hasOpticalData(locale: String where: OpticalDataPropositionInput): Boolean @cost(weight: "10")
@@ -2069,23 +2055,6 @@ input DataFormatSortInput {
   mediaType: SortEnumType @cost(weight: "10")
   schemaLocator: UriSortInput @cost(weight: "10")
   manager: InstitutionSortInput @cost(weight: "10")
-}
-
-input DataPropositionInput {
-  and: [DataPropositionInput!]
-  cielabColors: CielabColorsPropositionInput
-  colorRenderingIndices: FloatsPropositionInput
-  componentId: UuidPropositionInput
-  gValues: FloatsPropositionInput
-  infraredEmittances: FloatsPropositionInput
-  nearnormalHemisphericalSolarReflectances: FloatsPropositionInput
-  nearnormalHemisphericalSolarTransmittances: FloatsPropositionInput
-  nearnormalHemisphericalVisibleReflectances: FloatsPropositionInput
-  nearnormalHemisphericalVisibleTransmittances: FloatsPropositionInput
-  not: DataPropositionInput
-  or: [DataPropositionInput!]
-  resources: GetHttpsResourcesPropositionInput
-  uValues: FloatsPropositionInput
 }
 
 input DatabaseFilterInput {

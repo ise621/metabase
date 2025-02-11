@@ -16,12 +16,12 @@ const navItems = [
     label: "Data",
     subitems: [
       {
-        path: paths.data,
-        label: "All Data",
-      },
-      {
         path: paths.calorimetricData,
         label: "Calorimetric Data",
+      },
+      {
+        path: paths.geometricData,
+        label: "Geometric Data",
       },
       {
         path: paths.hygrothermalData,
@@ -34,10 +34,6 @@ const navItems = [
       {
         path: paths.photovoltaicData,
         label: "Photovoltaic Data",
-      },
-      {
-        path: paths.geometricData,
-        label: "Geometric Data",
       },
     ],
   },

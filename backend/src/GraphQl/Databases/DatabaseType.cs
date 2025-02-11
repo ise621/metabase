@@ -28,22 +28,6 @@ public sealed class DatabaseType
             .Field(t => t.OperatorId).Ignore();
         ConfigureDataField(
             descriptor,
-            "data",
-            _ => _.GetDataAsync(default!, default, default, default!, default!, default)
-        );
-        ConfigureAllDataField<DataPropositionInput>(
-            descriptor,
-            "allData",
-            _ => _.GetAllDataAsync(default!, default, default, default, default, default, default,
-                default!, default!, default)
-        );
-        ConfigureHasDataField<DataPropositionInput>(
-            descriptor,
-            "hasData",
-            _ => _.GetHasDataAsync(default!, default, default, default!, default!, default)
-        );
-        ConfigureDataField(
-            descriptor,
             "opticalData",
             _ => _.GetOpticalDataAsync(default!, default, default, default!, default!, default)
         );

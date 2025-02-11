@@ -41,32 +41,6 @@ fragment DataPartial on Data {
   }
 }
 
-query AllData($where: DataPropositionInput) {
-  databases {
-    edges {
-      node {
-        allData(where: $where) {
-          edges {
-            node {
-              ...DataPartial
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-query HasData($where: DataPropositionInput) {
-  databases {
-    edges {
-      node {
-        hasData(where: $where)
-      }
-    }
-  }
-}
-
 fragment CalorimetricDataPartial on CalorimetricData {
   ...DataPartial
   gValues

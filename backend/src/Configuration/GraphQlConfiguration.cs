@@ -162,6 +162,7 @@ public static class GraphQlConfiguration
             .AddType<DataApproval>()
             .AddType<GetHttpsResourceTreeNonRootVertex>()
             .AddType<GetHttpsResourceTreeRoot>()
+            .AddType<IData>()
             .AddType<HygrothermalData>()
             .AddType<OpticalData>()
             .AddType<PhotovoltaicData>()
