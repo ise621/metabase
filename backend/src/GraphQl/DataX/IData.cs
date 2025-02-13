@@ -17,7 +17,7 @@ public interface IData
     Guid CreatorId { get; }
     DateTime CreatedAt { get; }
     AppliedMethod AppliedMethod { get; }
-    // IReadOnlyList<DataApproval> Approvals { get; }
+    IReadOnlyList<DataApproval> Approvals { get; }
     IReadOnlyList<GetHttpsResource> Resources { get; }
     GetHttpsResourceTree ResourceTree { get; }
     // ResponseApproval Approval { get; }

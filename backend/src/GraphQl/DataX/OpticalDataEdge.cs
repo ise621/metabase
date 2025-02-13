@@ -11,11 +11,4 @@ public sealed class OpticalDataEdge(
         node
         )
 {
-    internal static OpticalDataEdge From(OpticalDataEdgeIgsdb edge)
-    {
-        return new OpticalDataEdge(
-            Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(edge.Node.Id)),
-            OpticalData.From(edge.Node)
-        );
-    }
 }

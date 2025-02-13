@@ -11,11 +11,4 @@ public sealed class GeometricDataEdge(
         node
         )
 {
-    internal static GeometricDataEdge From(GeometricDataEdgeIgsdb edge)
-    {
-        return new GeometricDataEdge(
-            Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(edge.Node.Id)),
-            GeometricData.From(edge.Node)
-        );
-    }
 }

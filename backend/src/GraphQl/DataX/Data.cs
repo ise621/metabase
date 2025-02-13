@@ -23,19 +23,13 @@ public abstract class Data(
     DateTime createdAt,
     AppliedMethod appliedMethod,
     IReadOnlyList<GetHttpsResource> resources,
-    GetHttpsResourceTree resourceTree
-    // IReadOnlyList<DataApproval> approvals
+    GetHttpsResourceTree resourceTree,
+    IReadOnlyList<DataApproval> approvals
     // ResponseApproval approval
     )
         : IData
 {
-    protected const string IgsdbLocale = "en-US";
-    protected const string IgsdbDatabaseId = "48994b60-670d-488d-aaf7-53333a64f1d6";
-    protected const string IgsdbInstitutionId = "c17af5ef-2f1d-4c73-bcc9-fcfb722420f3";
-    protected const string IgsdbMethodId = "35e98d58-9627-4bdf-bf9f-f265471c1f24";
-
     public string Id { get; } = id;
-
     public string Locale { get; } = locale;
     public IReadOnlyList<string> Warnings { get; } = warnings;
     public Guid CreatorId { get; } = creatorId;
@@ -49,6 +43,7 @@ public abstract class Data(
     public string? Description { get; } = description;
     public AppliedMethod AppliedMethod { get; } = appliedMethod;
     public GetHttpsResourceTree ResourceTree { get; } = resourceTree;
+    public IReadOnlyList<DataApproval> Approvals { get; } = approvals;
 
     public Task<Database?> GetDatabaseAsync(
             DatabaseByIdDataLoader databaseById,

@@ -17,8 +17,8 @@ public sealed class HygrothermalData(
     DateTime createdAt,
     AppliedMethod appliedMethod,
     IReadOnlyList<GetHttpsResource> resources,
-    GetHttpsResourceTree resourceTree
-    // IReadOnlyList<DataApproval> approvals
+    GetHttpsResourceTree resourceTree,
+    IReadOnlyList<DataApproval> approvals
     // ResponseApproval approval
     )
         : Data(
@@ -35,7 +35,8 @@ public sealed class HygrothermalData(
     createdAt,
     appliedMethod,
     resources,
-    resourceTree
+    resourceTree,
+    approvals
     )
 {
 }

@@ -18,7 +18,7 @@ public sealed class CalorimetricData(
     AppliedMethod appliedMethod,
     IReadOnlyList<GetHttpsResource> resources,
     GetHttpsResourceTree resourceTree,
-    // IReadOnlyList<DataApproval> approvals
+    IReadOnlyList<DataApproval> approvals,
     // ResponseApproval approval
     IReadOnlyList<double> gValues,
     IReadOnlyList<double> uValues
@@ -37,7 +37,8 @@ public sealed class CalorimetricData(
     createdAt,
     appliedMethod,
     resources,
-    resourceTree
+    resourceTree,
+    approvals
     )
 {
     public IReadOnlyList<double> GValues { get; } = gValues;

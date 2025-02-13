@@ -24,14 +24,14 @@ fragment DataFields on Data {
       }
     }
   }
-  # approvals {
-  #   timestamp
-  #   signature
-  #   keyFingerprint
-  #   query
-  #   response
-  #   approverId
-  # }
+  approvals {
+    timestamp
+    signature
+    keyFingerprint
+    query
+    response
+    approverId
+  }
   resources {
     description
     hashValue

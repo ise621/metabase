@@ -16,16 +16,4 @@ public sealed class DataConnection(
         pageInfo
         )
 {
-    internal static DataConnection? From(DataConnectionIgsdb? connection)
-    {
-        if (connection is null)
-        {
-            return null;
-        }
-        return new DataConnection(
-            connection.Edges.Select(DataEdge.From).ToList().AsReadOnly(),
-            connection.TotalCount,
-            connection.PageInfo
-        );
-    }
 }

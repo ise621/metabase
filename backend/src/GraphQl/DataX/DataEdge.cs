@@ -9,11 +9,4 @@ public sealed class DataEdge(
         node
         )
 {
-    internal static DataEdge From(DataEdgeIgsdb edge)
-    {
-        return new DataEdge(
-            edge.Cursor,
-            OpticalData.From((OpticalDataIgsdb)edge.Node)
-        );
-    }
 }

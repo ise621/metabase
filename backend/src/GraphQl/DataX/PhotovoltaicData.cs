@@ -17,8 +17,8 @@ public sealed class PhotovoltaicData(
     DateTime createdAt,
     AppliedMethod appliedMethod,
     IReadOnlyList<GetHttpsResource> resources,
-    GetHttpsResourceTree resourceTree
-    // IReadOnlyList<DataApproval> approvals
+    GetHttpsResourceTree resourceTree,
+    IReadOnlyList<DataApproval> approvals
     // ResponseApproval approval
     )
         : Data(
@@ -35,7 +35,8 @@ public sealed class PhotovoltaicData(
     createdAt,
     appliedMethod,
     resources,
-    resourceTree
+    resourceTree,
+    approvals
     )
 {
 }

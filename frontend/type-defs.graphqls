@@ -5,6 +5,7 @@ schema {
 
 interface Data {
   appliedMethod: AppliedMethod!
+  approvals: [DataApproval!]!
   componentId: Uuid!
   createdAt: DateTime!
   creatorId: Uuid!
@@ -171,6 +172,7 @@ type Authorization {
 
 type CalorimetricData implements Data {
   appliedMethod: AppliedMethod!
+  approvals: [DataApproval!]!
   component: Component @cost(weight: "10")
   componentId: Uuid!
   createdAt: DateTime!
@@ -736,6 +738,7 @@ type GenerateUserTwoFactorRecoveryCodesPayload {
 
 type GeometricData implements Data {
   appliedMethod: AppliedMethod!
+  approvals: [DataApproval!]!
   component: Component @cost(weight: "10")
   componentId: Uuid!
   createdAt: DateTime!
@@ -794,6 +797,7 @@ type GetHttpsResourceTreeRoot {
 
 type HygrothermalData implements Data {
   appliedMethod: AppliedMethod!
+  approvals: [DataApproval!]!
   component: Component @cost(weight: "10")
   componentId: Uuid!
   createdAt: DateTime!
@@ -1136,6 +1140,7 @@ type OpenEndedDateTimeRange {
 
 type OpticalData implements Data {
   appliedMethod: AppliedMethod!
+  approvals: [DataApproval!]!
   cielabColors: [CielabColor!]!
   colorRenderingIndices: [Float!]!
   component: Component @cost(weight: "10")
@@ -1222,6 +1227,7 @@ type PendingInstitutionsEdge {
 
 type PhotovoltaicData implements Data {
   appliedMethod: AppliedMethod!
+  approvals: [DataApproval!]!
   component: Component @cost(weight: "10")
   componentId: Uuid!
   createdAt: DateTime!
