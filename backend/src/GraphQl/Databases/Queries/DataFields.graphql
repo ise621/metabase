@@ -1,6 +1,9 @@
 fragment DataFields on Data {
   uuid
   databaseId
+  type
+  subtype
+  coatedSide
   timestamp
   componentId
   name
