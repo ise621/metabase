@@ -4,7 +4,11 @@ fragment OpticalDataFields on OpticalData {
   type
   subtype
   coatedSide
-  cielabColors
+  cielabColors {
+    aStar
+    bStar
+    lStar
+  }
   colorRenderingIndices
   infraredEmittances
   nearnormalHemisphericalSolarReflectances
