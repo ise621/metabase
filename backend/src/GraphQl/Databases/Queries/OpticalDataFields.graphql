@@ -1,6 +1,11 @@
 fragment OpticalDataFields on OpticalData {
   id
   ...DataFields
+  type
+  subtype
+  coatedSide
+  cielabColors
+  colorRenderingIndices
   infraredEmittances
   nearnormalHemisphericalSolarReflectances
   nearnormalHemisphericalSolarTransmittances

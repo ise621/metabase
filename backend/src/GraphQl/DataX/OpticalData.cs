@@ -15,8 +15,8 @@ public sealed class OpticalData(
     IReadOnlyList<string> warnings,
     Guid creatorId,
     DateTime createdAt,
-    DataType? type,
-    DataSubtype? subtype,
+    OpticalComponentType? type,
+    OpticalComponentSubtype? subtype,
     CoatedSide? coatedSide,
     AppliedMethod appliedMethod,
     IReadOnlyList<GetHttpsResource> resources,
@@ -43,15 +43,15 @@ public sealed class OpticalData(
     warnings,
     creatorId,
     createdAt,
-    type,
-    subtype,
-    coatedSide,
     appliedMethod,
     resources,
     resourceTree,
     approvals
     )
 {
+    public OpticalComponentType? Type { get; } = type;
+    public OpticalComponentSubtype? Subtype { get; } = subtype;
+    public CoatedSide? CoatedSide { get; } = coatedSide;
     public IReadOnlyList<double> NearnormalHemisphericalVisibleTransmittances { get; } = nearnormalHemisphericalVisibleTransmittances;
     public IReadOnlyList<double> NearnormalHemisphericalVisibleReflectances { get; } = nearnormalHemisphericalVisibleReflectances;
     public IReadOnlyList<double> NearnormalHemisphericalSolarTransmittances { get; } = nearnormalHemisphericalSolarTransmittances;

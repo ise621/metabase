@@ -21,9 +21,6 @@ public abstract class Data(
     IReadOnlyList<string> warnings,
     Guid creatorId,
     DateTime createdAt,
-    DataType? type,
-    DataSubtype? subtype,
-    CoatedSide? coatedSide,
     AppliedMethod appliedMethod,
     IReadOnlyList<GetHttpsResource> resources,
     GetHttpsResourceTree resourceTree,
@@ -44,9 +41,6 @@ public abstract class Data(
     public Guid ComponentId { get; } = componentId;
     public string? Name { get; } = name;
     public string? Description { get; } = description;
-    public DataType? Type { get; } = type;
-    public DataSubtype? Subtype { get; } = subtype;
-    public CoatedSide? CoatedSide { get; } = coatedSide;
     public AppliedMethod AppliedMethod { get; } = appliedMethod;
     public GetHttpsResourceTree ResourceTree { get; } = resourceTree;
     public IReadOnlyList<DataApproval> Approvals { get; } = approvals;
