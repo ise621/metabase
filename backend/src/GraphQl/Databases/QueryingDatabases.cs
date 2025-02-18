@@ -48,38 +48,13 @@ public sealed class QueryingDatabases
         }
     }
 
-    private static readonly JsonSerializerOptions s_nonDataSerializerOptions =
-        new()
-        {
-            Converters =
-            {
-                new JsonStringEnumConverter(new ConstantCaseJsonNamingPolicy(), false),
-                new DateTimeConverterUsingDateTimeParseAsFallback()
-            },
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            IgnoreReadOnlyFields = true,
-            IgnoreReadOnlyProperties = false,
-            IncludeFields = false,
-            NumberHandling = JsonNumberHandling.Strict,
-            PreferredObjectCreationHandling = JsonObjectCreationHandling.Replace,
-            PropertyNameCaseInsensitive = false,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            ReadCommentHandling = JsonCommentHandling.Disallow,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            // RespectNullableAnnotations = true,
-            UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement,
-            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
-            WriteIndented = false
-        }; //.SetupImmutableConverter();
-
     public static readonly JsonSerializerOptions SerializerOptions =
         new()
         {
             Converters =
             {
                 new JsonStringEnumConverter(new ConstantCaseJsonNamingPolicy(), false),
-                new DateTimeConverterUsingDateTimeParseAsFallback(),
-                new DataConverterWithTypeDiscriminatorProperty(s_nonDataSerializerOptions)
+                new DateTimeConverterUsingDateTimeParseAsFallback()
             },
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             IgnoreReadOnlyFields = true,
@@ -248,116 +223,5 @@ public sealed class QueryingDatabases
         result.Headers.ContentType =
             new MediaTypeHeaderValue("application/json");
         return result;
-    }
-
-    // Inspired by https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#support-polymorphic-deserialization
-    // and https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#an-alternative-way-to-do-polymorphic-deserialization
-    public sealed class DataConverterWithTypeDiscriminatorProperty(
-        JsonSerializerOptions options
-        ) : JsonConverter<IData>
-    {
-        private const string DISCRIMINATOR_PROPERTY_NAME = "__typename";
-
-        // type discriminators
-        private const string CALORIMETRIC_DATA = "CalorimetricData";
-        private const string HYGROTHERMAL_DATA = "HygrothermalData";
-        private const string OPTICAL_DATA = "OpticalData";
-        private const string PHOTOVOLTAIC_DATA = "PhotovoltaicData";
-        private const string GEOMETRIC_DATA = "GeometricData";
-
-        private readonly JsonSerializerOptions _options = options;
-
-        public override bool CanConvert(Type typeToConvert)
-        {
-            // typeof(DataX.IData).IsAssignableFrom(typeToConvert);
-            return typeof(IData).IsEquivalentTo(typeToConvert);
-        }
-
-        public override IData Read(
-            ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var readerClone = reader; // clones `reader` because it is a struct!
-            if (readerClone.TokenType != JsonTokenType.StartObject)
-            {
-                throw new JsonException($"Token is not a start object but {readerClone.TokenType}.");
-            }
-
-            readerClone.Read();
-            if (readerClone.TokenType != JsonTokenType.PropertyName)
-            {
-                throw new JsonException($"Token is not a property but {readerClone.TokenType}.");
-            }
-
-            var propertyName = readerClone.GetString();
-            if (propertyName != DISCRIMINATOR_PROPERTY_NAME)
-            {
-                throw new JsonException($"Property is not discriminator property but {propertyName}.");
-            }
-
-            readerClone.Read();
-            if (readerClone.TokenType != JsonTokenType.String)
-            {
-                throw new JsonException($"Token is not a string but {readerClone.TokenType}.");
-            }
-
-            var typeDiscriminator = readerClone.GetString();
-            // Note that you can't pass in the original options instance
-            // that registers the converter to `Deserialize` as told on
-            // https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#an-alternative-way-to-do-polymorphic-deserialization
-            return typeDiscriminator switch
-            {
-                CALORIMETRIC_DATA => JsonSerializer.Deserialize<CalorimetricData>(ref reader, _options) ??
-                                     throw new JsonException("Could not deserialize calorimetric data."),
-                HYGROTHERMAL_DATA => JsonSerializer.Deserialize<HygrothermalData>(ref reader, _options) ??
-                                     throw new JsonException("Could not deserialize hygrothermal data."),
-                OPTICAL_DATA => JsonSerializer.Deserialize<OpticalData>(ref reader, _options) ??
-                                throw new JsonException("Could not deserialize optical data."),
-                PHOTOVOLTAIC_DATA => JsonSerializer.Deserialize<PhotovoltaicData>(ref reader, _options) ??
-                                     throw new JsonException("Could not deserialize photovoltaic data."),
-                GEOMETRIC_DATA => JsonSerializer.Deserialize<GeometricData>(ref reader, _options) ??
-                                     throw new JsonException("Could not deserialize geometric data."),
-                _ => throw new JsonException($"Type discriminator has unknown value {typeDiscriminator}.")
-            };
-        }
-
-        public override void Write(
-            Utf8JsonWriter writer, IData value, JsonSerializerOptions options)
-        {
-            try
-            {
-                writer.WriteStartObject();
-                if (value is CalorimetricData calorimetricData)
-                {
-                    writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, CALORIMETRIC_DATA);
-                    throw new JsonException("Unsupported!");
-                }
-                else if (value is HygrothermalData hygrothermalData)
-                {
-                    writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, HYGROTHERMAL_DATA);
-                    throw new JsonException("Unsupported!");
-                }
-                else if (value is OpticalData opticalData)
-                {
-                    writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, OPTICAL_DATA);
-                    throw new JsonException("Unsupported!");
-                }
-                else if (value is PhotovoltaicData photovoltaicData)
-                {
-                    writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, PHOTOVOLTAIC_DATA);
-                    throw new JsonException("Unsupported!");
-                }
-                else if (value is GeometricData geometricData)
-                {
-                    writer.WriteString(DISCRIMINATOR_PROPERTY_NAME, GEOMETRIC_DATA);
-                    throw new JsonException("Unsupported!");
-                }
-
-                throw new JsonException("Unsupported!");
-            }
-            finally
-            {
-                writer.WriteEndObject();
-            }
-        }
     }
 }
