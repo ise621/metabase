@@ -65,7 +65,7 @@ export default {
   },
   applicationCreate: "/application/create",
   openIdConnect: "/openIdConnect",
-  openIdConnectClientLogin: "https://local.buildingenvelopedata.org:4041/connect/client/login",
+  openIdConnectClientLogin: "/connect/client/login",
   openIdConnectClientLogout: "/connect/client/logout",
 };
 
