@@ -8,14 +8,14 @@ using Metabase.GraphQl.DataFormats;
 namespace Metabase.GraphQl.DataX;
 
 public sealed class GetHttpsResource(
-    string description,
+    string? description,
     string hashValue,
     Uri locator,
     Guid dataFormatId,
     IReadOnlyList<FileMetaInformation> archivedFilesMetaInformation
     )
 {
-    public string Description { get; } = description;
+    public string? Description { get; } = description;
     public string HashValue { get; } = hashValue;
     public Uri Locator { get; } = locator;
     public Guid DataFormatId { get; } = dataFormatId;
