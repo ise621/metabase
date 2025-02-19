@@ -2045,7 +2045,7 @@ input CreateMethodInput {
   validity: OpenEndedDateTimeRangeInput
 }
 
-input CreateNumerationInput {
+input NumerationInput {
   mainNumber: String!
   prefix: String
   suffix: String
@@ -2524,7 +2524,7 @@ input SetUserPhoneNumberInput {
 input StandardInput {
   abstract: String
   locator: Url
-  numeration: CreateNumerationInput!
+  numeration: NumerationInput!
   section: String
   standardizers: [Standardizer!]!
   title: String

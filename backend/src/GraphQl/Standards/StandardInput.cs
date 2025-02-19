@@ -9,7 +9,7 @@ public sealed record StandardInput(
     string? Abstract,
     string? Section,
     int? Year,
-    CreateNumerationInput Numeration,
+    NumerationInput Numeration,
     Standardizer[] Standardizers,
     Uri? Locator
 );
