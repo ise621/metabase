@@ -71,6 +71,22 @@ public static class CommonAuthorization
         return roles.Contains(InstitutionRepresentativeRole.OWNER);
     }
 
+    public static async Task<bool> IsAtLeastAssistant(
+        User user,
+        ApplicationDbContext context,
+        CancellationToken cancellationToken
+    )
+    {
+        var roles = await FetchRoles(
+                   user,
+                   context,
+                   cancellationToken
+               ).ConfigureAwait(false);
+
+        if (roles == null) return false;
+        return roles.Contains(InstitutionRepresentativeRole.OWNER) || roles.Contains(InstitutionRepresentativeRole.ASSISTANT);
+    }
+
     private static async Task<bool> IsInRole(
         User user,
         UserRole role,

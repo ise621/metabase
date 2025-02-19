@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Metabase.Enumerations;
 
@@ -13,6 +14,10 @@ public sealed class InstitutionRepresentative
     public User User { get; set; } = default!;
 
     [Required] public InstitutionRepresentativeRole Role { get; set; }
+
+    public DataSigningPermission DataSigningPermission { get; set; } = DataSigningPermission.NEVER;
+
+    public ICollection<string> KeyFingerprints { get; set; } = [];
 
     public bool Pending { get; set; } = true;
 }

@@ -34,6 +34,11 @@ public sealed class User
         WebsiteLocator = websiteLocator;
     }
 
+    [GraphQLDescription("Full name")]
+    [ProtectedPersonalData]
+    [PersonalData]
+    public string Name { get; private set; }
+
     [MinLength(1)]
     [ProtectedPersonalData]
     [PersonalData]
@@ -58,9 +63,4 @@ public sealed class User
     public ICollection<Institution> RepresentedInstitutions { get; } = [];
 
     public uint Version { get; private set; } // https://www.npgsql.org/efcore/modeling/concurrency.html
-
-    [GraphQLDescription("Full name")]
-    [ProtectedPersonalData]
-    [PersonalData]
-    public string Name { get; private set; }
 }
