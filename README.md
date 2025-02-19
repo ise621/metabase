@@ -165,6 +165,24 @@ not clean-up anonymous volumes properly. You can do so manually by running
 `docker system prune` potentially with the argument `--all`. Note that this may
 result in loss of data.
 
+When the `frontend` Docker image does not build in production because of an
+unused import in an automatically generated file, for example, one in the
+directory `./frontend/__generated__`, then **temporarily** ignore TypeScript
+build errors by adding the following lines to `./frontend/next.config.js`, for
+example with `vi` or `nano` in a shell on the deployment machine:
+
+```
+typescript: {
+  ignoreBuildErrors: true,
+},
+```
+
+The same can happen in development when running `make build` (or `yarn run
+build`) in the shell entered by `make shellf`. In that case, remove the
+offending import manually in the file and try again. Do not disable build
+errors in development because when you do so, build errors in non-generated
+files may leak into the code base.
+
 ## Deployment
 
 For information on using Docker in production see
