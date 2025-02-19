@@ -267,11 +267,18 @@ and the pages following it.
    respective inboxes (the variable's value is a comma separated list of email
    addresses). Note that in order for OpenId Connect to work as expected in
    staging, make sure that the redirect URIs use the sub-domain `staging`
-   (instead of `www`) by entering `psql` with `make --file=Makefile.production psql`, expecting the output of the SQL statement `select * from metabase."OpenIddictApplications";`, and if necessary executing SQL
+   (instead of `www`) by entering `psql` with `make --file=Makefile.production psql`, examining the output of the SQL statement `select * from metabase."OpenIddictApplications";` and if necessary executing SQL
    statements along the lines
    `update metabase."OpenIddictApplications" set "RedirectUris"='["https://staging.buildingenvelopedata.org/connect/callback/login/metabase"]', "PostLogoutRedirectUris"='["https://staging.buildingenvelopedata.org/connect/callback/logout/metabase"]' where "Id"='2f61279d-25db-4fef-bd19-ba840ba13114';`
    and
    `update metabase."OpenIddictApplications" set "RedirectUris"='["https://staging.solarbuildingenvelopes.com/connect/callback/login/metabase"]', "PostLogoutRedirectUris"='["https://staging.solarbuildingenvelopes.com/connect/callback/logout/metabase"]' where "Id"='eaa8ddfa-abd0-43ac-b048-cc1ff3aad2e5';`
+   And if you want the staging environment to forward queries to the staging
+   environments of product-data databases, then examine the output of the SQL
+   statement `select * from metabase.database;` and if necessary execute SQL
+   statements along the lines
+   `update metabase.database set "Locator"='https://staging.solarbuildingenvelopes.com/graphql/' where "Id"='8a27aa0d-6026-4124-b185-4efd5cead953';`
+   and
+   `update metabase.database set "Locator"='https://igsdb-v2-staging.herokuapp.com/graphql/' where "Id"='48994b60-670d-488d-aaf7-53333a64f1d6';`
 1. Change to the production environment by running `cd /app/production`.
 1. Adapt the environment file `./.env` if necessary by comparing it with the
    `./.env.staging.sample` file of the release to be deployed.
