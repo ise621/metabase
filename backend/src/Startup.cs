@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Net.Http;
 using HotChocolate.AspNetCore;
 using Metabase.Configuration;
@@ -20,14 +19,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Npgsql;
+using Microsoft.OpenApi;
 using Serilog;
+using Scalar.AspNetCore;
 
 namespace Metabase;
 
@@ -116,6 +115,10 @@ public sealed class Startup(
                 // TODO I consider the flattened structure a bug. How can we solve this?
             }
         );
+        services.AddOpenApi("v1", _ =>
+        {
+            _.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+        });
     }
 
     private void ConfigureMessageSenderServices(IServiceCollection services)
@@ -200,7 +203,7 @@ public sealed class Startup(
         // `OpenIddict`, see in particular `AuthConfiguration`,
         // `UseUserManagerAttribute` and `UseSignInManagerAttribute`.
         services.AddDbContext<ApplicationDbContext>(options =>
-            {},
+            { },
             contextLifetime: ServiceLifetime.Transient,
             optionsLifetime: ServiceLifetime.Singleton
         );
@@ -268,7 +271,9 @@ public sealed class Startup(
         app.UseSession();
         // app.UseResponseCompression(); // Done by Nginx
         // app.UseResponseCaching(); // Done by Nginx
-        /* app.UseWebSockets(); */
+        // app.UseWebSockets();
+        app.MapOpenApi("/openapi/{documentName}.json");
+        app.MapScalarApiReference(_ => _.Servers = []); // https://github.com/dotnet/aspnetcore/issues/57332#issuecomment-2480939916
         app.MapGraphQL()
             .WithOptions(
                 // https://chillicream.com/docs/hotchocolate/server/middleware
@@ -296,7 +301,11 @@ public sealed class Startup(
             {
                 ResponseWriter = WriteJsonResponse
             }
-        ).DisableHttpMetrics();
+        )
+        .WithName("Health")
+        .WithDescription("Check the webserver health.")
+        .WithTags("Health")
+        .DisableHttpMetrics();
     }
 
     // Inspired by https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-7.0#customize-output

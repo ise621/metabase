@@ -95,6 +95,11 @@ server {
     limit_req  zone=one burst=10 nodelay;
   }
 
+  location /openapi {
+    proxy_pass http://backend;
+    limit_req  zone=one burst=10 nodelay;
+  }
+
   location /connect {
     proxy_pass http://backend;
     limit_req  zone=one burst=10 nodelay;
